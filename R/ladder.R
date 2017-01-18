@@ -1,4 +1,14 @@
-ladder <- function(tree, decreasing = FALSE){
+#' Reorder the branches of a dendrogram in a ladderized fashion.
+#'
+#' \code{"ladder"} takes an object of class "dendrogram" and ladderizes
+#' the branches for easier visual interpretation.
+#'
+#' @param x an object of class \code{"dendrogram"}.
+#' @param decreasing logical indicating whether the tree should be ladderized upwards
+#' (FALSE; default) or downwards (TRUE).
+#' @export
+#'
+ladder <- function(x, decreasing = FALSE){
   ordernode <- function(tree, decreasing = FALSE){
     if(is.list(tree)){
       cladesizes <- sapply(tree, function(e) attr(e, "members"))
@@ -16,10 +26,10 @@ ladder <- function(tree, decreasing = FALSE){
     }
     return(tree)
   }
-  tree <- ordernodes(tree, decreasing = decreasing)
-  tree <- ordernode(tree, decreasing = decreasing)
+  x <- ordernodes(x, decreasing = decreasing)
+  x <- ordernode(x, decreasing = decreasing)
   #shortcut in lieu of re-midpoint function *TODO*
-  newick <- write.dendrogram(tree)
-  tree <- read.dendrogram(text = newick)
-  return(tree)
+  newick <- write.dendrogram(x)
+  x <- read.dendrogram(text = newick)
+  return(x)
 }

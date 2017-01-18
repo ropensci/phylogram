@@ -1,3 +1,16 @@
+#' Remove tree branches based on regular expression matching.
+#'
+#' \code{"prune"} takes an object of class \code{"dendrogram"} and removes all branches whose
+#' branch labels match a given regular expression.
+#'
+#' @param tree an object of class \code{"dendrogram"}.
+#' @param pattern a regular expression provided as a single string variable.
+#' @param keep logical indicating whether the branches whose labels match the regexp pattern
+#'     provided should be kept (TRUE) or discarded (FALSE; default)
+#' @param untag logical used only when keep = TRUE, indicating whether the pattern should be removed
+#' from the branch labels.
+#' @export
+#'
 prune <- function(tree, pattern, keep = FALSE, untag = FALSE){
   collapse <- function(tree, pattern, keep = FALSE){
     if(is.list(tree)){
