@@ -1,0 +1,19 @@
+#' A package for viewing, editing and publishing phylogenetic trees in R.
+#'
+#' The phylogram package contains functions for reading, viewing and editing phylogenetic trees
+#' as deeply nested lists using R's 'dendrogram' object type. This enables users to perform both
+#' top-down and bottom-up recursive tree operations such as splitting and neighbor joining.
+#' For compatibility with other programs and packages, trees can be imported and exported
+#' in the 'Newick' or 'New Hampshire' text format.
+#'
+#' @section phylogram functions:
+#' The \code{read.phylogram} and \code{write.phylogram} functions import and export phylogram objects
+#' as newick text strings to a file or connection.
+#' \code{as.phylogram} coerces a nested list or dendrogram object to an object of class \code{"phylogram"}.
+#' \code{plot.phylogram} calls plot.dendrogram but with some enhancements for phylogram
+#' objects.
+#'
+#'
+#' @docType package
+#' @name phylogram
+NULL

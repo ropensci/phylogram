@@ -1,13 +1,24 @@
 Package: phylogram
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Title: View, edit and publish phylogenetic trees in R
+Version: 0.0.0.9000
+Authors@R: person("Shaun", "Wilkinson", role = c("aut", "cre"),
+                     email = "shaunpwilkinson@gmail.com")
+Description: Contains functions for reading, viewing and editing phylogenetic
+    trees as deeply nested lists using R's 'dendrogram' object type. This enables
+    users to perform both top-down and bottom-up recursive tree operations such
+    as splitting and neighbor joining. For compatibility with other programs and
+    packages, trees can be imported and exported in the 'Newick' or 'New Hampshire'
+    text format.
+Depends:
+    R (>= 3.0.2)
+License: GPL-3
 LazyData: TRUE
-Imports: 
+Imports:
     Rcpp (>= 0.12.8)
-LinkingTo: 
-    Rcpp
+Suggests:
+    ape (>= 4.0)
+LinkingTo: Rcpp
+URL: https://github.com/shaunpwilkinson/phylogram
+BugReports: https://github.com/shaunpwilkinson/phylogram/issues
+RoxygenNote: 5.0.1

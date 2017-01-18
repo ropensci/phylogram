@@ -1,0 +1,14 @@
+---
+title: "A quick guide to the 'phylogram' package"
+author: "Shaun Wilkinson"
+date: "January 17, 2017"
+output: html_document
+---
+
+
+The 'phylogram' package contains functions for reading, viewing and editing phylogenetic
+    trees as deeply nested lists using R's 'dendrogram' object type. This enables
+    users to perform both top-down and bottom-up recursive tree operations such
+    as splitting and neighbor joining. For compatibility with other programs and
+    packages, trees can be imported and exported in the 'Newick' or 'New Hampshire'
+    text format.
