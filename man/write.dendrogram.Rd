@@ -29,7 +29,6 @@ Writes a dendrogram object to a file or connection in Newick
 arrests.hc <- hclust(dist(USArrests[1:6,]), "ave")
 arrests.den <- as.dendrogram(arrests.hc)
 write.dendrogram(arrests.den)
-
 }
 \seealso{
 \code{\link{read.dendrogram}} to create a \code{"dendrogram"} object from a

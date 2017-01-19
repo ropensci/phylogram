@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.R
 \name{read.dendrogram}
 \alias{read.dendrogram}
-\title{Read dendrogram from parenthetic text}
+\title{Read a dendrogram from parenthetic text.}
 \usage{
 read.dendrogram(file = "", text = NULL, edges = TRUE, ...)
 }
@@ -31,7 +31,6 @@ discards comments enclosed in square brackets
 mynewick <- "(A:1,(B:0.5,C:0.2):0.6);"
 mydendrogram <- read.dendrogram(text = mynewick)
 plot(mydendrogram)
-
 
 }
 \seealso{
