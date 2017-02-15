@@ -36,7 +36,7 @@ ultrametricize <- function(x){
     if(is.leaf(node)) attr(node, "height") <- 0
     return(node)
   }
-  x <- dendrapply(x, ultrametricize)
+  x <- dendrapply(x, ultrametricize1)
   return(x)
 }
 
