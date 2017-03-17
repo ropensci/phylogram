@@ -61,7 +61,6 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   has.unmatched.singlequotes <- grepl("''", x)
   if(has.unmatched.singlequotes) x <- gsub("''", "singlequote", x)
   # rectified later with fixnames function
-
   fun1 <- function(s, has.edges){ # a string, applied to odds (not enclosed in single quotes)
     # Underscore characters outside unquoted labels are converted to blanks.
     #s <- gsub("_", "", s)
@@ -72,7 +71,6 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
     s <- gsub(", *\\)", ",unnamedleaf\\)", s)
     # remove inner nodes (for now)
     s <- gsub("\\)[^,:;\\(\\)]+([,:;\\(\\)])", "\\)\\1", s)
-
     if(has.edges){
       s <- gsub("([\\(,])([^\\(\\),]+):", "\\1'\\2':", s)
       s <- gsub(";", ":1", s)
@@ -130,7 +128,6 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   tree <- tree[[1]]
   attr(tree, "edge") <- 0
   # convert nested list to dendrogram object by setting attributes recursvely
-
   setnodeattr <- function(x, leafnames){ # x is a nested list with 'edge' attributes, leafnmes is a character vector
     if(is.list(x)){
       cladesizes <- sapply(x, function(y) length(unlist(y)))

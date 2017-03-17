@@ -10,15 +10,16 @@ Description: Contains functions for reading, viewing and editing phylogenetic
     as splitting and neighbor joining. For compatibility with other programs and
     packages, trees can be imported and exported in the 'Newick' or 'New Hampshire'
     text format.
-Depends:
-    R (>= 3.0.2)
 License: GPL-3
 LazyData: TRUE
+URL: http://github.com/shaunpwilkinson/phylogram
+BugReports: http://github.com/shaunpwilkinson/phylogram/issues
+Encoding: UTF-8
+Depends:
+    R (>= 3.0.2)
 Imports:
     Rcpp (>= 0.12.8)
 Suggests:
     ape (>= 4.0)
 LinkingTo: Rcpp
-URL: https://github.com/shaunpwilkinson/phylogram
-BugReports: https://github.com/shaunpwilkinson/phylogram/issues
 RoxygenNote: 5.0.1
