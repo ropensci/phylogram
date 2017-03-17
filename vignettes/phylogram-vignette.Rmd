@@ -1,7 +1,6 @@
 ---
 title: "A quick guide to the 'phylogram' package"
 author: "Shaun Wilkinson"
-date: "January 17, 2017"
 output: html_document
 ---
 

@@ -37,7 +37,7 @@ TBA.
   attr(futuredendro[[2]][[2]], "height") <- 0
   dendro <- remidpoint(futuredendro)
   class(dendro) <- "dendrogram"
-  plot(dendro, horiz = T)
+  plot(dendro, horiz = TRUE)
 
 }
 \author{

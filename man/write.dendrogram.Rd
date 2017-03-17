@@ -37,6 +37,6 @@ specify the numbering style of the edge weights (if edges = TRUE).}
 \code{\link{read.dendrogram}} to create a \code{"dendrogram"}
   object from a text file.
   The \code{\link[ape]{write.tree}} function in the \code{\link[ape]{ape}}
-  package performs a similar operation for objects of class \code{"phylo"}
-  and \code{"multiPhylo"}.
+  package performs a similar operation for \code{"phylo"}
+  and \code{"multiPhylo"} objects.
 }

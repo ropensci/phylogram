@@ -25,7 +25,7 @@ TBA.
   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
   dendro <- read.dendrogram(text = newick)
   dendro <- reposition(dendro)
-  plot(dendro, horiz = T)
+  plot(dendro, horiz = TRUE)
 
 }
 \author{
