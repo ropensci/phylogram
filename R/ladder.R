@@ -1,13 +1,25 @@
-#' Reorder the branches of a dendrogram in a ladderized fashion.
+#' Reorder tree branches in ladderized format.
 #'
-#' \code{"ladder"} takes an object of class "dendrogram" and ladderizes
-#' the branches for easier visual interpretation.
+#' \code{ladder} takes an object of class \code{dendrogram} and ladderizes
+#'   the branches for easier visual interpretation.
 #'
 #' @param x an object of class \code{"dendrogram"}.
-#' @param decreasing logical indicating whether the tree should be ladderized upwards
-#' (FALSE; default) or downwards (TRUE).
-#' @export
+#' @param decreasing logical indicating whether the tree should be
+#'   ladderized upwards (FALSE; default) or downwards (TRUE).
+#' @return an object of class \code{dendrogram}.
+#' @details TBA.
+#' @author Shaun Wilkinson
+#' @seealso The \code{\link[ape]{ladderize}} function in the
+#'   \code{\link[ape]{ape}} package performs a similar operation for objects
+#'   of class \code{"phylo"}.
+#' @examples
+#'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
+#'   dendro <- read.dendrogram(text = newick)
+#'   plot(dendro, horiz = T)
+#'   dendro <- ladder(dendro, decreasing = TRUE)
+#'   plot(dendro, horiz = TRUE)
 #'
+################################################################################
 ladder <- function(x, decreasing = FALSE){
   ordernode <- function(tree, decreasing = FALSE){
     if(is.list(tree)){

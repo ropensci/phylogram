@@ -1,16 +1,31 @@
-#' Remove tree branches based on regular expression matching.
+#' Remove tree nodes by regular expression pattern matching.
 #'
-#' \code{"prune"} takes an object of class \code{"dendrogram"} and removes all branches whose
-#' branch labels match a given regular expression.
+#' \code{"prune"} takes an object of class \code{"dendrogram"} and
+#'   removes all branches whose branch labels match a given regular
+#'   expression.
 #'
 #' @param tree an object of class \code{"dendrogram"}.
-#' @param pattern a regular expression provided as a single string variable.
-#' @param keep logical indicating whether the branches whose labels match the regexp pattern
-#'     provided should be kept (TRUE) or discarded (FALSE; default)
-#' @param untag logical used only when keep = TRUE, indicating whether the pattern should be removed
-#' from the branch labels.
-#' @export
+#' @param pattern a regular expression supplied as a single string variable.
+#' @param keep logical indicating whether the branches whose labels match
+#'   the regexp pattern provided should be kept (TRUE) or discarded (FALSE;
+#'   default)
+#' @param untag logical (used only when keep = TRUE). Indicates whether
+#'   the specified pattern should be removed from the branch labels in
+#'   the returned object.
+#' @return an object of class \code{"dendrogram"}.
+#' @details TBA.
+#' @author Shaun Wilkinson
+#' @seealso The \code{\link[ape]{drop.tip}} function in the
+#'   \code{\link[ape]{ape}} package performs a similar operation for objects
+#'   of class \code{"phylo"}.
+#' @examples
+#'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
+#'   dendro <- read.dendrogram(text = newick)
+#'   plot(dendro, horiz = T)
+#'   dendro <- prune(dendro, pattern = "^A$")
+#'   plot(dendro, horiz = TRUE)
 #'
+################################################################################
 prune <- function(tree, pattern, keep = FALSE, untag = FALSE){
   collapse <- function(tree, pattern, keep = FALSE){
     if(is.list(tree)){

@@ -2,11 +2,44 @@
 % Please edit documentation in R/utils.R
 \name{remidpoint}
 \alias{remidpoint}
-\title{Internal phylogram functions}
+\title{Set dendrogram attributes for a nested list.}
 \usage{
 remidpoint(x)
 }
-\description{
-Internal phylogram functions
+\arguments{
+\item{x}{a nested list, possibly of class \code{"dendrogram"}}
 }
+\value{
+returns a nested list, or an object of class \code{"dendrogram"}
+  depending on the class of the input object.
+}
+\description{
+\code{remidpoint} is a helper function used for manually creating
+  \code{"dendrogram"} objects from nested lists. The function
+  recursively assigns the necessary 'midpoint' and 'members'
+  attributes at each node.
+}
+\details{
+TBA.
+}
+\examples{
+  futuredendro <- list("A", list("B", "C"))
+  attr(futuredendro[[1]], "leaf") <- TRUE
+  attr(futuredendro[[2]][[1]], "leaf") <- TRUE
+  attr(futuredendro[[2]][[2]], "leaf") <- TRUE
+  attr(futuredendro[[1]], "label") <- "A"
+  attr(futuredendro[[2]][[1]], "label") <- "B"
+  attr(futuredendro[[2]][[2]], "label") <- "C"
+  attr(futuredendro, "height") <- 1
+  attr(futuredendro[[1]], "height") <- 0
+  attr(futuredendro[[2]], "height") <- 0.5
+  attr(futuredendro[[2]][[1]], "height") <- 0
+  attr(futuredendro[[2]][[2]], "height") <- 0
+  dendro <- remidpoint(futuredendro)
+  class(dendro) <- "dendrogram"
+  plot(dendro, horiz = T)
 
+}
+\author{
+Shaun Wilkinson
+}

@@ -2,23 +2,47 @@
 % Please edit documentation in R/prune.R
 \name{prune}
 \alias{prune}
-\title{Remove tree branches based on regular expression matching.}
+\title{Remove tree nodes by regular expression pattern matching.}
 \usage{
 prune(tree, pattern, keep = FALSE, untag = FALSE)
 }
 \arguments{
 \item{tree}{an object of class \code{"dendrogram"}.}
 
-\item{pattern}{a regular expression provided as a single string variable.}
+\item{pattern}{a regular expression supplied as a single string variable.}
 
-\item{keep}{logical indicating whether the branches whose labels match the regexp pattern
-provided should be kept (TRUE) or discarded (FALSE; default)}
+\item{keep}{logical indicating whether the branches whose labels match
+the regexp pattern provided should be kept (TRUE) or discarded (FALSE;
+default)}
 
-\item{untag}{logical used only when keep = TRUE, indicating whether the pattern should be removed
-from the branch labels.}
+\item{untag}{logical (used only when keep = TRUE). Indicates whether
+the specified pattern should be removed from the branch labels in
+the returned object.}
+}
+\value{
+an object of class \code{"dendrogram"}.
 }
 \description{
-\code{"prune"} takes an object of class \code{"dendrogram"} and removes all branches whose
-branch labels match a given regular expression.
+\code{"prune"} takes an object of class \code{"dendrogram"} and
+  removes all branches whose branch labels match a given regular
+  expression.
 }
+\details{
+TBA.
+}
+\examples{
+  newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
+  dendro <- read.dendrogram(text = newick)
+  plot(dendro, horiz = T)
+  dendro <- prune(dendro, pattern = "^A$")
+  plot(dendro, horiz = TRUE)
 
+}
+\seealso{
+The \code{\link[ape]{drop.tip}} function in the
+  \code{\link[ape]{ape}} package performs a similar operation for objects
+  of class \code{"phylo"}.
+}
+\author{
+Shaun Wilkinson
+}

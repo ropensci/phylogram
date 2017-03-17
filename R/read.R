@@ -1,28 +1,42 @@
 #' Read a dendrogram from parenthetic text.
 #'
-#' Reads a file or character string in Newick (New Hampshire) format into
-#' an object of class \code{dendrogram}.
+#' \code{read.dendrogram} parses a text file or character string in Newick
+#'   (New Hampshire) format and creates an object of class \code{"dendrogram"}.
 #'
-#' @param file the name of the file to read the data from.
-#' @param text character string: if a text argument is provided instead of a
-#' file path then data are read from the value of text via a text connection.
-#' @param edges a logical value indicating whether edge weights
-#' provided in the Newick string should be retained (defaults to TRUE).
+#' @param file character string giving a valid path to the file from
+#'   where to read the data.
+#' @param text optional character string in lieu of a "file" argument.
+#'   If a text argument is provided instead of a file path, the data
+#'   are read via a text connection.
+#' @param edges logical indicating whether edge weights
+#'   provided in the Newick string should be retained in the returned
+#'   object (defaults to TRUE).
 #' @param ... further arguments to be passed to \code{scan}.
-#' @details discards comments enclosed in square brackets
-#'
+#' @details There are many varying interpretations of the Newick/
+#'   New Hampshire file format. This function attempts to adhere to
+#'   that outlined by Joe Felsenstein
+#'   \href{http://evolution.genetics.washington.edu/phylip/newicktree.html}{here}.
+#'   Newick strings with labeled inner nodes (for example
+#'   "(B:6.0,(A:5.0,C:3.0,E:4.0)Ancestor1:5.0,D:11.0);")
+#'   are accepted, however the current version removes the inner node
+#'   labels. Comments enclosed in square brackets are also discarded.
 #' @return an object of class \code{"dendrogram"}.
-#'
-#' @seealso \code{\link{write.dendrogram}} to write an object of
-#' class \code{"dendrogram"} to a text string.
-#'
+#' @author Shaun Wilkinson
+#' @references
+#'   \url{http://evolution.genetics.washington.edu/phylip/newicktree.html}
+#'   \url{http://evolution.genetics.washington.edu/phylip/newick_doc.html}
+#' @seealso
+#'   \code{\link{write.dendrogram}} writes an object of
+#'   class \code{"dendrogram"} to a text string.
+#'   The \code{\link[ape]{read.tree}} function in the
+#'   \code{\link[ape]{ape}} package performs a similar operation for objects
+#'   of class \code{"phylo"} and \code{"multiPhylo"}.
 #' @examples
-#' mynewick <- "(A:1,(B:0.5,C:0.2):0.6);"
-#' mydendrogram <- read.dendrogram(text = mynewick)
-#' plot(mydendrogram)
+#'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
+#'   dendro <- read.dendrogram(text = newick)
+#'   plot(dendro, horiz = T)
 #'
-#' @export
-#'
+################################################################################
 read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   if(!is.null(text)){
     if(!is.character(text))
@@ -61,7 +75,8 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   has.unmatched.singlequotes <- grepl("''", x)
   if(has.unmatched.singlequotes) x <- gsub("''", "singlequote", x)
   # rectified later with fixnames function
-  fun1 <- function(s, has.edges){ # a string, applied to odds (not enclosed in single quotes)
+  fun1 <- function(s, has.edges){ # a string, applied to odds
+    # (not enclosed in single quotes)
     # Underscore characters outside unquoted labels are converted to blanks.
     #s <- gsub("_", "", s)
     s <- gsub(" ", "", s)
@@ -99,7 +114,6 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   newleafnames <- paste0("L", seq(100001, 100000 + length(leafnames)))
   tmp2[evens] <- newleafnames
   tmp2 <- paste0(tmp2, collapse = "")
-
   tmp3 <- tmp2
   tree <- lapply(leafnames, function(e) e)
   names(tree) <- newleafnames
@@ -163,12 +177,13 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   attr(res, "edge") <- NULL
   # now convert to dendrogram
   attr(res, "class") <- "dendrogram"
-  min.height <- min(unlist(dendrapply(res, attr, "height")))
-  reposition <- function(y, min.height){ # y is a dendrogram
-    attr(y, "height") <- attr(y, "height") - min.height
-    y
-  }
-  res <- dendrapply(res, reposition, min.height = min.height)
+  res <- reposition(res)
+  # min.height <- min(unlist(dendrapply(res, attr, "height")))
+  # reposition <- function(y, min.height){ # y is a dendrogram
+  #   attr(y, "height") <- attr(y, "height") - min.height
+  #   y
+  # }
+  # res <- dendrapply(res, reposition, min.height = min.height)
   fixnames <- function(y){
     if(!(is.list(y))){
       attr(y, "label") <- gsub("unnamedleaf", "", attr(y, "label"))
@@ -176,12 +191,10 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
     }
     y
   }
-  if(has.unnamed.leaves | has.unmatched.singlequotes) res <- dendrapply(res, fixnames)
-  ultrametricize <- function(y){
-    if(is.leaf(y)) attr(y, "height") <- 0
-    y
+  if(has.unnamed.leaves | has.unmatched.singlequotes){
+    res <- dendrapply(res, fixnames)
   }
-  if(!has.edges) res <- dendrapply(res, ultrametricize)
+  if(!has.edges) res <- ultrametricize(res)
   return(res)
 }
-
+################################################################################

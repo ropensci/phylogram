@@ -2,18 +2,39 @@
 % Please edit documentation in R/ladder.R
 \name{ladder}
 \alias{ladder}
-\title{Reorder the branches of a dendrogram in a ladderized fashion.}
+\title{Reorder tree branches in ladderized format.}
 \usage{
 ladder(x, decreasing = FALSE)
 }
 \arguments{
 \item{x}{an object of class \code{"dendrogram"}.}
 
-\item{decreasing}{logical indicating whether the tree should be ladderized upwards
-(FALSE; default) or downwards (TRUE).}
+\item{decreasing}{logical indicating whether the tree should be
+ladderized upwards (FALSE; default) or downwards (TRUE).}
+}
+\value{
+an object of class \code{dendrogram}.
 }
 \description{
-\code{"ladder"} takes an object of class "dendrogram" and ladderizes
-the branches for easier visual interpretation.
+\code{ladder} takes an object of class \code{dendrogram} and ladderizes
+  the branches for easier visual interpretation.
 }
+\details{
+TBA.
+}
+\examples{
+  newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
+  dendro <- read.dendrogram(text = newick)
+  plot(dendro, horiz = T)
+  dendro <- ladder(dendro, decreasing = TRUE)
+  plot(dendro, horiz = TRUE)
 
+}
+\seealso{
+The \code{\link[ape]{ladderize}} function in the
+  \code{\link[ape]{ape}} package performs a similar operation for objects
+  of class \code{"phylo"}.
+}
+\author{
+Shaun Wilkinson
+}

@@ -5,13 +5,13 @@
 
 using namespace Rcpp;
 
-// rcpp_hello
-List rcpp_hello();
-RcppExport SEXP phylogram_rcpp_hello() {
+// placeholder
+int placeholder();
+RcppExport SEXP phylogram_placeholder() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello());
+    rcpp_result_gen = Rcpp::wrap(placeholder());
     return rcpp_result_gen;
 END_RCPP
 }

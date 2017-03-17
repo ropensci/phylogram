@@ -1,31 +1,38 @@
-#' Write dendrogram as a Newick string.
+#' Write a dendrogram object to parenthetic text.
 #'
-#' Writes a dendrogram object to a file or connection in Newick
-#' (New Hampshire) format.
+#' \code{write.dendrogram} writes a dendrogram object to a text file
+#'   in Newick (New Hampshire) format.
 #'
 #' @param x an object of class \code{"dendrogram"}.
-#' @param file a character string naming a file or connection to write the output to.
-#' If no file path is specified or \code{file = ""} the result will be printed to the console.
-#' @param append a logical value indicating whether the output should be appended to the file.
-#' If \code{append = FALSE} the contents of the file will be overwritten (the default setting).
+#' @param file a character string naming a file or connection to write the
+#'   output to. If no file path is specified or \code{file = ""} the result
+#'   will be printed to the console.
+#' @param append a logical value indicating whether the output should be
+#'   appended to the file. If \code{append = FALSE} the contents of the
+#'   file will be overwritten (the default setting).
 #' @param edges a logical value indicating whether edge weights should be
-#' included in the output string.
-#' @param ... further arguments to be passed to \code{format} to specify the numbering style
-#' of the edge weights (assuming edges = TRUE).
-#' @seealso \code{\link{read.dendrogram}} to create a \code{"dendrogram"} object from a
-#' text file.
+#'   included in the output string.
+#' @param ... further arguments to be passed to \code{format}.Used to
+#'   specify the numbering style of the edge weights (if edges = TRUE).
+#' @seealso \code{\link{read.dendrogram}} to create a \code{"dendrogram"}
+#'   object from a text file.
+#'   The \code{\link[ape]{write.tree}} function in the \code{\link[ape]{ape}}
+#'   package performs a similar operation for objects of class \code{"phylo"}
+#'   and \code{"multiPhylo"}.
 #' @examples
-#' arrests.hc <- hclust(dist(USArrests[1:6,]), "ave")
-#' arrests.den <- as.dendrogram(arrests.hc)
-#' write.dendrogram(arrests.den)
-#' @export
+#'   arrests.hclust <- hclust(dist(USArrests[1:6,]), "average")
+#'   arrests.dendro <- as.dendrogram(arrests.hclust)
+#'   write.dendrogram(arrests.dendro, digits = 3)
 #'
+################################################################################
 write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){
-  if(!(inherits(x, "dendrogram"))) stop("Input object must be of class 'dendrogram'")
+  if(!(inherits(x, "dendrogram"))) stop("Input object must be of class
+                                        'dendrogram'")
   renameLeaves <- function(y){
     if(is.leaf(y)){
       tmp <- attr(y, "label")
-      if(grepl("[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]", tmp)){
+      if(grepl("[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]",
+               tmp)){
         tmp <- paste0(c("'", tmp, "'"), collapse = "")
       }
       y[1] <- tmp
@@ -46,7 +53,8 @@ write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){
   addEdges <- function(y){
     if(is.list(y)){
       y[] <- lapply(y, function(z){
-        attr(z, "edge") <- format(attr(y, "height") - attr(z, "height"), ... = ...)#scientific = FALSE)
+        attr(z, "edge") <- format(attr(y, "height") - attr(z, "height"),
+                                  ... = ...)#scientific = FALSE)
         z
       })
       attributes(y)[names(attributes(y)) != "edge"] <- NULL
