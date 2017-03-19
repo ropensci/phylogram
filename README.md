@@ -9,9 +9,6 @@ enables users to manipulate nodes recursively using fast inbuilt functions such 
 software packages via the Newick (aka New Hampshire) text format, using the 
 functions `read.dendrogram` and `write.dendrogram`.
 
-If you experience a problem using this package please
-either raise it as an issue on [GitHub](http://github.com/shaunpwilkinson/phylogram/issues) 
-or post it on the [phylogram google group](http://groups.google.com/group/phylogram).
 
 ### Installation
 `phylogram` is currently only available as a development version, with a stable
@@ -27,7 +24,7 @@ devtools, run
 ```R
 install.packages("devtools")
 ``` 
-Following this, install and load the `phylogram` package by running 
+Then install and load the `phylogram` package by running 
 ```R
 devtools::install_github("shaunpwilkinson/phylogram") 
 library("phylogram")
@@ -40,6 +37,10 @@ An overview of the package and it's functions can be found by running
 ```
 and more detail on the individual functions can be found using the 
 `?<function-name>` command.
+
+If you experience a problem using this package please
+either raise it as an issue on [GitHub](http://github.com/shaunpwilkinson/phylogram/issues) 
+or post it on the [phylogram google group](http://groups.google.com/group/phylogram).
 
 ### Disclaimer
 The production of this package was made possible with funding from a Rutherford Foundation
