@@ -38,11 +38,15 @@ An overview of the package and it's functions can be found by running
 and more detail on the individual functions can be found using the 
 `?<function-name>` command.
 
+To build the vignette users will need to have LaTeX installed. RStudio recommends 
+[MiKTeX Complete](http://miktex.org/2.9/setup) for Windows and
+[TexLive 2013 Full](http://tug.org/) for Mac OS X and Linux.
+
 If you experience a problem using this package please
 either raise it as an issue on [GitHub](http://github.com/shaunpwilkinson/phylogram/issues) 
 or post it on the [phylogram google group](http://groups.google.com/group/phylogram).
 
-### Disclaimer
+### Acknowledgements
 The production of this package was made possible with funding from a Rutherford Foundation
 Postdoctoral Research Fellowship awarded by the Royal Society of New Zealand, and 
 carried out through [Victoria University of Wellington](http://www.victoria.ac.nz/).
