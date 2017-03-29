@@ -1,21 +1,52 @@
-#' A package for viewing, editing and publishing phylogenetic trees in R.
+#' A package for building, editing and publishing phylogenetic trees in R.
 #'
-#' The phylogram package contains functions for reading, viewing and
-#'   editing phylogenetic trees as deeply nested lists using R's
-#'   'dendrogram' object type. This enables users to perform both
-#'   top-down and bottom-up recursive tree operations such as splitting
-#'   and neighbor joining. For compatibility with other programs and
+#' The phylogram package contains functions for working with phylogenetic
+#'   trees as deeply nested lists using the \code{\link[stats]{dendrogram}}
+#'   object type.
+#'   This gives users fine-scale control to edit trees recursively
+#'   from the command line.
+#'   For compatibility with other programs and
 #'   packages, trees can be imported and exported
-#'   in the 'Newick' or 'New Hampshire' text format.
+#'   in the 'Newick' (a.k.a. 'New Hampshire') text format.
 #'
-#' @section phylogram functions:
-#'   The \code{read.phylogram} and \code{write.phylogram} functions import
-#'   and export phylogram objects as newick text strings via a file or
-#'   connection.
-#'   \code{prune} and \code{ladder} are tree editing functions, that are
-#'   used to remove branches (based on regular expression pattern matching)
-#'   and reorder branches, respectively. Other editing functions include
-#'   \code{remidpoint}, \code{reposition}, and \code{ultrametricize}.
+#' @section Functions:
+#' A breif description of the primary \pkg{phylogram} functions are
+#'   provided with links to their help pages below.
+#'
+#' @section File import/export:
+#' \itemize{
+#' \item \code{\link{read.dendrogram}} is a text parser that converts
+#'   parenthetic text (Newick strings) into objects of class
+#'   \code{"dendrogram"}
+#' \item \code{\link{write.dendrogram}} outputs an object of class
+#'   \code{"dendrogram"} to a text string or file in Newick/New Hampshire
+#'   format
+#' }
+#'
+#' @section Tree creation:
+#' \itemize{
+#' \item \code{\link{kdistance}} calculates pairwise
+#'   distances between sequences by k-mer counting
+#' \item \code{\link{mbed}} embeds sequences as vectors of distances to a set of
+#'   'seed' sequences (see Blackshields et al. (2010))
+#' \item \code{\link{topdown}} builds a phylogenetic tree by successively
+#'   splitting a set of sequences (recursive partitioning)
+#' }
+#'
+#' @section Tree editing and manipulation:
+#' \itemize{
+#' \item \code{\link{prune}} remove branches from a "dendrogram" object
+#'   based on regular expression pattern matching
+#' \item \code{\link{ladder}} reorders the branches of a \code{"dendrogram"}
+#'   object to aid visualization
+#' \item \code{\link{remidpoint}} recursively sets "midpoint" and "members"
+#'   attributes for a nested list
+#' \item \code{\link{reposition}} shifts a \code{"dendrogram"} object up or
+#'   down (or sideways if plotted horizontally)
+#' \item \code{\link{ultrametricize}} modifies the "height" attributes of the
+#'   nodes such that all leaves terminate at zero
+#' }
+#'
 #'
 #' @docType package
 #' @name phylogram

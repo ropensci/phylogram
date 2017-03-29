@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/shaunpwilkinson/phylogram.svg?branch=master)](https://travis-ci.org/shaunpwilkinson/phylogram)
 
+--------------------------------------------------------------------------------
+
 `phylogram` is an R package for viewing, editing and publishing phylogenetic trees. 
 It differs from others in that trees are represented as deeply nested lists, which 
 enables users to manipulate nodes recursively using fast inbuilt functions such as 
@@ -46,10 +48,12 @@ If you experience a problem using this package please
 either raise it as an issue on [GitHub](http://github.com/shaunpwilkinson/phylogram/issues) 
 or post it on the [phylogram google group](http://groups.google.com/group/phylogram).
 
+
 ### Acknowledgements
-The production of this package was made possible with funding from a Rutherford Foundation
-Postdoctoral Research Fellowship awarded by the Royal Society of New Zealand, and 
-carried out through [Victoria University of Wellington](http://www.victoria.ac.nz/).
+This software was developed at 
+[Victoria University of Wellington](http://www.victoria.ac.nz/) 
+with funding from a Rutherford Foundation Postdoctoral Research Fellowship 
+award from the Royal Society of New Zealand.
 
 
 

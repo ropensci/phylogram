@@ -9,7 +9,7 @@ prune(tree, pattern, keep = FALSE, untag = FALSE)
 \arguments{
 \item{tree}{an object of class \code{"dendrogram"}.}
 
-\item{pattern}{a regular expression supplied as a single string variable.}
+\item{pattern}{a regular expression provided as a single string variable.}
 
 \item{keep}{logical indicating whether the branches whose labels match
 the regexp pattern provided should be kept (TRUE) or discarded (FALSE;

@@ -40,8 +40,6 @@ ladder <- function(x, decreasing = FALSE){
   }
   x <- ordernodes(x, decreasing = decreasing)
   x <- ordernode(x, decreasing = decreasing)
-  #shortcut in lieu of re-midpoint function *TODO*
-  newick <- write.dendrogram(x)
-  x <- read.dendrogram(text = newick)
+  x <- remidpoint(x)
   return(x)
 }

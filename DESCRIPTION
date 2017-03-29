@@ -8,18 +8,25 @@ Description: Contains functions for reading, viewing and editing phylogenetic
     trees as deeply nested lists using R's 'dendrogram' object type. This enables
     users to perform both top-down and bottom-up recursive tree operations such
     as splitting and neighbor joining. For compatibility with other programs and
-    packages, trees can be imported and exported in the 'Newick' or 'New Hampshire'
-    text format.
+    packages, trees can be imported and exported in the 'Newick' 
+    (a.k.a. 'New Hampshire') text format.
 License: GPL-3
 LazyData: TRUE
 URL: http://github.com/shaunpwilkinson/phylogram
 BugReports: http://github.com/shaunpwilkinson/phylogram/issues
 Encoding: UTF-8
 Depends:
-    R (>= 3.0.2)
+    R (>= 3.0.0)
 Imports:
-    Rcpp (>= 0.12.8)
+    graphics,
+    Rcpp (>= 0.12.8),
+    stats,
+    utils
 Suggests:
-    ape (>= 4.0)
+    ape (>= 4.0),
+    knitr,
+    rmarkdown,
+    testthat
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr

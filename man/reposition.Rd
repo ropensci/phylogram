@@ -4,10 +4,14 @@
 \alias{reposition}
 \title{Reset dendrogram height to zero.}
 \usage{
-reposition(x)
+reposition(x, shift = "reset")
 }
 \arguments{
 \item{x}{an object of class \code{"dendrogram"}.}
+
+\item{shift}{either the character string "reset" (shift the graph so that
+the height of the farthest leaf from the root is zero), or a numeric value
+giving the amount to shift the graph along the primary axis.}
 }
 \value{
 returns an object of class \code{"dendrogram"}.
@@ -18,15 +22,11 @@ returns an object of class \code{"dendrogram"}.
   recursively assigns the necessary 'height' attributes at each node
   so that the height of the furthest leaf from the root node is zero.
 }
-\details{
-TBA.
-}
 \examples{
   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
   dendro <- read.dendrogram(text = newick)
   dendro <- reposition(dendro)
   plot(dendro, horiz = TRUE)
-
 }
 \author{
 Shaun Wilkinson

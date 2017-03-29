@@ -1,13 +1,183 @@
 ---
-title: "A quick guide to the 'phylogram' package"
+title: "The 'phylogram' package for developing phylogenetic trees in R"
 author: "Shaun Wilkinson"
-output: html_document
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{phylogram introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
+--------------------------------------------------------------------------------
+## Introduction
+An evolutionary tree is a simple directed graph used to represent inferred 
+patterns of evolution by descent. A typical tree involves a set of extant taxa 
+shown as terminal 'leaf' nodes, with inner branching nodes representing the
+hypothetical most recent common ancestors (MRCAs) of the descendant taxa. 
+The interconnecting edges of the graph may be weighted to represent the 
+evolutionary time since divergence from the MRCA. 
+For a set of *n* taxa, there are (2*n* - 5)!! possible unique unrooted 
+binary trees (Balding et al. 2003), and hence finding the 'correct' one is 
+seldom a straightforward task. For most taxonomic groups, 
+a 'consensus' tree is generally subject to continual modification 
+as new genetic and/or morphological data comes to light.
 
-The 'phylogram' package contains functions for reading, viewing and editing phylogenetic
-    trees as deeply nested lists using R's 'dendrogram' object type. This enables
-    users to perform both top-down and bottom-up recursive tree operations such
-    as splitting and neighbor joining. For compatibility with other programs and
-    packages, trees can be imported and exported in the 'Newick' or 'New Hampshire'
-    text format.
+The R environment continues to gain popularity as a platform for
+working with evolutionary trees, primarily due to the reproducibility 
+of its code-based workflow and the increased availability of powerful 
+analytical tools via the development of open-source packages. 
+Some of the more comprehensive and popular packages include ape, 
+phangorn and Phytools. 
+In these packages, the basic unit of representation for an evolutionary tree 
+is the "phylo" object, a list whose elements include an integer matrix 
+with one row for each edge in the graph, and two columns giving the identities 
+of the two nodes connected by the edge. 
+Other list elements may include edge lengths, labels, and the identity 
+of the root node (if applicable). 
+This is a compact and intuitive structure for tree representation, and
+many useful functions have been developed for statistical inference,
+visualization and modification based on this format.
+
+An alternative means of representing evolutionary trees in R is the 
+"dendrogram" object, which can be derived using the ```as.dendrogram``` 
+function in the "stats" package.
+Rather than a matrix of edges, the "dendrogram" object is a heirarchical list 
+(or a simple length-1 vector if the object is a single terminal leaf). 
+These 'lists of lists' can be deeply nested, with the limit depending on 
+the C stack size (settable via the ```options("expressions")``` command).
+A useful feature of this representation is its modularity, whereby the 
+subtree of a tree is itself a tree - a "dendrogram" within a "dendrogram". 
+This modularity means that "dendrogram" objects are subsettable in the same 
+way that standard lists are, which in addition to the standard editing 
+functions such as ```cut``` and ```merge```, facilitates intuitive 
+command-line manipulation of this object type. 
+
+Each node of a "dendrogram" object has various attributes that may include: 
+
+* "height" the position of the node along the vertical axis 
+* "midpoint" the horizontal distance of the node from the left-most member 
+    of the sub-tree
+* "members" the number of terminal leaf nodes belonging to the node 
+    (= 1 if the node is a leaf)
+* "leaf" TRUE for terminal nodes, NULL otherwise
+* "label" an optional character string giving the name of the taxon or group
+* "class" all nodes have the class attribute "dendrogram" 
+
+Aside from those listed above, users may attach other standard objects 
+as attributes to the dendrogram nodes. 
+This can be a powerful feature when performing recursive tree operations 
+in either a 'top-down' or 'bottom-up' fashion, as described in further detail 
+below. 
+
+
+...learning methods... recursive..
+... emphasis on fast k-mer counting methods ... progressive alignment guide trees
+and tree-based sequence weighting, e.g. for deriving hidden Markov models.
+
+
+## The 'phylogram' package
+Here, we introduce 'phylogram', an R package for working with 
+evolutionary trees as heirarchical (nested) lists. 
+The package contains functions for importing and exporting trees in 
+Newick (a.k.a. New Hampshire) format, computing distance matrices, 
+and assembling, visualizing, manipulating and exporting phylogenetic 
+trees for publication. 
+These functions are detailed below with examples provided.
+
+
+
+### Importing and exporting trees
+Character strings and text files in the Newick/New Hampshire parenthetic text 
+format can be imported into R as a "dendrogram" object using the text parser 
+```read.dendrogram```.
+This function supports weighted edges, labels with special metacharacters 
+(provided they are enclosed in single quotation marks), ...
+Inner-node labelling is not supported in this version, ... ignored. 
+
+The ```write.dendrogram``` function exports a "dendrogram" object to 
+a text string or file in the Newick/New Hampshire format. This is 
+perhaps the most widely used text format for representing evolutionary 
+trees, and is compatible with most other tree-editing software. 
+This includes other R packages such as \code{\link[ape]{ape}}, which hosts 
+a wide range of tree editing, visualization and inference functions.
+
+
+### Computing distance matrices
+A primary focus of this package is to facilitate the assembly of very 
+large trees as quickly and efficiently as possible. 
+The distance metric we use is the alignment-free k-mer or k-tuple 
+distance measure outlined in Edgar (2004).
+For two sequences $a$ and $b$ the fractional common k-mer count over the 
+$4^k$ possible tuples is calculated as
+
+$$
+\begin{equation}
+F  = \sum\limits_{\tau}
+\frac{min (n_a(\tau), n_b (\tau))}{min (L_a , L_b ) - k + 1}
+\end{equation}
+$$
+where $\tau$ is a k-mer, $n_a(\tau)$ and $n_b(\tau)$ are the number of times 
+$\tau$ appears in each sequence, $k$ is the tuple length and $L$ is 
+the sequence length.
+
+We then calculate the pairwise distance as 
+
+$$
+d = \frac{log(0.1 + F) - log(1.1)}{log(0.1)} 
+$$
+
+While this is the default measure for both the standard distance matrix 
+computation and the embedding routine, an alternative option detailed in 
+Yang & Zhang (2008) is also available.
+
+$$
+\begin{equation}
+d  = \sum\limits_{\tau}\frac{n_a(\tau)}{L_a - k + 1} - \frac{n_b(\tau)}{L_b - k + 1}
+\end{equation}
+$$
+
+
+
+### Assembling trees
+Several functions exist in other packages for deriving an evolutionary trees 
+from a distance matrix, including ape's neighbour joining function ```nj```  
+and the implementation of the unweighted pair group ... algorithm 
+```upgma``` in the Phytools package. The "phylogram" package features
+a function ```topdown``` that builds a tree by recursively splitting the 
+sequence set using k-means clustering (k = 2). To achieve this, the number of
+k-mers are first counted for each sequence, and the distance of each sequence
+to each of (*t*) seed sequences (where $t = log_2N^2$) is computed using the 
+formula of Edgar (2004)... 
+This is known as "embedding" sequences, a procedure introduced by 
+Blacksheilds et al. (2010)
+
+
+and the export function
+```write.dendrogram``` provide the facility to
+port "dendrogram" objects between ```phylogram``` and other programs  
+via the  text format.
+
+
+This enables users to perform both top-down and bottom-up recursive tree operations 
+such as splitting and neighbor joining. For compatibility with other programs and
+packages, trees can be imported and exported in the 
+
+
+...NxN...
+
+## References 
+Balding DJ, Bishop M, Cannings C (Eds) (2003) Handbook of Statistical Genetics, 
+2nd edn. Chichester: Wiley.
+
+Blackshields G, Sievers F, Shi W, Wilm A, Higgins DG (2010) Sequence embedding
+for fast construction of guide trees for multiple sequence alignment.
+\emph{Algorithms for Molecular Biology}, \strong{5}, 21.
+
+Edgar RC (2004) Local homology recognition and distance measures in
+linear time using compressed amino acid alphabets.
+\emph{Nucleic Acids Research}, \strong{32}, 380-385.
+
+Yang K, Zhang L (2008) Performance comparison between k-tuple distance
+and four model-based distances in phylogenetic tree reconstruction.
+\emph{Nucleic Acids Research}, \strong{36}, e33.

@@ -8,7 +8,6 @@
 #' @param x a nested list, possibly of class \code{"dendrogram"}
 #' @return returns a nested list, or an object of class \code{"dendrogram"}
 #'   depending on the class of the input object.
-#' @details TBA.
 #' @author Shaun Wilkinson
 #' @examples
 #'   futuredendro <- list("A", list("B", "C"))
@@ -26,17 +25,18 @@
 #'   dendro <- remidpoint(futuredendro)
 #'   class(dendro) <- "dendrogram"
 #'   plot(dendro, horiz = TRUE)
-#'
 ################################################################################
 remidpoint <- function(x){
   isdendro <- inherits(x, "dendrogram")
   setnodeattr <- function(node){
     if(is.list(node)){
       cladesizes <- sapply(node, function(subnode) length(unlist(subnode)))
+      nclades <- length(cladesizes)
       attr(node, "members") <- sum(cladesizes)
       attr(node, "midpoint") <- ((cladesizes[1] - 1)/2 +
-                                   (cladesizes[1] +
-                                      (cladesizes[2] - 1)/2))/2
+                                   #(cladesizes[1] +
+                                   (sum(cladesizes[1:(nclades - 1)]) +
+                                      (cladesizes[nclades] - 1)/2))/2
     }else{
       attr(node, "members") <- 1
     }
@@ -52,7 +52,6 @@ remidpoint <- function(x){
   return(x)
 }
 ################################################################################
-
 #' Reset dendrogram height to zero.
 #'
 #' \code{reposition} is a helper function used for manually creating
@@ -61,29 +60,31 @@ remidpoint <- function(x){
 #'   so that the height of the furthest leaf from the root node is zero.
 #'
 #' @param x an object of class \code{"dendrogram"}.
+#' @param shift either the character string "reset" (shift the graph so that
+#'   the height of the farthest leaf from the root is zero), or a numeric value
+#'   giving the amount to shift the graph along the primary axis.
 #' @return returns an object of class \code{"dendrogram"}.
-#' @details TBA.
 #' @author Shaun Wilkinson
 #' @examples
 #'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
 #'   dendro <- read.dendrogram(text = newick)
 #'   dendro <- reposition(dendro)
 #'   plot(dendro, horiz = TRUE)
-#'
 ################################################################################
-reposition <- function(x){
+reposition <- function(x, shift = "reset"){
   if(!(inherits(x, "dendrogram"))) stop("Input object must be of class
                                         'dendrogram'")
-  minhgt <- min(unlist(dendrapply(x, attr, "height")))
-  reposition1 <- function(node, minhgt){ # node is a dendrogram
-    attr(node, "height") <- attr(node, "height") - minhgt
+  if(identical(shift, "reset")){
+    shift <- -1 * min(unlist(dendrapply(x, attr, "height")))
+  }
+  reposition1 <- function(node, shift){ # node is a dendrogram
+    attr(node, "height") <- attr(node, "height") + shift
     return(node)
   }
-  x <- dendrapply(x, reposition1, minhgt = minhgt)
+  x <- dendrapply(x, reposition1, shift = shift)
   return(x)
 }
 ################################################################################
-
 #' Make dendrogram ultrametric.
 #'
 #' This is a simple function that sets the 'height' attributes of
@@ -91,7 +92,6 @@ reposition <- function(x){
 #'
 #' @param x an object of class \code{"dendrogram"}.
 #' @return returns an object of class \code{"dendrogram"}.
-#' @details TBA.
 #' @author Shaun Wilkinson
 #' @examples
 #'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
@@ -99,16 +99,44 @@ reposition <- function(x){
 #'   plot(dendro, horiz = TRUE)
 #'   dendro <- ultrametricize(dendro)
 #'   plot(dendro, horiz = TRUE)
-#'
 ################################################################################
 ultrametricize <- function(x){
-  if(!(inherits(x, "dendrogram"))) stop("Input object must be of class
-                                        'dendrogram'")
-  ultrametricize1 <- function(node){
-    if(is.leaf(node)) attr(node, "height") <- 0
+  if(!(inherits(x, "dendrogram"))) stop("x must be a 'dendrogram' object")
+  placeflags <- function(node){
+    if(is.leaf(node)){
+      attr(node, "height") <- 0
+      attr(node, "flag") <- TRUE
+    }
     return(node)
   }
-  x <- dendrapply(x, ultrametricize1)
+  x <- dendrapply(x, placeflags)
+  checkflags <- function(node){
+    if(is.list(node)){
+      if(all(sapply(node, function(e) !is.null(attr(e, "flag"))))){
+        return(TRUE)
+      }else return(FALSE)
+    }else return(FALSE)
+  }
+  removeflags <- function(node){
+    if(is.list(node)){
+      for(i in seq_along(node)){
+        attr(node[[i]], "flag") <- NULL
+      }
+    }
+    return(node)
+  }
+  ultrametricize1 <- function(node){
+    if(is.list(node)){
+      if(checkflags(node)){
+        childheights <- sapply(node, function(e) attr(e, "height"))
+        attr(node, "height") <- max(childheights) + 1
+        node <- removeflags(node)
+        attr(node, "flag") <- TRUE
+      }
+    }
+    return(node)
+  }
+  while(is.null(attr(x, "flag"))) x <- dendrapply(x, ultrametricize1)
   return(x)
 }
 ################################################################################

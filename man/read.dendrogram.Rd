@@ -41,7 +41,6 @@ There are many varying interpretations of the Newick/
   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
   dendro <- read.dendrogram(text = newick)
   plot(dendro, horiz = TRUE)
-
 }
 \references{
 \url{http://evolution.genetics.washington.edu/phylip/newicktree.html}

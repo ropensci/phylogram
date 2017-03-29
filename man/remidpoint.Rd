@@ -19,9 +19,6 @@ returns a nested list, or an object of class \code{"dendrogram"}
   recursively assigns the necessary 'midpoint' and 'members'
   attributes at each node.
 }
-\details{
-TBA.
-}
 \examples{
   futuredendro <- list("A", list("B", "C"))
   attr(futuredendro[[1]], "leaf") <- TRUE
@@ -38,7 +35,6 @@ TBA.
   dendro <- remidpoint(futuredendro)
   class(dendro) <- "dendrogram"
   plot(dendro, horiz = TRUE)
-
 }
 \author{
 Shaun Wilkinson

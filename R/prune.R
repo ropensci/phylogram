@@ -5,7 +5,7 @@
 #'   expression.
 #'
 #' @param tree an object of class \code{"dendrogram"}.
-#' @param pattern a regular expression supplied as a single string variable.
+#' @param pattern a regular expression provided as a single string variable.
 #' @param keep logical indicating whether the branches whose labels match
 #'   the regexp pattern provided should be kept (TRUE) or discarded (FALSE;
 #'   default)
@@ -27,25 +27,25 @@
 #'
 ################################################################################
 prune <- function(tree, pattern, keep = FALSE, untag = FALSE){
-  collapse <- function(tree, pattern, keep = FALSE){
-    if(is.list(tree)){
-      childnames <- sapply(tree, function(e) if(is.null(attr(e, "label"))) NA else attr(e, "label"))
-      if(all(is.na(childnames))) return(tree)
+  collapse <- function(node, pattern, keep = FALSE){
+    if(is.list(node)){
+      childnames <- sapply(node, function(e) if(is.null(attr(e, "label"))) NA else attr(e, "label"))
+      if(all(is.na(childnames))) return(node)
       condemned.leaves <- grepl(pattern, childnames)
       if(keep){
         condemned.leaves <- !condemned.leaves
         condemned.leaves[is.na(childnames)] <- FALSE
       }
-      condemned.leaf <- match(TRUE, condemned.leaves)# just do one at a time so don't get singleton trees
+      condemned.leaf <- match(TRUE, condemned.leaves)# just do one at a time so don't get singleton nodes
       if(!is.na(condemned.leaf)){
-        tmpattr <- attributes(tree) # cache internal tree attributes
-        tree <- tree[-condemned.leaf]
+        tmpattr <- attributes(node) # cache internal node attributes
+        node <- node[-condemned.leaf]
         tmpattr$members <- tmpattr$members - 1
-        attributes(tree) <- tmpattr
-        if(length(tree) == 1) tree <- tree[[1]] # delete inner node
+        attributes(node) <- tmpattr
+        if(length(node) == 1) node <- node[[1]] # delete inner node
       }
     }
-    return(tree)
+    return(node)
   }
   prune1 <- function(tree, pattern, keep = FALSE){
     if(is.list(tree)){
@@ -68,7 +68,6 @@ prune <- function(tree, pattern, keep = FALSE, untag = FALSE){
     tree <- dendrapply(tree, fixmembers)
     tree <- collapse(tree, pattern = pattern, keep = keep)
   }
-  #shortcut in lieu of re-midpoint function *TODO*
   newick <- write.dendrogram(tree)
   if(keep & untag) newick <- gsub(pattern, "", newick)
   tree <- read.dendrogram(text = newick)

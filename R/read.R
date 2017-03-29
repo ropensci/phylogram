@@ -35,7 +35,6 @@
 #'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
 #'   dendro <- read.dendrogram(text = newick)
 #'   plot(dendro, horiz = TRUE)
-#'
 ################################################################################
 read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   if(!is.null(text)){
@@ -145,9 +144,13 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   setnodeattr <- function(x, leafnames){ # x is a nested list with 'edge' attributes, leafnmes is a character vector
     if(is.list(x)){
       cladesizes <- sapply(x, function(y) length(unlist(y)))
+      nclades <- length(cladesizes)
       attr(x, "members") <- sum(cladesizes)
-      attr(x, "midpoint") <- if(length(cladesizes) > 1){
-        ((cladesizes[1] - 1)/2 + (cladesizes[1] + (cladesizes[2] - 1)/2))/2
+      attr(x, "midpoint") <- if(nclades > 1){
+        #((cladesizes[1] - 1)/2 + (cladesizes[1] + (cladesizes[2] - 1)/2))/2
+        ((cladesizes[1] - 1)/2 +
+            (sum(cladesizes[1:(nclades - 1)]) +
+               (cladesizes[nclades] - 1)/2))/2
       }else 0
       if(is.null(attr(x, "height"))) attr(x, "height") <- 0
       setleafattr <- function(y, leafnames){
@@ -194,7 +197,9 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   if(has.unnamed.leaves | has.unmatched.singlequotes){
     res <- dendrapply(res, fixnames)
   }
-  if(!has.edges) res <- ultrametricize(res)
+  if(!has.edges){
+    res <- ultrametricize(res)
+  }
   return(res)
 }
 ################################################################################
