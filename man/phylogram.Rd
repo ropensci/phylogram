@@ -4,14 +4,14 @@
 \name{phylogram}
 \alias{phylogram}
 \alias{phylogram-package}
-\title{A package for viewing, editing and publishing phylogenetic trees in R.}
+\title{A package for building, editing and publishing phylogenetic trees in R.}
 \description{
-The phylogram package contains functions for reading, viewing and
-  editing phylogenetic trees as deeply nested lists using R's
-  \code{\link[stats]{dendrogram}} object type.
-  This enables users to perform both
-  top-down and bottom-up recursive tree operations such as splitting
-  and neighbor joining. For compatibility with other programs and
+The phylogram package contains functions for working with phylogenetic
+  trees as deeply nested lists using the \code{\link[stats]{dendrogram}}
+  object type.
+  This gives users fine-scale control to edit trees recursively
+  from the command line.
+  For compatibility with other programs and
   packages, trees can be imported and exported
   in the 'Newick' (a.k.a. 'New Hampshire') text format.
 }

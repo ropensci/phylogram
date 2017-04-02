@@ -39,7 +39,8 @@
                                224, 176, 208, 112, 240, 4, 2))))
   }else if(mode(x) == "list"){
     if(length(x) > 0){
-      return(all(unlist(x) %in% as.raw(c(136, 72, 40, 24, 192, 160, 144, 96, 80, 48,
+      return(all(unlist(x, use.names = FALSE) %in%
+                   as.raw(c(136, 72, 40, 24, 192, 160, 144, 96, 80, 48,
                                          224, 176, 208, 112, 240, 4, 2))))
     }else{
       return(FALSE)
@@ -60,7 +61,7 @@
     return(all(x %in% as.raw(c(65:90, 42, 45, 63))))
   }else if(mode(x) == "list"){
     if(length(x) > 0){
-      return(all(unlist(x) %in% as.raw(c(65:90, 42, 45, 63))))
+      return(all(unlist(x, use.names = FALSE) %in% as.raw(c(65:90, 42, 45, 63))))
     }else{
       return(FALSE)
     }

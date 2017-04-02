@@ -1,5 +1,5 @@
 ---
-title: "The 'phylogram' package for developing phylogenetic trees in R"
+title: "The 'phylogram' package for evolutionary tree development in R"
 author: "Shaun Wilkinson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -30,9 +30,9 @@ analytical tools via the development of open-source packages.
 Some of the more comprehensive and popular packages include ape, 
 phangorn and Phytools. 
 In these packages, the basic unit of representation for an evolutionary tree 
-is the "phylo" object, a list whose elements include an integer matrix 
+is the "phylo" object, a list whose primary element is an integer matrix 
 with one row for each edge in the graph, and two columns giving the identities 
-of the two nodes connected by the edge. 
+of the nodes connected by the edge. 
 Other list elements may include edge lengths, labels, and the identity 
 of the root node (if applicable). 
 This is a compact and intuitive structure for tree representation, and
@@ -45,11 +45,11 @@ function in the "stats" package.
 Rather than a matrix of edges, the "dendrogram" object is a heirarchical list 
 (or a simple length-1 vector if the object is a single terminal leaf). 
 These 'lists of lists' can be deeply nested, with the limit depending on 
-the C stack size (settable via the ```options("expressions")``` command).
+the C stack size (settable *via* ```options("expressions")```).
 A useful feature of this representation is its modularity, whereby the 
 subtree of a tree is itself a tree - a "dendrogram" within a "dendrogram". 
 This modularity means that "dendrogram" objects are subsettable in the same 
-way that standard lists are, which in addition to the standard editing 
+way that standard lists are, which in addition to the availability of editing 
 functions such as ```cut``` and ```merge```, facilitates intuitive 
 command-line manipulation of this object type. 
 
@@ -106,7 +106,7 @@ a wide range of tree editing, visualization and inference functions.
 ### Computing distance matrices
 A primary focus of this package is to facilitate the assembly of very 
 large trees as quickly and efficiently as possible. 
-The distance metric we use is the alignment-free k-mer or k-tuple 
+Hence the distance metric we use is the fast alignment-free k-mer or k-tuple 
 distance measure outlined in Edgar (2004).
 For two sequences $a$ and $b$ the fractional common k-mer count over the 
 $4^k$ possible tuples is calculated as
@@ -114,29 +114,54 @@ $4^k$ possible tuples is calculated as
 $$
 \begin{equation}
 F  = \sum\limits_{\tau}
-\frac{min (n_a(\tau), n_b (\tau))}{min (L_a , L_b ) - k + 1}
+\frac{min (n_a(\tau), n_b (\tau))}{min (L_a , L_b ) - k + 1} \tag{1}
 \end{equation}
 $$
 where $\tau$ is a k-mer, $n_a(\tau)$ and $n_b(\tau)$ are the number of times 
 $\tau$ appears in each sequence, $k$ is the tuple length and $L$ is 
 the sequence length.
 
-We then calculate the pairwise distance as 
+The pairwise distance is then calculated as 
 
 $$
-d = \frac{log(0.1 + F) - log(1.1)}{log(0.1)} 
+\begin{equation}
+d = \frac{log(0.1 + F) - log(1.1)}{log(0.1)} \tag{2}
+\end{equation}
 $$
 
 While this is the default measure for both the standard distance matrix 
 computation and the embedding routine, an alternative option detailed in 
-Yang & Zhang (2008) is also available.
+Yang & Zhang (2008) is also available:
 
 $$
 \begin{equation}
-d  = \sum\limits_{\tau}\frac{n_a(\tau)}{L_a - k + 1} - \frac{n_b(\tau)}{L_b - k + 1}
+d  = \sum\limits_{\tau}|\frac{n_a(\tau)}{L_a - k + 1} - \frac{n_b(\tau)}{L_b - k + 1}|^2 \tag{3}
 \end{equation}
 $$
+```kdistance``` produces a standard $N \times N$ distance matrix (where $N$ is the 
+number of sequences), returning an object of class "dist". This operation has 
+time and memory complexity $O(n^2)$ and hance can become computationally
+infeasible for large sequence sets consisting of more than 10,000 or so sequences
+(Blackshields et al. 2010).
+The "phylogram" package also features the ```mbed``` function for "embedding" 
+sequences in $t$ dimensional space (where $t \approx log_2(N)^2$) using the 
+algorithm described in (Blackshields et al. 2010). 
+This effectively linearizes the operation, making it possible to construct trees 
+from over a million ~ 200 nt DNA sequences in a few hours *via* recursive 
+k-means clustering (see the ```topdown``` function for more details). 
 
+DNA and amino acid sequences can be passed to the ```kdistance``` and ```mbed``` 
+functions either as unaligned lists or aligned matrices, preferably in either 
+the "DNAbin" or "AAbin" raw-byte format (see the documentation in the ape package 
+for more information on these classes). 
+Sequences supplied in the "character" format are supported; however ambiguity 
+codes may not be recognized or treated appropritely. 
+To minimize computation time when counting longer k-mers (k > 2), 
+amino acid sequences in the raw "AAbin" format are automatically compressed using 
+the Dayhoff-6 alphabet as detailed in Edgar (2004). 
+This will not happen if amino acid sequences are supplied in character format 
+rather than as an "AAbin" object, in which case the k-mer length should be reduced 
+(k < 4) to avoid excessive memory use and computation time.
 
 
 ### Assembling trees
@@ -144,7 +169,7 @@ Several functions exist in other packages for deriving an evolutionary trees
 from a distance matrix, including ape's neighbour joining function ```nj```  
 and the implementation of the unweighted pair group ... algorithm 
 ```upgma``` in the Phytools package. The "phylogram" package features
-a function ```topdown``` that builds a tree by recursively splitting the 
+the function ```topdown``` that builds a tree by recursively splitting the 
 sequence set using k-means clustering (k = 2). To achieve this, the number of
 k-mers are first counted for each sequence, and the distance of each sequence
 to each of (*t*) seed sequences (where $t = log_2N^2$) is computed using the 
@@ -152,9 +177,10 @@ formula of Edgar (2004)...
 This is known as "embedding" sequences, a procedure introduced by 
 Blacksheilds et al. (2010)
 
+..not satisfy a taxonomist.. sequence weighting and giude trees..
 
 and the export function
-```write.dendrogram``` provide the facility to
+```write.dendrogram``` provides the facility to
 port "dendrogram" objects between ```phylogram``` and other programs  
 via the  text format.
 

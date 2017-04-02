@@ -30,7 +30,9 @@ remidpoint <- function(x){
   isdendro <- inherits(x, "dendrogram")
   setnodeattr <- function(node){
     if(is.list(node)){
-      cladesizes <- sapply(node, function(subnode) length(unlist(subnode)))
+      cladesizes <- sapply(node, function(subnode){
+        length(unlist(subnode, use.names = FALSE))
+      })
       nclades <- length(cladesizes)
       attr(node, "members") <- sum(cladesizes)
       attr(node, "midpoint") <- ((cladesizes[1] - 1)/2 +
@@ -75,7 +77,7 @@ reposition <- function(x, shift = "reset"){
   if(!(inherits(x, "dendrogram"))) stop("Input object must be of class
                                         'dendrogram'")
   if(identical(shift, "reset")){
-    shift <- -1 * min(unlist(dendrapply(x, attr, "height")))
+    shift <- -1 * min(unlist(dendrapply(x, attr, "height"), use.names = FALSE))
   }
   reposition1 <- function(node, shift){ # node is a dendrogram
     attr(node, "height") <- attr(node, "height") + shift

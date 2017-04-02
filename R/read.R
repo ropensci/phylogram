@@ -61,7 +61,7 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
     opens <- which(xsplit == "[")
     closes <- which(xsplit == "]")
     if(length(opens) != length(closes)) stop("Invalid metacharacters in Newick string")
-    comments <- unlist(mapply(":", opens, closes))
+    comments <- unlist(mapply(":", opens, closes), use.names = FALSE)
     xsplit <- xsplit[-comments]
     x <- paste0(xsplit, collapse = "")
   }
@@ -143,7 +143,7 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   # convert nested list to dendrogram object by setting attributes recursvely
   setnodeattr <- function(x, leafnames){ # x is a nested list with 'edge' attributes, leafnmes is a character vector
     if(is.list(x)){
-      cladesizes <- sapply(x, function(y) length(unlist(y)))
+      cladesizes <- sapply(x, function(y) length(unlist(y, use.names = FALSE)))
       nclades <- length(cladesizes)
       attr(x, "members") <- sum(cladesizes)
       attr(x, "midpoint") <- if(nclades > 1){

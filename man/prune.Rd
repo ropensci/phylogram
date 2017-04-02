@@ -2,20 +2,21 @@
 % Please edit documentation in R/prune.R
 \name{prune}
 \alias{prune}
-\title{Remove tree nodes by regular expression pattern matching.}
+\title{Remove tree nodes with regular expression pattern matching.}
 \usage{
-prune(tree, pattern, keep = FALSE, untag = FALSE)
+prune(tree, pattern, invert = FALSE, untag = FALSE)
 }
 \arguments{
 \item{tree}{an object of class \code{"dendrogram"}.}
 
 \item{pattern}{a regular expression provided as a single string variable.}
 
-\item{keep}{logical indicating whether the branches whose labels match
-the regexp pattern provided should be kept (TRUE) or discarded (FALSE;
-default)}
+\item{invert}{logical indicating whether the branches whose labels match
+the regular expression provided in "pattern" should be
+discarded (FALSE; default) or kept.
+Nodes with no "label" attributes are ignored.}
 
-\item{untag}{logical (used only when keep = TRUE). Indicates whether
+\item{untag}{logical (used only when invert = TRUE). Indicates whether
 the specified pattern should be removed from the branch labels in
 the returned object.}
 }

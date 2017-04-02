@@ -40,7 +40,7 @@ write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){
     y
   }
   x <- dendrapply(x, renameLeaves)
-  xnames <- unlist(x)
+  xnames <- unlist(x, use.names = FALSE)
   ynames <- paste0("S", seq_along(xnames) + 10000)
   renameLeaves2 <- function(y){
     if(is.leaf(y)){
