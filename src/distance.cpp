@@ -241,6 +241,7 @@ NumericMatrix kdist(NumericMatrix x, IntegerVector from, IntegerVector to,
         Fij = 0;
       }
     }
+    checkUserInterrupt();
   }
   return(res);
 }
