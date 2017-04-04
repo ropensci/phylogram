@@ -1,5 +1,5 @@
 ---
-title: "The 'phylogram' package for evolutionary tree development in R"
+title: "The 'phylogram' package for developing evolutionary trees in R"
 author: "Shaun Wilkinson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -11,22 +11,22 @@ vignette: >
 
 --------------------------------------------------------------------------------
 ## Introduction
-An evolutionary tree is a simple directed graph used to represent inferred 
+An evolutionary tree is a simple directed graph portraying inferred 
 patterns of evolution by descent. A typical tree involves a set of extant taxa 
 shown as terminal 'leaf' nodes, with inner branching nodes representing the
 hypothetical most recent common ancestors (MRCAs) of the descendant taxa. 
 The interconnecting edges of the graph may be weighted to represent the 
 evolutionary time since divergence from the MRCA. 
 For a set of *n* taxa, there are (2*n* - 5)!! possible unique unrooted 
-binary trees (Balding et al. 2003), and hence finding the 'correct' one is 
+binary trees (Balding et al. 2003), and hence finding the true phylogeny is 
 seldom a straightforward task. For most taxonomic groups, 
-a 'consensus' tree is generally subject to continual modification 
+a "consensus" tree is generally subject to continual modification 
 as new genetic and/or morphological data comes to light.
 
 The R environment continues to gain popularity as a platform for
-working with evolutionary trees, primarily due to the reproducibility 
-of its code-based workflow and the increased availability of powerful 
-analytical tools via the development of open-source packages. 
+working with evolutionary trees, primarily due to the reproducible 
+code-based workflow and the increased availability of powerful 
+analytical tools developed within a suite of open-source packages. 
 Some of the more comprehensive and popular packages include ape, 
 phangorn and Phytools. 
 In these packages, the basic unit of representation for an evolutionary tree 
@@ -36,8 +36,8 @@ of the nodes connected by the edge.
 Other list elements may include edge lengths, labels, and the identity 
 of the root node (if applicable). 
 This is a compact and intuitive structure for tree representation, and
-many useful functions have been developed for statistical inference,
-visualization and modification based on this format.
+many useful functions have been developed for tree analysis based on 
+this format.
 
 An alternative means of representing evolutionary trees in R is the 
 "dendrogram" object, which can be derived using the ```as.dendrogram``` 
@@ -86,14 +86,17 @@ trees for publication.
 These functions are detailed below with examples provided.
 
 
-
 ### Importing and exporting trees
 Character strings and text files in the Newick/New Hampshire parenthetic text 
 format can be imported into R as a "dendrogram" object using the text parser 
 ```read.dendrogram```.
-This function supports weighted edges, labels with special metacharacters 
-(provided they are enclosed in single quotation marks), ...
-Inner-node labelling is not supported in this version, ... ignored. 
+This parser supports weighted edges, labels with special metacharacters 
+(provided they are enclosed in single quotation marks), comments 
+(enclosed in square brackets; ignored), multifuricating nodes, 
+and both rooted and unrooted trees.
+Inner-node labels are ignored by the parser in this version, with 
+the addition of "label" attributes for non-leaf "dendrogram" nodes 
+available in a future release. 
 
 The ```write.dendrogram``` function exports a "dendrogram" object to 
 a text string or file in the Newick/New Hampshire format. This is 
