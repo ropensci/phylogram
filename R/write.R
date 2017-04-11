@@ -12,7 +12,7 @@
 #'   file will be overwritten (the default setting).
 #' @param edges a logical value indicating whether edge weights should be
 #'   included in the output string.
-#' @param ... further arguments to be passed to \code{format}.Used to
+#' @param ... further arguments to be passed to \code{format}. Used to
 #'   specify the numbering style of the edge weights (if edges = TRUE).
 #' @seealso \code{\link{read.dendrogram}} to create a \code{"dendrogram"}
 #'   object from a text file.

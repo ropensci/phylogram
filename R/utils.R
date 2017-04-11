@@ -39,8 +39,10 @@ remidpoint <- function(x){
                                    #(cladesizes[1] +
                                    (sum(cladesizes[1:(nclades - 1)]) +
                                       (cladesizes[nclades] - 1)/2))/2
+      attr(node, "leaf") <- NULL
     }else{
       attr(node, "members") <- 1
+      attr(node, "leaf") <- TRUE
     }
     return(node)
   }

@@ -62,8 +62,10 @@ data(woodmouse)
 woodmouse <- woodmouse[, 47:962] ## trim gappy ends
 set.seed(999)
 woodmouse.tree <- topdown(woodmouse)
+op <- par(no.readonly = TRUE)
 par(mar = c(5, 2, 4, 8) + 0.1)
 plot(woodmouse.tree, main = "Woodmouse tree", horiz = TRUE)
+par(op)
 }
 }
 \references{

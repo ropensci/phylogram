@@ -193,8 +193,8 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-"){
     if(min(seqlengths) < k) stop("minimum sequence length is less than k")
     kcounts <- t(sapply(x, tuplecount, k, arity))
   }
+  duplicates <- duplicated(x)
   if(is.null(seeds)){
-    duplicates <- duplicated(x)
     nseeds <- min(sum(!duplicates), ceiling(log(nseq, 2)^2))
     # LLR algorithm see Blacksheilds et al. 2010
     seeds <- sort(sample(seqalongx[!duplicates], size = nseeds))

@@ -1,5 +1,5 @@
 ---
-title: "The 'phylogram' package for developing evolutionary trees in R"
+title: "The **phylogram** package for developing evolutionary trees in R"
 author: "Shaun Wilkinson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,101 +9,221 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+#knitr::opts_chunk$set(out.width='750px', dpi=200)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
 --------------------------------------------------------------------------------
+## Abstract
+The R platform continues to gain popularity among evolutionary biologists
+as an increasing number of useful and convenient
+bioinformatics packages become available. 
+In particular, many sophisticated
+tools have been developed for creating, editing, visualizing 
+and publishing evolutionary trees within a suite of comprehensive 
+packages such as **ape**, **phangorn** and **Phytools**. 
+Here we introduce **phylogram**, an R package
+that interfaces traditional evolutionary tree formats
+with an alternative data structure in which trees are stored 
+as deeply-nested lists.
+Unlike the widely used "phylo" object type, 
+in which trees are represented as a matrix of edges, 
+the dendrogram object is a heirarchical list of lists, 
+such that each subtree within the tree is itself a tree (a smaller
+dendrogram object).
+This representation facilitates intuitive command-line
+manipulation including subsetting, merging and recursive node-wise 
+operations using fast inbuilt functions in the "apply" family. 
+With an emphasis on speed and efficiency, the **phylogram** package also 
+includes functions for rapidly generating trees from very large
+sequence sets, an operation that can quickly become computationally 
+infeasible when using traditional agglomerative methods such as 
+neighbor joining and UPGMA. 
+These features will be essential as we continue to develop new 
+computationally-intensive learning methods for inferring 
+evolutionary patterns from large biological sequence datasets.
+
+
+
 ## Introduction
 An evolutionary tree is a simple directed graph portraying inferred 
-patterns of evolution by descent. A typical tree involves a set of extant taxa 
+patterns of evolution by descent. A typical tree depicts a set of extant taxa 
 shown as terminal 'leaf' nodes, with inner branching nodes representing the
 hypothetical most recent common ancestors (MRCAs) of the descendant taxa. 
 The interconnecting edges of the graph may be weighted to represent the 
 evolutionary time since divergence from the MRCA. 
 For a set of *n* taxa, there are (2*n* - 5)!! possible unique unrooted 
-binary trees (Balding et al. 2003), and hence finding the true phylogeny is 
-seldom a straightforward task. For most taxonomic groups, 
-a "consensus" tree is generally subject to continual modification 
-as new genetic and/or morphological data comes to light.
+binary trees (Balding et al. 2003), and hence reconstructing the true 
+phylogeny is seldom a straightforward task. 
+For most taxonomic groups, a "consensus" tree is generally subject 
+to continual modification as new genetic and/or morphological data 
+become available.
 
 The R environment continues to gain popularity as a platform for
 working with evolutionary trees, primarily due to the reproducible 
-code-based workflow and the increased availability of powerful 
-analytical tools developed within a suite of open-source packages. 
-Some of the more comprehensive and popular packages include ape, 
-phangorn and Phytools. 
-In these packages, the basic unit of representation for an evolutionary tree 
-is the "phylo" object, a list whose primary element is an integer matrix 
-with one row for each edge in the graph, and two columns giving the identities 
-of the nodes connected by the edge. 
-Other list elements may include edge lengths, labels, and the identity 
-of the root node (if applicable). 
+code-based workflow and the many powerful analytical tools freely 
+available within a suite of open-source packages including **ape**, 
+**phangorn** and **Phytools**. 
+These packages use a tree representation called the "phylo" object, 
+a list whose primary element is an integer matrix 
+with one row representing each edge in the graph, 
+and two columns giving the identities of the nodes connected by the edges. 
+Other list elements may include edge lengths (weights), labels, and 
+the identity of the root node if applicable. 
 This is a compact and intuitive structure for tree representation, and
 many useful functions have been developed for tree analysis based on 
-this format.
+this format.  
 
-An alternative means of representing evolutionary trees in R is the 
-"dendrogram" object, which can be derived using the ```as.dendrogram``` 
-function in the "stats" package.
-Rather than a matrix of edges, the "dendrogram" object is a heirarchical list 
+An alternative structure for evolutionary trees in R is the 
+"dendrogram", an object that can be generated using the function 
+```as.dendrogram``` from the package **stats**.
+Rather than a matrix of edges, dendrogram objects are heirarchical lists 
 (or a simple length-1 vector if the object is a single terminal leaf). 
 These 'lists of lists' can be deeply nested, with the limit depending on 
-the C stack size (settable *via* ```options("expressions")```).
+the C stack size (settable with ```options("expressions")```).
 A useful feature of this representation is its modularity, whereby the 
-subtree of a tree is itself a tree - a "dendrogram" within a "dendrogram". 
-This modularity means that "dendrogram" objects are subsettable in the same 
-way that standard lists are, which in addition to the availability of editing 
-functions such as ```cut``` and ```merge```, facilitates intuitive 
-command-line manipulation of this object type. 
+subtree of a tree is itself a tree - a dendrogram within a dendrogram. 
+This means that dendrogram objects are subsettable in the same 
+way that standard lists are, which in addition to the unbuilt
+**stats** editing functions such as ```cut``` and ```merge```, 
+facilitates intuitive command-line manipulation of this object type. 
 
-Each node of a "dendrogram" object has various attributes that may include: 
+Each node of a dendrogram object has attributes including: 
 
 * "height" the position of the node along the vertical axis 
+   (assuming the graph is orientated vertically as in Example 1)
 * "midpoint" the horizontal distance of the node from the left-most member 
-    of the sub-tree
+   of the subtree, where the horizontal distance between the leftmost and         rightmost leaves of the subtree is 1
 * "members" the number of terminal leaf nodes belonging to the node 
-    (= 1 if the node is a leaf)
-* "leaf" TRUE for terminal nodes, NULL otherwise
-* "label" an optional character string giving the name of the taxon or group
 * "class" all nodes have the class attribute "dendrogram" 
 
-Aside from those listed above, users may attach other standard objects 
-as attributes to the dendrogram nodes. 
+Rather than lists, terminal leaf nodes are length-1 integer vectors whose
+values correspond to the indices of the members in the set. 
+The  "members" attributes of these nodes is always set to 1, 
+the "midpoint" attribute is 0, and they have two additional attributes:    
+
+* "leaf" TRUE for terminal nodes, NULL otherwise
+* "label" an optional character string giving the name of the taxon or group
+
+Aside from those listed above, users may attach other objects 
+as attributes to the dendrogram nodes (including attaching "label" attributes
+to inner nodes). 
 This can be a powerful feature when performing recursive tree operations 
 in either a 'top-down' or 'bottom-up' fashion, as described in further detail 
 below. 
 
+#### Example 1: build a dendrogram object from scratch
+Consider the simple example of a tree with three members named 
+"A", "B" and "C", and where "B" and "C" are more closely related
+to eachother than to "A". A Newick string for this tree might look 
+like this:  
+$(A,(B,C));$  
+We can manually create a dendrogram object for this phylogeny
+and plot the tree as follows:
 
-...learning methods... recursive..
-... emphasis on fast k-mer counting methods ... progressive alignment guide trees
-and tree-based sequence weighting, e.g. for deriving hidden Markov models.
+```{r}
+x <- list(1, list(2, 3))
+## attach "leaf" and "label" attributes to leaf nodes
+attr(x[[1]], "leaf") <- TRUE
+attr(x[[2]][[1]], "leaf") <- TRUE
+attr(x[[2]][[2]], "leaf") <- TRUE
+attr(x[[1]], "label") <- "A"
+attr(x[[2]][[1]], "label") <- "B"
+attr(x[[2]][[2]], "label") <- "C"
+## set "height" attributes for all nodes
+attr(x, "height") <- 1
+attr(x[[1]], "height") <- 0
+attr(x[[2]], "height") <- 0.5
+attr(x[[2]][[1]], "height") <- 0
+attr(x[[2]][[2]], "height") <- 0
+## set "midpoints" attributes for all nodes
+attr(x, "midpoint") <- 0.33
+attr(x[[1]], "midpoint") <- 0
+attr(x[[2]], "midpoint") <- 0.5
+attr(x[[2]][[1]], "midpoint") <- 0
+attr(x[[2]][[2]], "midpoint") <- 0
+## set "members" attributes for all nodes
+attr(x, "members") <- 3
+attr(x[[1]], "members") <- 1
+attr(x[[2]], "members") <- 2
+attr(x[[2]][[1]], "members") <- 1
+attr(x[[2]][[2]], "members") <- 1
+## set class as "dendrogram" 
+## Note that setting the class for the root node
+## automatically sets the class of all nested subnodes
+class(x) <- "dendrogram"
+
+### plot the dendrogram
+np <- list(pch = c(NA, NA), lab.cex = 1)
+plot(x, yaxt = "n", nodePar = np, leaflab = "textlike")
+```
+  
+**Figure 1:** A simple dendrogram created manually in Example 1. 
+The basic anatomy of a dendrogram object is a nested
+list of lists, each with certain attributes
+defining the metadata for the node.  
+
+As shown in this example, manually setting attributes on dendrogram
+objects can be rather tedious, motivating the development of a suite
+of functions automating the generation and manipulation of tree 
+structures of this type.
 
 
 ## The 'phylogram' package
-Here, we introduce 'phylogram', an R package for working with 
-evolutionary trees as heirarchical (nested) lists. 
-The package contains functions for importing and exporting trees in 
-Newick (a.k.a. New Hampshire) format, computing distance matrices, 
-and assembling, visualizing, manipulating and exporting phylogenetic 
-trees for publication. 
-These functions are detailed below with examples provided.
+Here, we introduce **phylogram**, an R package for working with 
+evolutionary trees as dendrogram objects in the heirarchical 
+(nested) list format. 
+The package contains functions for importing and exporting trees to 
+and from Newick-style parenthetic text, 
+computing distance matrices, and assembling, visualizing, 
+manipulating and exporting phylogenetic trees for publication.
+These functions are detailed below with examples of their utility.
 
 
 ### Importing and exporting trees
-Character strings and text files in the Newick/New Hampshire parenthetic text 
-format can be imported into R as a "dendrogram" object using the text parser 
-```read.dendrogram```.
-This parser supports weighted edges, labels with special metacharacters 
+The Newick (a.k.a. New Hampshire) parenthetic text format is a 
+universal means of porting evolutionary trees between programs, 
+and is compatible with most tree-editing software. 
+This includes other R packages such as **ape**, which 
+features the ```read.tree``` function for parsing Newick
+strings to generate "phylo" objects.
+The **phylogram** package offers the text parser ```read.dendrogram```
+which reads character strings and text files in the Newick
+format and generates objects of class "dendrogram".
+This function supports weighted edges, labels with special metacharacters 
 (provided they are enclosed in single quotation marks), comments 
-(enclosed in square brackets; ignored), multifuricating nodes, 
-and both rooted and unrooted trees.
-Inner-node labels are ignored by the parser in this version, with 
-the addition of "label" attributes for non-leaf "dendrogram" nodes 
-available in a future release. 
+(enclosed in square brackets; ignored by the parser), 
+multifuricating nodes, and both rooted and unrooted trees.
+The current version of this package ignores inner-node labels; 
+however, the addition of "label" attributes for non-leaf 
+dendrogram nodes will be available in a future release. 
+Objects of class "dendrogram" can be exported as 
+Newick-style parenthetic text with the function 
+```write.dendrogram```.
 
-The ```write.dendrogram``` function exports a "dendrogram" object to 
-a text string or file in the Newick/New Hampshire format. This is 
-perhaps the most widely used text format for representing evolutionary 
-trees, and is compatible with most other tree-editing software. 
-This includes other R packages such as \code{\link[ape]{ape}}, which hosts 
-a wide range of tree editing, visualization and inference functions.
+#### Example 2: import and export a tree from a Newick string
+The simple Newick string in Example 1 can be imported into R as a 
+dendrogram object using the ```read.dendrogram``` function 
+as follows:
+
+```{r}
+newick <- "(A,(B,C));"
+x <- phylogram::read.dendrogram(text = newick)
+```
+
+The syntax is similar for reading from text files, 
+except the ```text``` argument is replaced by ```file```, 
+and a valid file path passed to the function. 
+To write the object back to the console in Newick format without 
+edge weights run:
+
+```{r}
+phylogram::write.dendrogram(x, edges = FALSE)
+```
+
+Similarly, to write to a text file a valid path can be passed 
+*via* the ```file``` argument. 
 
 
 ### Computing distance matrices
@@ -121,7 +241,7 @@ F  = \sum\limits_{\tau}
 \end{equation}
 $$
 where $\tau$ is a k-mer, $n_a(\tau)$ and $n_b(\tau)$ are the number of times 
-$\tau$ appears in each sequence, $k$ is the tuple length and $L$ is 
+$\tau$ appears in each sequence, $k$ is the tuple length and $L$ refers to 
 the sequence length.
 
 The pairwise distance is then calculated as 
@@ -132,68 +252,241 @@ d = \frac{log(0.1 + F) - log(1.1)}{log(0.1)} \tag{2}
 \end{equation}
 $$
 
-While this is the default measure for both the standard distance matrix 
-computation and the embedding routine, an alternative option detailed in 
-Yang & Zhang (2008) is also available:
+This is the **phylogram** default measure for both the standard distance matrix 
+computation ```kdistance``` and the embedding routine ```mbed```. 
+However, an alternative option detailed in Yang & Zhang (2008) can also be invoked by
+setting ```measure = YANG08```:
 
 $$
 \begin{equation}
 d  = \sum\limits_{\tau}|\frac{n_a(\tau)}{L_a - k + 1} - \frac{n_b(\tau)}{L_b - k + 1}|^2 \tag{3}
 \end{equation}
 $$
-```kdistance``` produces a standard $N \times N$ distance matrix (where $N$ is the 
-number of sequences), returning an object of class "dist". This operation has 
-time and memory complexity $O(n^2)$ and hance can become computationally
-infeasible for large sequence sets consisting of more than 10,000 or so sequences
-(Blackshields et al. 2010).
-The "phylogram" package also features the ```mbed``` function for "embedding" 
-sequences in $t$ dimensional space (where $t \approx log_2(N)^2$) using the 
-algorithm described in (Blackshields et al. 2010). 
-This effectively linearizes the operation, making it possible to construct trees 
+The ```kdistance``` function computes a standard $n \times n$ distance matrix 
+(where $n$ is the number of sequences), returning an object of class "dist". 
+This operation has time and memory complexity $O(n^2)$ and thus can 
+become computationally infeasible for large sequence sets 
+(more than ~ 10,000 sequences).
+As such, the **phylogram** package also features the function ```mbed``` for 
+"embedding" sequences in $t$ dimensional space (where $t \approx log_2(n)^2$) 
+using the algorithm described in Blackshields et al. (2010). 
+This effectively linearizes the operation, making it possible to reconstruct trees 
 from over a million ~ 200 nt DNA sequences in a few hours *via* recursive 
 k-means clustering (see the ```topdown``` function for more details). 
 
 DNA and amino acid sequences can be passed to the ```kdistance``` and ```mbed``` 
 functions either as unaligned lists or aligned matrices, preferably in either 
-the "DNAbin" or "AAbin" raw-byte format (see the documentation in the ape package 
-for more information on these classes). 
-Sequences supplied in the "character" format are supported; however ambiguity 
-codes may not be recognized or treated appropritely. 
+the "DNAbin" or "AAbin" raw-byte format (see the **ape** package documentation 
+for more information on these S3 classes). 
+Character vectors are supported; however ambiguity 
+codes may not be recognized or treated approprately. 
 To minimize computation time when counting longer k-mers (k > 2), 
 amino acid sequences in the raw "AAbin" format are automatically compressed using 
 the Dayhoff-6 alphabet as detailed in Edgar (2004). 
-This will not happen if amino acid sequences are supplied in character format 
-rather than as an "AAbin" object, in which case the k-mer length should be reduced 
+Note that amino acid sequences will not be compressed if 
+supplied as character vectors rather than as an "AAbin" object, 
+in which case the k-mer length should be reduced 
 (k < 4) to avoid excessive memory use and computation time.
+
+#### Example 3: compute a k-mer distance matrix for the woodmouse dataset
+The **ape** package features a dataset of 15 aligned mitochondrial 
+cytochrome *b* gene DNA seqences from the woodmouse *Apodemus sylvaticus*. 
+This is a subset of those originally published in Michaux et al. (2003).
+While the **phylogram** distance functions do not require sequences to 
+be aligned, this example will enable us to compare our k-mer distances
+with the traditional alignment-reliant distances produced by 
+```ape::dist.dna```. First, load the woodmouse dataset and view the first few 
+columns as follows:
+
+```{r}
+library(ape)
+data(woodmouse)
+ape::as.character.DNAbin(woodmouse[, 1:10])
+```
+
+Notice that this is a 'semiglobal' alignment featuring some 
+incomplete sequences, with unknown characters represented by 
+the ambiguity code "n" (e.g. No1114S and No1208S). To 
+avoid artificially inflating the distances between these partial sequences
+and the others, we first trim the gappy ends by subsetting 
+the 'true' global alignment (by default the **ape** function ```dist.dna``` 
+also removes columns with ambiguity codes prior to distance computation).
+
+```{r}
+woodmouse <- woodmouse[, 47:962] 
+```
+
+Note that the ```kdistance``` and ```mbed``` functions in the **phylogram** 
+package count ambiguity codes according to their underlying residue 
+frequencies. For example the 5-mer "ACRGT" would contribute 0.5 to 
+the tally for "ACAGT" and 0.5 to the tally for "ACGGT".  
+
+To compute the full $n \times n$ distance matrix using a k-mer size of 5, run:
+
+```{r}
+woodmouse.kdist <- phylogram::kdistance(woodmouse, k = 5)
+
+### show the first 5 rows and columns of the full distance matrix
+print(as.matrix(woodmouse.kdist)[1:5, 1:5], digits = 2)
+
+```
+
+Rather than computing a full symmetrical $n \times n$ distance matrix as 
+illustrated above, the ```mbed``` function only computes the distances 
+from each sequence to a smaller or equal sized subset of 'seed' sequences. 
+The following code computes the k-mer distances ($k = 5$) from each 
+of the sequences in the woodmouse dataset to five randomly selected 
+seed sequences:
+
+```{r}
+set.seed(999)
+seeds <- sample(1:15, size = 5)
+woodmouse.mbed <- phylogram::mbed(woodmouse, seeds = seeds, k = 5)
+woodmouse.mbed
+
+### This object has additional attributes including a large 
+### matrix of k-mer counts.
+### Hence there is a summary print method 
+### to avoid flooding the console. 
+### To show the matrix of embedded sequences only, 
+### remove the attributes by subsetting the distance matrix
+print(woodmouse.mbed[,], digits = 2)
+```
+
+
+For maximum information retention following the embedding process
+it is generally desirable to select the seed sequences based on their 
+uniqueness (rather than simply selecting a random subset). 
+See Blackshields et al. (2010) for suggested options for 
+seed selection.
+
+Blackshields et al. (2010) also suggest that a suitable number of seed 
+sequences is $log_2(n)^2$ (where $n$ is the total number of 
+sequences). This is clearly much more 
+efficient than computing a standard $n \times n$ distance matrix 
+when the number of sequences is large.
+For example, for a set of 100,000 sequences, the embedding routine 
+would compute $100,000 \times log_2(100,000)^2 = 27,600,000$ 
+distance calculations as opposed to $100,000^2 = 10,000,000,000$
+for a standard distance matrix.
+One notable drawback to this method is that traditional agglomerative 
+("bottom-up") tree-building methods such as neighbor-joining and 
+UPGMA depend on a full $n \times n$ distance matrix. 
+To circumvent this the **phylogram** package features 
+a function called ```topdown``` that recursively partitions the 
+embedded sequences using k-means clustering ($k = 2$). 
+This method is discussed in more detail in the following section. 
 
 
 ### Assembling trees
-Several functions exist in other packages for deriving an evolutionary trees 
-from a distance matrix, including ape's neighbour joining function ```nj```  
-and the implementation of the unweighted pair group ... algorithm 
-```upgma``` in the Phytools package. The "phylogram" package features
-the function ```topdown``` that builds a tree by recursively splitting the 
-sequence set using k-means clustering (k = 2). To achieve this, the number of
-k-mers are first counted for each sequence, and the distance of each sequence
-to each of (*t*) seed sequences (where $t = log_2N^2$) is computed using the 
-formula of Edgar (2004)... 
-This is known as "embedding" sequences, a procedure introduced by 
-Blacksheilds et al. (2010)
+There are several tools available for deriving evolutionary trees 
+from distance matrices in other packages, 
+including the neighbour joining function ```nj``` in the **ape** 
+package and an implementation of the unweighted pair group method 
+with arithmetic mean algorithm ```upgma``` in **Phytools**. 
+The **phylogram** package features a function called ```topdown``` 
+that builds a tree by recursively splitting the 
+sequence set using k-means clustering ($k = 2$). 
+To achieve this, the number of k-mers are first counted 
+for each sequence, and the distance of each sequence
+to each of $t$ seed sequences (where $t = log_2n^2$) is computed using the 
+formula of Edgar (2004; see Equations 1 & 2)
+This is known as sequence "embedding", a procedure introduced by 
+Blacksheilds et al. (2010). While recursive partitioning of embedded 
+sequence matrices may not necessarily 
+reconstruct sufficiently accurate phylogenetic trees for taxonomic 
+purposes, it offers a fast and efficient means of producing large trees 
+for a variety of other applications. 
+These include tree-based sequence weighting (e.g. Gerstein et al. 1994), 
+guide trees for progressive multiple sequence alignment (e.g. Sievers 
+et al. 2011), and other recursive operations such as sequence 
+classification tree learning (discussed in more detail below).
 
-..not satisfy a taxonomist.. sequence weighting and giude trees..
+#### Example 4: reconstruct a phylogenetic tree from the woodmouse dataset 
+In this example we will compare the fast embedded k-mer distance/ 
+top-down tree method with standard neighbor-joining 
+trees constructed from full distance matrices computed using both the 
+alignment-free k-mer distance and the Kimura (1980) distance measure
+(as featured in the examples in the **ape** package documentation).
 
-and the export function
-```write.dendrogram``` provides the facility to
-port "dendrogram" objects between ```phylogram``` and other programs  
-via the  text format.
+```{r, echo = FALSE}
+op <- par(no.readonly = TRUE)
+```
+
+```{r, out.width='700px', out.height='550px', dpi=500}
+### set out plotting panes
+par(mfrow = c(1, 3), mar = c(1, 2, 3, 3), cex = 0.3)
+
+### (1) Neighbor joining tree for Kimura 1980 distance matrix
+### compute the n x n Kimura (1980) distance matrix 
+woodmouse.dist <- ape::dist.dna(woodmouse, model = "K80") 
+### build the neighbor joining tree
+tree3 <- ape::nj(woodmouse.dist)
+### sort nodes by size
+tree3 <- ape::ladderize(tree3)
+### plot the nj tree
+plot(tree3, font = 1, cex = 1, 
+     main = "Neighbor-joining tree with\nKimura (1980) distance")
+
+### (2) Neighbor joining tree for full k-mer distance matrix
+tree2 <- ape::nj(woodmouse.kdist)
+### sort nodes by size
+tree2 <- ape::ladderize(tree2)
+### plot the nj tree
+plot(tree2, font = 1, cex = 1, 
+     main = "Neighbor-joining tree with\nstandard k-mer distance")
+
+### (3) topdown tree for embedded k-mer distances
+set.seed(999)
+tree1 <- phylogram::topdown(woodmouse, seeds = seeds, weighted = TRUE)
+### sort nodes by size
+tree1 <- phylogram::ladder(tree1)
+np <- list(pch = c(NA, NA), lab.cex = 1)
+plot(tree1, horiz = TRUE, yaxt = "n", nodePar = np,
+     main = "Top-down tree with\nembedded k-mer distance")
+```
+
+```{r, echo = FALSE}
+### reset plotting parameters
+par(op)
+```
+
+### Tree vizualization 
+base plotting ... options **ggplot2** and **ggdendro** ... ``dendro_data()``
+**dendextend**.. **ape**
 
 
-This enables users to perform both top-down and bottom-up recursive tree operations 
-such as splitting and neighbor joining. For compatibility with other programs and
-packages, trees can be imported and exported in the 
+### Tree editing/manipulation
+While dendrogram objects can be edited fairly easily using standard 
+list- and vector subsetting operators, the **phylogram** package features 
+several additional functions to facilite some of the more common 
+manipulation operations.
+Leaf nodes and internal branching nodes can be removed 
+using the function ```prune```, which identifies and 
+recursively deletes nodes based on regular expression pattern 
+matching of node "label" attributes.
+To aid vizualization, the function ```ladder``` rearranges
+the tree, sorting nodes by the number of members (analogous to the
+```ladderize ``` function in the ape package). Another function 
+aiding in tree visualization is ```ultrametricize ```, which
+resets the "height" attributes of all terminal leaf nodes to zero. 
+The function ```reposition``` scales the height of all nodes in
+a tree by a given constant (passed *via* the argument ```shift```), 
+and features the option to reset all node heights so that height of 
+the farthest terminal leaf node from the root is zero (by specifying 
+```shift = "reset"```). 
+Finally, the function ```remidpoint```
+recursively corrects all "midpoint", "members" and "leaf" attributes 
+following manual editing of a tree.
 
 
-...NxN...
+### Recursive tree operations
+A primary motivation for the development of this package was the requirement
+to perform recursive tree operations in a straightforward and intuitive manner.
+Machine learning and data mining techniques such as classification and 
+regression tree (CART) learning offer many potential benefits for the field 
+of bioinformatics..... 
+
 
 ## References 
 Balding DJ, Bishop M, Cannings C (Eds) (2003) Handbook of Statistical Genetics, 
@@ -201,12 +494,28 @@ Balding DJ, Bishop M, Cannings C (Eds) (2003) Handbook of Statistical Genetics,
 
 Blackshields G, Sievers F, Shi W, Wilm A, Higgins DG (2010) Sequence embedding
 for fast construction of guide trees for multiple sequence alignment.
-\emph{Algorithms for Molecular Biology}, \strong{5}, 21.
+*Algorithms for Molecular Biology*, **5**, 21.
 
 Edgar RC (2004) Local homology recognition and distance measures in
 linear time using compressed amino acid alphabets.
-\emph{Nucleic Acids Research}, \strong{32}, 380-385.
+*Nucleic Acids Research*, **32**, 380-385.
+
+Gerstein M, Sonnhammer ELL, Chothia C (1994) Volume changes in protein evolution.
+*Journal of Molecular Biology*, **236**, 1067-1078.
+
+Kimura M (1980) A simple method for estimating evolutionary rates of 
+base substitutions through comparative studies of nucleotide sequences. 
+*Journal of Molecular Evolution*, **16**, 111–120.
+
+Michaux JR, Magnanou E, Paradis E, Nieberding C, Libois R (2003) 
+Mitochondrial phylogeography of the Woodmouse (*Apodemus sylvaticus*) 
+in the Western Palearctic region. *Molecular Ecology*, **12**, 685–697.
+
+Sievers F, Wilm A, Dineen D, Gibson TJ, Karplus K, Li W, Lopez R, McWilliam H,
+Remmert M, Soding J, Thompson JD, Higgins DG (2011) Fast, scalable generation
+of high-quality protein multiple sequence alignments using Clustal Omega.
+*Molecular Systems Biology*, **7**, 539.
 
 Yang K, Zhang L (2008) Performance comparison between k-tuple distance
 and four model-based distances in phylogenetic tree reconstruction.
-\emph{Nucleic Acids Research}, \strong{36}, e33.
+*Nucleic Acids Research*, **36**, e33.

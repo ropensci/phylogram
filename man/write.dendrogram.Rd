@@ -20,7 +20,7 @@ file will be overwritten (the default setting).}
 \item{edges}{a logical value indicating whether edge weights should be
 included in the output string.}
 
-\item{...}{further arguments to be passed to \code{format}.Used to
+\item{...}{further arguments to be passed to \code{format}. Used to
 specify the numbering style of the edge weights (if edges = TRUE).}
 }
 \description{

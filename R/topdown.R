@@ -105,7 +105,7 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
   }
   # recursively build the tree
   tree <- topdown1(tree, d = M)
-  tree <- phylogram::remidpoint(tree)
+  tree <- remidpoint(tree)
   class(tree) <- "dendrogram"
   # model the branch lengths
   if(weighted){
@@ -149,10 +149,10 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
     }
     tree <- reheight1(tree)
     class(tree) <- "dendrogram"
-    tree <- phylogram::reposition(tree)
+    tree <- reposition(tree)
   }else{
-    tree <- phylogram::reposition(tree)
-    tree <- phylogram::ultrametricize(tree)
+    tree <- reposition(tree)
+    tree <- ultrametricize(tree)
   }
   label <- function(node, x){
     if(is.leaf(node)) attr(node, "label") <- names(x)[attr(node, "sequences")]
@@ -210,7 +210,7 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
 #     return(node)
 #   }
 #   tree <- forknode1(tree)
-#   tree <- phylogram::remidpoint(tree)
+#   tree <- remidpoint(tree)
 #   x <- fullx
 # }
 
@@ -275,9 +275,9 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
 #   attr(tree, "sequences") <- 1:nrow(x)
 #   attr(tree, "height") <- 0
 #   tree <- topdown1(tree, d = x)
-#   tree <- phylogram::remidpoint(tree)
+#   tree <- remidpoint(tree)
 #   class(tree) <- "dendrogram"
-#   tree <- phylogram::reposition(tree)
+#   tree <- reposition(tree)
 #   label <- function(node, d){
 #     if(is.leaf(node)) attr(node, "label") <- rownames(d)[attr(node, "sequences")]
 #     return(node)

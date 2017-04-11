@@ -5,9 +5,10 @@
 #' @author Shaun Wilkinson
 ################################################################################
 print.mbed <- function(x, ...){
-  cat("Matrix of", nrow(x),
-      "embedded sequences, represented as vectors of distances to",
+  cat("Matrix of distances from",
+      nrow(x),
+      "sequences to",
       ncol(x),
-      "seed sequences")
+      "seed sequences\n")
 }
 ################################################################################
