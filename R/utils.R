@@ -141,6 +141,7 @@ ultrametricize <- function(x){
     return(node)
   }
   while(is.null(attr(x, "flag"))) x <- dendrapply(x, ultrametricize1)
+  attr(x, "flag") <- NULL
   return(x)
 }
 ################################################################################
