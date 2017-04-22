@@ -6,6 +6,8 @@
 #'   attributes at each node.
 #'
 #' @param x a nested list, possibly of class \code{"dendrogram"}
+#' @param widths logical indicating whether the x coordinates should
+#'   be included as "width" attributes at each node.
 #' @return returns a nested list, or an object of class \code{"dendrogram"}
 #'   depending on the class of the input object.
 #' @author Shaun Wilkinson
