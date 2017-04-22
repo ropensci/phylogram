@@ -26,19 +26,27 @@
 #'   class(dendro) <- "dendrogram"
 #'   plot(dendro, horiz = TRUE)
 ################################################################################
-remidpoint <- function(x){
+remidpoint <- function(x, widths = FALSE){
   isdendro <- inherits(x, "dendrogram")
-  setnodeattr <- function(node){
+  setnodeattr <- function(node, widths = FALSE){
     if(is.list(node)){
       cladesizes <- sapply(node, function(subnode){
         length(unlist(subnode, use.names = FALSE))
       })
       nclades <- length(cladesizes)
+      if(widths){
+        cladecounter <- 0
+        for(i in 1:nclades){
+          attr(node[[i]], "width") <- attr(node, "width") + cladecounter
+          cladecounter <- cladecounter + cladesizes[i]
+        }
+      }
       attr(node, "members") <- sum(cladesizes)
       attr(node, "midpoint") <- ((cladesizes[1] - 1)/2 +
                                    #(cladesizes[1] +
                                    (sum(cladesizes[1:(nclades - 1)]) +
                                       (cladesizes[nclades] - 1)/2))/2
+      if(widths) attr(node, "width") <- attr(node, "width") + attr(node, "midpoint")
       attr(node, "leaf") <- NULL
     }else{
       attr(node, "members") <- 1
@@ -46,12 +54,14 @@ remidpoint <- function(x){
     }
     return(node)
   }
-  settreeattr <- function(tree){
-    tree <- setnodeattr(tree)
-    if(is.list(tree)) tree[] <- lapply(tree, settreeattr)
+  settreeattr <- function(tree, widths = FALSE){
+    tree <- setnodeattr(tree, widths = widths)
+    if(is.list(tree)) tree[] <- lapply(tree, settreeattr, widths = widths)
     return(tree)
   }
-  x <- settreeattr(x)
+  if(widths) attr(x, "width") <- 1
+  x <- settreeattr(x, widths = widths)
+  #x <- setnodeattr(x)
   if(isdendro) class(x) <- "dendrogram"
   return(x)
 }

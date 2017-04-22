@@ -4,7 +4,7 @@
 \alias{remidpoint}
 \title{Set dendrogram attributes for a nested list.}
 \usage{
-remidpoint(x)
+remidpoint(x, widths = FALSE)
 }
 \arguments{
 \item{x}{a nested list, possibly of class \code{"dendrogram"}}
