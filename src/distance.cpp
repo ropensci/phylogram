@@ -28,7 +28,7 @@ NumericMatrix kcountDNA(List x, int k = 5){
   IntegerVector curseq(k); // current kmer sequence
   IntegerVector curseqind(k);
   double ncombos = 1;
-  double kNs = 1/fourtopowerk;
+  //double kNs = 1/fourtopowerk;
   double seqcontrib; // contribution of current kmer
   int curk; // current x position in current kmer (ie wheel of combolock)
   bool advance;
