@@ -119,7 +119,8 @@ kdistance <- function(x, k = 5, measure = "EDGAR04", residues = NULL,
 #'   be used as the seed sequences. If \code{seeds = NULL} a set of
 #'   log(N, 2)^2 non-identical sequences is randomly selected from the
 #'   sequence set (where N is the number of sequences; see Blacksheilds et al.
-#'   2010).
+#'   2010). Alternatively, if \code{seeds = 'all'} a standard N x N
+#'   distance matrix is computed.
 #' @param residues either NULL (default; emitted residues are automatically
 #'   detected from the sequences), a case sensitive character vector
 #'   specifying the residue alphabet, or one of the character strings
@@ -199,6 +200,14 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-"){
     # LLR algorithm see Blacksheilds et al. 2010
     seeds <- sort(sample(seqalongx[!duplicates], size = nseeds))
     ## TODO could expand on this using pivot objects etc
+  }else if(identical(seeds, "all")){
+    seeds <- seqalongx
+  }else{
+    stopifnot(
+      mode(seeds) %in% c("numeric", "integer"),
+      max(seeds) <= nseq,
+      min(seeds) > 0
+    )
   }
   res <- .kdist(kcounts, from = seqalongx - 1, to = seeds - 1,
                 seqlengths = seqlengths, k = k)

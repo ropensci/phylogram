@@ -32,8 +32,11 @@
 #'   sequences). Instead, an N x log(N, 2)^2
 #'   distance matrix is first derived from the input sequences using the
 #'   \code{\link{mbed}} function of Blacksheilds et al. 2010 and the k-mer
-#'   istance measure of (Edgar 2004).
-#'   This requires substantially less memory and time. The 'embedded' sequences
+#'   distance measure of (Edgar 2004). This is done by first selecting
+#'   log(N, 2)^2 'seed' sequences (selected randomly by default)
+#'   and calculating the distance of each sequence to each of the seeds.
+#'   This requires substantially less memory and time than N x N matrix
+#'   computation. The 'embedded' sequences
 #'   are then split recursively using the k-means (clusters = 2) technique.
 #' @author Shaun Wilkinson
 #' @references

@@ -14,7 +14,8 @@ Accepted modes are "character" and "raw" (for "DNAbin" and "AAbin" objects).}
 be used as the seed sequences. If \code{seeds = NULL} a set of
 log(N, 2)^2 non-identical sequences is randomly selected from the
 sequence set (where N is the number of sequences; see Blacksheilds et al.
-2010).}
+2010). Alternatively, if \code{seeds = 'all'} a standard N x N
+distance matrix is computed.}
 
 \item{k}{integer representing the k-mer size to be used for calculating
 the distance matrix. Defaults to 5. Note that high values of k
