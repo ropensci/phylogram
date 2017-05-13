@@ -53,6 +53,8 @@
 #' library(ape)
 #' data(woodmouse)
 #' woodmouse <- woodmouse[, 47:962] ## trim gappy ends
+#' ambigs <- apply(woodmouse, 2, function(v) as.raw(240) %in% v)
+#' woodmouse <- woodmouse[, !ambigs] ## trim gappy ends
 #' set.seed(999)
 #' woodmouse.tree <- topdown(woodmouse)
 #' op <- par(no.readonly = TRUE)
@@ -114,22 +116,26 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
   if(weighted){
     avdist <- function(node){
       if(is.list(node)){
-        tof <- matrix(TRUE, nrow = nseq, ncol = nseeds)
-        rownames(tof) <- names(x)
-        colnames(tof) <- names(x)[seeds]
+        # tof <- matrix(TRUE, nrow = nseq, ncol = nseeds)
+        # rownames(tof) <- names(x)
+        # colnames(tof) <- names(x)[seeds]
         node1seqs <- attr(node[[1]], "sequences")
         node2seqs <- attr(node[[2]], "sequences")
-        n1sis <- node1seqs %in% seeds
-        n2sis <- node2seqs %in% seeds
-        if(any(n1sis) & any(n2sis)){
-          tof[-node1seqs[n1sis], ] <- FALSE
-          tof[, -(match(node2seqs[n2sis], seeds))] <- FALSE
-          attr(node, "avdist") <- mean(M[tof])
-        }else{
+        ln1s <- length(node1seqs)
+        ln2s <- length(node2seqs)
+        if(ln1s > 19) node1seqs <- sample(node1seqs, size = ceiling(log(ln1s, 2)^2))
+        if(ln2s > 19) node1seqs <- sample(node2seqs, size = ceiling(log(ln2s, 2)^2))
+        #n1sis <- node1seqs %in% seeds
+        #n2sis <- node2seqs %in% seeds
+        # if(any(n1sis) & any(n2sis)){
+        #   tof[-node1seqs[n1sis], ] <- FALSE
+        #   tof[, -(match(node2seqs[n2sis], seeds))] <- FALSE
+        #   attr(node, "avdist") <- mean(M[tof])
+        # }else{
           dists <- .kdist(kcounts, from = node1seqs - 1,
                           to = node2seqs - 1, seqlengths = seqlengths, k = k)
           attr(node, "avdist") <- mean(dists)
-        }
+        # }
       }else{
         attr(node, "avdist") <- 0
       }
