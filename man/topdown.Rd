@@ -63,6 +63,8 @@ This function creates phylogenetic trees by successively splitting
 library(ape)
 data(woodmouse)
 woodmouse <- woodmouse[, 47:962] ## trim gappy ends
+ambigs <- apply(woodmouse, 2, function(v) as.raw(240) \%in\% v)
+woodmouse <- woodmouse[, !ambigs] ## trim gappy ends
 set.seed(999)
 woodmouse.tree <- topdown(woodmouse)
 op <- par(no.readonly = TRUE)
