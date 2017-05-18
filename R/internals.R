@@ -11,7 +11,7 @@
     residues <- LETTERS[-c(2, 10, 15, 21, 24, 26)]
   }
   else if(is.null(residues)){
-    residues <- sort(unique(as.vector(unlist(sequences))))
+    residues <- sort(unique(as.vector(unlist(sequences, use.names = FALSE))))
     if(!is.null(gap)) residues <- residues[residues != gap]
     if(!is.null(endchar)) residues <- residues[residues != endchar]
   }else{

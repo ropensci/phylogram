@@ -17,12 +17,10 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 --------------------------------------------------------------------------------
 ## Abstract
 The R platform continues to gain popularity among evolutionary biologists
-as an increasing number of useful and convenient
-bioinformatics packages become available. 
-In particular, many sophisticated
-tools have been developed for creating, editing, visualizing 
-and publishing evolutionary trees within a suite of comprehensive 
-packages such as **ape**, **phangorn** and **Phytools**. 
+as an increasing number of powerful bioinformatics packages become available. 
+In particular, many sophisticated tools have been developed for creating, 
+editing, visualizing and publishing evolutionary trees within a suite of 
+comprehensive packages such as **ape**, **phangorn** and **Phytools**. 
 Here we introduce **phylogram**, an R package
 that interfaces traditional evolutionary tree formats
 with an alternative data structure in which trees are stored 
