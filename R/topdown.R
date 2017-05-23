@@ -67,34 +67,38 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
                     weighted = TRUE){
   if(is.matrix(x)) x <- .unalign(x, gap = gap)
   # first embed the seqs in a N x log(N, 2)^2 distmat as in Blackshields 2010
-  nseq <- length(x)
-  seqlengths <- sapply(x, length)
-  #generate long thin distance matrix with counts attributes etc
-  M <- mbed(x, seeds = seeds, k = k, residues = residues, gap = gap)
-  # throw some minor random variation into duplicate rows so kmeans doesn't crash
-  Mduplicates <- duplicated.matrix(M, MARGIN = 1)
-  M[Mduplicates, ] <- M[Mduplicates, ] + runif(length(M[Mduplicates, ]),
-                                                min = -0.0001, max = 0.0001)
-  seeds <- attr(M, "seeds")
-  nseeds <- length(seeds)
-  kcounts <- attr(M, "kcounts")
-  # initialize the tree
+  M <- mbed(x, seeds = seeds, k = k, residues = residues, gap = gap,
+            counts = weighted) # kcounts only required for weighted option
+  duplicates <- attr(M, "duplicates")
+  pointers <- attr(M, "pointers")
+  hashes <- attr(M, "hashes")
+  kcounts <- attr(M, "kcounts") # NULL if not weighted
+  nuseq <- sum(!duplicates)
+  M <- M[!duplicates, ] # removes attrs
+  seqlengths <- sapply(x[!duplicates], length)
+  ## initialize the tree
   tree <- 1
   attr(tree, "leaf") <- TRUE
-  attr(tree, "sequences") <- 1:nseq
+  attr(tree, "sequences") <- 1:nuseq
   attr(tree, "height") <- 0
   # define recursive splitting functions
-  topdown1 <- function(tree, d){
+  topdown1 <- function(tree, d){ # d is the mbed matrix
     tree <- topdown2(tree, d = d)
     if(is.list(tree)) tree[] <- lapply(tree, topdown1, d = d)
     return(tree)
   }
-  topdown2 <- function(node, d){
-    if(!is.list(node)){ # fork leaves only
+  topdown2 <- function(node, d){# d is the mbed object
+    if(!is.list(node) & length(attr(node, "sequences")) > 1){
+      # fork leaves only
       seqs <- d[attr(node, "sequences"), , drop = FALSE]
-      nseq <- nrow(seqs)
-      if(nseq == 1) return(node)
-      membership <- if(nseq == 2) 1:2 else kmeans(seqs, centers = 2)$cluster
+      errfun <- function(er){# use when > 3 uniq hashes but kmeans throws error
+        nrs <- nrow(seqs)
+        out <- rep(1, nrs)
+        out[sample(1:nrs, 1)] <- 2
+        return(out)
+      }
+      membership <- tryCatch(kmeans(seqs, centers = 2)$cluster,
+                      error = errfun, warning = errfun)
       tmpattr <- attributes(node)
       node <- vector(mode = "list", length = 2)
       attributes(node) <- tmpattr
@@ -108,30 +112,20 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
     }
     return(node)
   }
-  # recursively build the tree
+  #  build tree recursively
   tree <- topdown1(tree, d = M)
   tree <- remidpoint(tree)
   class(tree) <- "dendrogram"
   # model the branch lengths
   if(weighted){
-    avdist <- function(node){
+    avdist <- function(node, kcounts){
       if(is.list(node)){
-        # tof <- matrix(TRUE, nrow = nseq, ncol = nseeds)
-        # rownames(tof) <- names(x)
-        # colnames(tof) <- names(x)[seeds]
         node1seqs <- attr(node[[1]], "sequences")
         node2seqs <- attr(node[[2]], "sequences")
         ln1s <- length(node1seqs)
         ln2s <- length(node2seqs)
         if(ln1s > 19) node1seqs <- sample(node1seqs, size = ceiling(log(ln1s, 2)^2))
         if(ln2s > 19) node1seqs <- sample(node2seqs, size = ceiling(log(ln2s, 2)^2))
-        #n1sis <- node1seqs %in% seeds
-        #n2sis <- node2seqs %in% seeds
-        # if(any(n1sis) & any(n2sis)){
-        #   tof[-node1seqs[n1sis], ] <- FALSE
-        #   tof[, -(match(node2seqs[n2sis], seeds))] <- FALSE
-        #   attr(node, "avdist") <- mean(M[tof])
-        # }else{
           dists <- .kdist(kcounts, from = node1seqs - 1,
                           to = node2seqs - 1, seqlengths = seqlengths, k = k)
           attr(node, "avdist") <- mean(dists)
@@ -141,7 +135,7 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
       }
       return(node)
     }
-    tree <- dendrapply(tree, avdist)
+    tree <- dendrapply(tree, avdist, kcounts = kcounts)
     reheight <- function(node){
       if(is.list(node)){
         node1edge <- max(0.001, (attr(node, "avdist") - attr(node[[1]], "avdist"))/2)
@@ -163,11 +157,16 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
     tree <- reposition(tree)
     tree <- ultrametricize(tree)
   }
-  label <- function(node, x){
-    if(is.leaf(node)) attr(node, "label") <- names(x)[attr(node, "sequences")]
+  reduplicate <- function(node, pointers){
+    attr(node, "sequences") <- which(pointers %in% attr(node, "sequences"))
     return(node)
   }
-  tree <- dendrapply(tree, label, x = x)
+  if(any(duplicates)) tree <- dendrapply(tree, reduplicate, pointers)
+  label <- function(node, labs){
+    if(is.leaf(node)) attr(node, "label") <- labs[attr(node, "sequences")]
+    return(node)
+  }
+  tree <- dendrapply(tree, label, labs = names(x))
   return(tree)
 }
 ################################################################################
@@ -293,4 +292,56 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
 #   }
 #   tree <- dendrapply(tree, label, d = x)
 #   return(tree)
+# }
+
+
+# topdown2 <- function(node, d){# d is the mbed object
+#   if(!is.list(node) & length(attr(node, "sequences")) > 1){
+#     # fork leaves only
+#     seqs <- d[attr(node, "sequences"), , drop = FALSE]
+#     hashes <- attr(d, "hashes")[attr(node, "sequences")]
+#     nuniq <- 1
+#     counter <- 2
+#     uhashes <- character(2)
+#     uhashes[1] <- hashes[1]
+#     repeat{ # this is faster than length(unique(hashes)) for large nseq
+#       if(hashes[counter] != uhashes[1] & hashes[counter] != uhashes[2]){
+#         nuniq <- nuniq + 1
+#         if(nuniq > 2) break
+#         uhashes[2] <- hashes[counter]
+#       }
+#       if(counter == length(hashes)) break
+#       counter <- counter + 1
+#     }
+#     errfun <- function(hashes){# use when > 3 uniq hashes but kmeans throws error
+#       out <- rep(1, length(hashes))
+#       out[hashes == sample(hashes, 1)] <- 2
+#       return(out)
+#     }
+#     if(nuniq == 3){
+#       membership <- tryCatch(kmeans(seqs, centers = 2)$cluster,
+#                              error = errfun, warning = errfun)
+#       nbranches <- 2
+#       allid <- FALSE
+#     }else if(nuniq == 2){
+#       membership <- errfun(hashes)
+#       nbranches <- 2
+#       allid <- FALSE
+#     }else{
+#       nbranches <- nrow(seqs) # all identical
+#       membership <- 1:nbranches
+#       allid <- TRUE
+#     }
+#     tmpattr <- attributes(node)
+#     node <- vector(mode = "list", length = nbranches)
+#     attributes(node) <- tmpattr
+#     attr(node, "leaf") <- NULL
+#     for(i in 1:nbranches){
+#       node[[i]] <- 1
+#       attr(node[[i]], "height") <- attr(node, "height") - if(allid) 0 else 1
+#       attr(node[[i]], "leaf") <- TRUE
+#       attr(node[[i]], "sequences") <- attr(node, "sequences")[membership == i]
+#     }
+#   }
+#   return(node)
 # }

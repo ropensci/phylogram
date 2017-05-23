@@ -60,7 +60,7 @@ kdistance <- function(x, k = 5, measure = "EDGAR04", residues = NULL,
   nseq <- length(x)
   seqalongx <- seq_along(x)
   if(DNA){
-    x <- lapply(x, function(y) y[!(y %in% as.raw(c(2, 4, 240)))])
+    x <- lapply(x, function(s) s[!(s %in% as.raw(c(2, 4, 240)))])
     seqlengths <- sapply(x, length)
     if(min(seqlengths) < k) stop("minimum sequence length is less than k")
     kcounts <- .kcountDNA(x, k = k)
@@ -130,6 +130,9 @@ kdistance <- function(x, k = 5, measure = "EDGAR04", residues = NULL,
 #' @param gap the character used to represent gaps in the alignment matrix
 #'   (if applicable). Ignored for \code{"DNAbin"} or \code{"AAbin"} objects.
 #'   Defaults to "-" otherwise.
+#' @param counts logical indicating whether the (usually large) matrix of
+#'   k-mer counts should be returned as an attribute of the returned
+#'   object. Defaults to FALSE to avoid excessive memory usage.
 #' @return returns a N x log(N, 2)^2 matrix of class "mbed" (where N is the
 #'   number of sequences). The returned
 #'   object has additional attributes including a the 'seeds' vector and
@@ -156,11 +159,34 @@ kdistance <- function(x, k = 5, measure = "EDGAR04", residues = NULL,
 #'   woodmouse.mbed <- mbed(woodmouse)
 #'   woodmouse.mbed
 ################################################################################
-mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-"){
+mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
+                 counts = FALSE){
+  nseq <- length(x)
   if(is.matrix(x)) x <- .unalign(x, gap = gap)
+  if(!is.null(seeds)){
+    if(identical(seeds, "all")) seeds <- seq_along(x)
+    stopifnot(mode(seeds) %in% c("numeric", "integer"),
+              max(seeds) <= nseq,
+              min(seeds) > 0)
+  }
   DNA <- .isDNA(x)
   AA <- .isAA(x)
-  nseq <- length(x)
+  hashes <- sapply(x, function(s) paste(openssl::md5(as.vector(s))))
+  duplicates <- duplicated(hashes)
+  nuseq <- sum(!duplicates)
+  if(any(duplicates)){
+    pointers <- integer(length(x))
+    dupehashes <- hashes[duplicates]
+    uniquehashes <- hashes[!duplicates]
+    pointers[!duplicates] <- seq_along(uniquehashes)
+    pd <- integer(length(dupehashes))
+    for(i in unique(dupehashes)) pd[dupehashes == i] <- match(i, uniquehashes)
+    pointers[duplicates] <- pd
+    catchnames <- names(x)
+    x <- x[!duplicates]
+  }else{
+    pointers <- seq_along(x)
+  }
   seqalongx <- seq_along(x)
   if(DNA){
     x <- lapply(x, function(s) s[!(s %in% as.raw(c(2, 4, 240)))])
@@ -184,7 +210,7 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-"){
       if(k > 2 & arity >= 20) stop("Unable to calculate distance matrix for
                                large k and large alphabet size. If residues
                                are amino acids consider converting to AAbin
-                               object for compression")
+                               object for automatic compression, else reduce k")
       modes <- lapply(x, mode)
       if(!(all(modes == "integer") | all(modes == "numeric"))){
         x <- .encodeCH(x, residues = residues, na.rm = TRUE)
@@ -194,26 +220,48 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-"){
     if(min(seqlengths) < k) stop("minimum sequence length is less than k")
     kcounts <- t(sapply(x, tuplecount, k, arity))
   }
-  duplicates <- duplicated(x)
   if(is.null(seeds)){
-    nseeds <- min(sum(!duplicates), ceiling(log(nseq, 2)^2))
-    # LLR algorithm see Blacksheilds et al. 2010
-    seeds <- sort(sample(seqalongx[!duplicates], size = nseeds))
+    nseeds <- ceiling(log(nuseq, 2)^2)
+    allseeds <- nseeds >= nuseq
+    if(allseeds){
+      nseeds <- nuseq
+      seeds <- seqalongx
+    }else{
+      seeds <- match(1:nseeds, kmeans(kcounts, centers = nseeds)$cluster)
+    }
+    ## LLR algorithm see Blacksheilds et al. 2010
+    # seeds <- sort(sample(seqalongx, size = nseeds))
     ## TODO could expand on this using pivot objects etc
-  }else if(identical(seeds, "all")){
-    seeds <- seqalongx
   }else{
-    stopifnot(
-      mode(seeds) %in% c("numeric", "integer"),
-      max(seeds) <= nseq,
-      min(seeds) > 0
-    )
+    seeds <- unique(pointers[seeds])
+    nseeds <- length(seeds)
   }
   res <- .kdist(kcounts, from = seqalongx - 1, to = seeds - 1,
                 seqlengths = seqlengths, k = k)
+  if(any(duplicates)){
+    tmp <- matrix(nrow = nseq, ncol = ncol(res))
+    rownames(tmp) <- catchnames
+    colnames(tmp) <- names(x)[seeds]
+    tmp[!duplicates, ] <- res
+    #for(i in which(duplicates)) tmp[i, ] <- res[pointers[i], ]
+    tmp[duplicates, ] <- res[pointers[duplicates], ]
+    res <- tmp
+    # also refll kcounts
+    if(counts){
+      tmpkc <- matrix(nrow = nseq, ncol = ncol(kcounts))
+      rownames(tmpkc) <- catchnames
+      tmpkc[!duplicates, ] <- kcounts
+      tmpkc[duplicates, ] <- kcounts[pointers[duplicates], ]
+      kcounts <- tmpkc
+    }
+  }
   attr(res, "seeds") <- seeds
-  attr(res, "kcounts") <- kcounts
+  if(counts) attr(res, "kcounts") <- kcounts
+  rm(kcounts)
+  gc()
   attr(res, "duplicates") <- duplicates
+  attr(res, "pointers") <- pointers
+  attr(res, "hashes") <- hashes
   class(res) <- "mbed"
   return(res)
 }

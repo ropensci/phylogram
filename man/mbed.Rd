@@ -4,7 +4,8 @@
 \alias{mbed}
 \title{Convert sequences to vectors of distances to \emph{n} seed sequences.}
 \usage{
-mbed(x, seeds = NULL, k = 5, residues = NULL, gap = "-")
+mbed(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
+  counts = FALSE)
 }
 \arguments{
 \item{x}{a matrix of aligned sequences or a list of unaligned sequences.
@@ -33,6 +34,10 @@ recommended unless x is a "DNAbin" or "AAbin" object.}
 \item{gap}{the character used to represent gaps in the alignment matrix
 (if applicable). Ignored for \code{"DNAbin"} or \code{"AAbin"} objects.
 Defaults to "-" otherwise.}
+
+\item{counts}{logical indicating whether the (usually large) matrix of
+k-mer counts should be returned as an attribute of the returned
+object. Defaults to FALSE to avoid excessive memory usage.}
 }
 \value{
 returns a N x log(N, 2)^2 matrix of class "mbed" (where N is the

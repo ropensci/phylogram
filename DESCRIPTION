@@ -19,6 +19,7 @@ Depends:
     R (>= 3.0.0)
 Imports:
     graphics,
+    openssl,
     Rcpp (>= 0.12.8),
     stats,
     utils

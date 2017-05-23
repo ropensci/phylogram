@@ -1,5 +1,6 @@
 exportPattern("^[[:alpha:]]+")
 S3method(print, mbed)
+importFrom(openssl, md5)
 importFrom(stats, as.dendrogram)
 importFrom(stats, as.dist)
 importFrom(stats, dendrapply)
