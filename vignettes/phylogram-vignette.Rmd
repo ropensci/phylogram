@@ -56,8 +56,9 @@ binary trees (Balding et al. 2003), and hence reconstructing the true
 phylogeny is seldom a straightforward task. 
 For most taxonomic groups, a "consensus" tree is generally subject 
 to continual modification as new genetic and/or morphological data 
-become available. The dynamic nature of evolutionary trees thus requires
-computational tools that facilitate 
+become available. This dynamic nature necessitates computational tools 
+that facilitate fine-scale tree manipulation, offer multiple 
+visualization options, and are readily scalable for large data-sets.
 
 The R environment continues to gain popularity as a platform for
 working with evolutionary trees, primarily due to the reproducible 
