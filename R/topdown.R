@@ -67,6 +67,9 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
                     weighted = TRUE){
   if(is.matrix(x)) x <- .unalign(x, gap = gap)
   # first embed the seqs in a N x log(N, 2)^2 distmat as in Blackshields 2010
+  DNA <- .isDNA(x)
+  AA <- .isAA(x)
+  gap <- if(AA) as.raw(45) else if(DNA) as.raw(4) else gap
   M <- mbed(x, seeds = seeds, k = k, residues = residues, gap = gap,
             counts = weighted) # kcounts only required for weighted option
   duplicates <- attr(M, "duplicates")

@@ -1,5 +1,5 @@
 ---
-title: "The **phylogram** package for developing evolutionary trees in R"
+title: "The **phylogram** R package for evolutionary tree development"
 author: "Shaun Wilkinson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -19,14 +19,14 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 The R platform continues to gain popularity among evolutionary biologists
 as an increasing number of powerful bioinformatics packages become available. 
 In particular, many sophisticated tools have been developed for creating, 
-editing, visualizing and publishing evolutionary trees within a suite of 
+editing, visualizing and publishing evolutionary trees in a suite of 
 comprehensive packages such as **ape**, **phangorn** and **Phytools**. 
 Here we introduce **phylogram**, an R package
-that interfaces traditional evolutionary tree formats
-with an alternative data structure in which trees are stored 
+that interfaces traditional matrix-based evolutionary tree formats
+with a data structure in which trees are stored 
 as deeply-nested lists.
 Unlike the widely used "phylo" object type, 
-in which trees are represented as a matrix of edges, 
+in which a tree is represented as a matrix of edges, 
 the dendrogram object is a heirarchical list of lists, 
 such that each subtree within the tree is itself a tree (a smaller
 dendrogram object).
@@ -34,11 +34,11 @@ This representation facilitates intuitive command-line
 manipulation including subsetting, merging and recursive node-wise 
 operations using fast inbuilt functions in the "apply" family. 
 With an emphasis on speed and efficiency, the **phylogram** package also 
-includes functions for rapidly generating trees from very large
+includes functions for the rapid divisive generation of trees from very large
 sequence sets, an operation that can quickly become computationally 
 infeasible when using traditional agglomerative methods such as 
 neighbor joining and UPGMA. 
-These features will be essential as we continue to develop new 
+These features will be useful as we continue to develop new 
 computationally-intensive learning methods for inferring 
 evolutionary patterns from large biological sequence datasets.
 
@@ -56,7 +56,8 @@ binary trees (Balding et al. 2003), and hence reconstructing the true
 phylogeny is seldom a straightforward task. 
 For most taxonomic groups, a "consensus" tree is generally subject 
 to continual modification as new genetic and/or morphological data 
-become available.
+become available. The dynamic nature of evolutionary trees thus requires
+computational tools that facilitate 
 
 The R environment continues to gain popularity as a platform for
 working with evolutionary trees, primarily due to the reproducible 

@@ -58,6 +58,7 @@ kdistance <- function(x, k = 5, measure = "EDGAR04", residues = NULL,
   gap <- if(AA) as.raw(45) else if(DNA) as.raw(4) else gap
   if(is.matrix(x)) x <- .unalign(x, gap = gap)
   nseq <- length(x)
+  if(is.null(names(x))) names(x) <- paste0("S", 1:nseq)
   seqalongx <- seq_along(x)
   if(DNA){
     x <- lapply(x, function(s) s[!(s %in% as.raw(c(2, 4, 240)))])
@@ -161,16 +162,20 @@ kdistance <- function(x, k = 5, measure = "EDGAR04", residues = NULL,
 ################################################################################
 mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
                  counts = FALSE){
-  nseq <- length(x)
+  DNA <- .isDNA(x)
+  AA <- .isAA(x)
+  if(DNA) class(x) <- "DNAbin" else if(AA) class(x) <- "AAbin"
+  residues <- .alphadetect(x, residues = residues, gap = gap)
+  gap <- if(AA) as.raw(45) else if(DNA) as.raw(4) else gap
   if(is.matrix(x)) x <- .unalign(x, gap = gap)
+  nseq <- length(x)
+  if(is.null(names(x))) names(x) <- paste0("S", 1:nseq)
   if(!is.null(seeds)){
     if(identical(seeds, "all")) seeds <- seq_along(x)
     stopifnot(mode(seeds) %in% c("numeric", "integer"),
               max(seeds) <= nseq,
               min(seeds) > 0)
   }
-  DNA <- .isDNA(x)
-  AA <- .isAA(x)
   hashes <- sapply(x, function(s) paste(openssl::md5(as.vector(s))))
   duplicates <- duplicated(hashes)
   nuseq <- sum(!duplicates)
@@ -192,6 +197,7 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
     x <- lapply(x, function(s) s[!(s %in% as.raw(c(2, 4, 240)))])
     seqlengths <- sapply(x, length)
     if(min(seqlengths) < k) stop("minimum sequence length is less than k")
+
     kcounts <- .kcountDNA(x, k = k)
   }else{
     tuplecount <- function(y, k, arity){
@@ -205,7 +211,6 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
       arity <- if(k > 2) 6 else 20 # compress AA alphabet for high k values
       x <- .encodeAA(x, arity = arity, na.rm = TRUE)
     }else{
-      residues <- .alphadetect(x, residues = residues, gap = gap)
       arity <- length(residues)
       if(k > 2 & arity >= 20) stop("Unable to calculate distance matrix for
                                large k and large alphabet size. If residues
