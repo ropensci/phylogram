@@ -197,7 +197,6 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
     x <- lapply(x, function(s) s[!(s %in% as.raw(c(2, 4, 240)))])
     seqlengths <- sapply(x, length)
     if(min(seqlengths) < k) stop("minimum sequence length is less than k")
-
     kcounts <- .kcountDNA(x, k = k)
   }else{
     tuplecount <- function(y, k, arity){

@@ -13,7 +13,7 @@ functions `read.dendrogram` and `write.dendrogram`.
 
 
 ### Installation
-`phylogram` is currently only available as a development version, with a stable
+`phylogram` is currently available as a development version, with a stable
 release available on CRAN shortly. To download the package from 
 GitHub you will first need to ensure you have a C/C++ compliler and the 
 [devtools](https://github.com/hadley/devtools) R package installed. 
