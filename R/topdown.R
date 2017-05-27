@@ -3,8 +3,9 @@
 #' Create phylogenetic trees by successively splitting the sequence dataset
 #'   into smaller and smaller subsets.
 #'
-#' @param x a list of sequences, possibly an object of class
-#'   \code{"DNAbin"} or \code{"AAbin"}.
+#' @param x a list or matrix of sequences, possibly an object of class
+#'   \code{"DNAbin"} or \code{"AAbin"}. Alternatively can be an object of class
+#'   \code{mbed}.
 #' @param seeds an integer vector indicating which sequences should be used as
 #'   seeds for the clustering procedure (see details section).
 #'   If NULL the seeds are randomly selected from the input sequence list.
@@ -65,20 +66,25 @@
 ################################################################################
 topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
                     weighted = TRUE){
-  if(is.matrix(x)) x <- .unalign(x, gap = gap)
-  # first embed the seqs in a N x log(N, 2)^2 distmat as in Blackshields 2010
-  DNA <- .isDNA(x)
-  AA <- .isAA(x)
-  gap <- if(AA) as.raw(45) else if(DNA) as.raw(4) else gap
-  M <- mbed(x, seeds = seeds, k = k, residues = residues, gap = gap,
-            counts = weighted) # kcounts only required for weighted option
+  if(inherits(x, "mbed")){
+    M <- x
+  }else{
+    if(is.matrix(x)) x <- .unalign(x, gap = gap)
+    # first embed the seqs in a N x log(N, 2)^2 distmat as in Blackshields 2010
+    DNA <- .isDNA(x)
+    AA <- .isAA(x)
+    gap <- if(AA) as.raw(45) else if(DNA) as.raw(4) else gap
+    M <- mbed(x, seeds = seeds, k = k, residues = residues, gap = gap,
+              counts = weighted) # kcounts only required for weighted option
+  }
   duplicates <- attr(M, "duplicates")
   pointers <- attr(M, "pointers")
   hashes <- attr(M, "hashes")
   kcounts <- attr(M, "kcounts") # NULL if not weighted
+  seqlengths <- attr(M, "seqlengths")
   nuseq <- sum(!duplicates)
   M <- M[!duplicates, ] # removes attrs
-  seqlengths <- sapply(x[!duplicates], length)
+  #seqlengths <- sapply(x[!duplicates], length)
   ## initialize the tree
   tree <- 1
   attr(tree, "leaf") <- TRUE
@@ -121,6 +127,7 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
   class(tree) <- "dendrogram"
   # model the branch lengths
   if(weighted){
+    if(is.null(kcounts)) stop("Can't weight tree without kcounts")
     avdist <- function(node, kcounts){
       if(is.list(node)){
         node1seqs <- attr(node[[1]], "sequences")
@@ -169,7 +176,7 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
     if(is.leaf(node)) attr(node, "label") <- labs[attr(node, "sequences")]
     return(node)
   }
-  tree <- dendrapply(tree, label, labs = names(x))
+  tree <- dendrapply(tree, label, labs = rownames(M))
   return(tree)
 }
 ################################################################################

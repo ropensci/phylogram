@@ -8,8 +8,9 @@ topdown(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
   weighted = TRUE)
 }
 \arguments{
-\item{x}{a list of sequences, possibly an object of class
-\code{"DNAbin"} or \code{"AAbin"}.}
+\item{x}{a list or matrix of sequences, possibly an object of class
+\code{"DNAbin"} or \code{"AAbin"}. Alternatively can be an object of class
+\code{mbed}.}
 
 \item{seeds}{an integer vector indicating which sequences should be used as
 seeds for the clustering procedure (see details section).

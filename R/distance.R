@@ -231,7 +231,8 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
       nseeds <- nuseq
       seeds <- seqalongx
     }else{
-      seeds <- match(1:nseeds, kmeans(kcounts, centers = nseeds)$cluster)
+      suppressWarnings(groups <- kmeans(kcounts, centers = nseeds)$cluster)
+      seeds <- match(1:nseeds, groups)
     }
     ## LLR algorithm see Blacksheilds et al. 2010
     # seeds <- sort(sample(seqalongx, size = nseeds))
@@ -259,13 +260,14 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
       kcounts <- tmpkc
     }
   }
-  attr(res, "seeds") <- seeds
+  attr(res, "seeds") <- seeds # integer vector
   if(counts) attr(res, "kcounts") <- kcounts
   rm(kcounts)
   gc()
   attr(res, "duplicates") <- duplicates
   attr(res, "pointers") <- pointers
   attr(res, "hashes") <- hashes
+  attr(res, "seqlengths") <- seqlengths
   class(res) <- "mbed"
   return(res)
 }
