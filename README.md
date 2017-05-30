@@ -1,6 +1,7 @@
 # phylogram
 
 [![Build Status](https://travis-ci.org/shaunpwilkinson/phylogram.svg?branch=master)](https://travis-ci.org/shaunpwilkinson/phylogram)
+[![ORCiD](https://img.shields.io/badge/ORCiD-0000--0002--7332--7931-green.svg)](http://orcid.org/0000-0002-7332-7931) 
 
 --------------------------------------------------------------------------------
 
