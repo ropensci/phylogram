@@ -4,13 +4,10 @@
 \alias{remidpoint}
 \title{Set dendrogram attributes for a nested list.}
 \usage{
-remidpoint(x, widths = FALSE)
+remidpoint(x)
 }
 \arguments{
 \item{x}{a nested list, possibly of class \code{"dendrogram"}}
-
-\item{widths}{logical indicating whether the x coordinates should
-be included as "width" attributes at each node.}
 }
 \value{
 returns a nested list, or an object of class \code{"dendrogram"}

@@ -6,8 +6,6 @@
 #'   attributes at each node.
 #'
 #' @param x a nested list, possibly of class \code{"dendrogram"}
-#' @param widths logical indicating whether the x coordinates should
-#'   be included as "width" attributes at each node.
 #' @return returns a nested list, or an object of class \code{"dendrogram"}
 #'   depending on the class of the input object.
 #' @author Shaun Wilkinson
@@ -28,27 +26,19 @@
 #'   class(dendro) <- "dendrogram"
 #'   plot(dendro, horiz = TRUE)
 ################################################################################
-remidpoint <- function(x, widths = FALSE){
+remidpoint <- function(x){
   isdendro <- inherits(x, "dendrogram")
-  setnodeattr <- function(node, widths = FALSE){
+  setnodeattr <- function(node){
     if(is.list(node)){
       cladesizes <- sapply(node, function(subnode){
         length(unlist(subnode, use.names = FALSE))
       })
       nclades <- length(cladesizes)
-      if(widths){
-        cladecounter <- 0
-        for(i in 1:nclades){
-          attr(node[[i]], "width") <- attr(node, "width") + cladecounter
-          cladecounter <- cladecounter + cladesizes[i]
-        }
-      }
       attr(node, "members") <- sum(cladesizes)
       attr(node, "midpoint") <- ((cladesizes[1] - 1)/2 +
                                    #(cladesizes[1] +
                                    (sum(cladesizes[1:(nclades - 1)]) +
                                       (cladesizes[nclades] - 1)/2))/2
-      if(widths) attr(node, "width") <- attr(node, "width") + attr(node, "midpoint")
       attr(node, "leaf") <- NULL
     }else{
       attr(node, "members") <- 1
@@ -56,13 +46,12 @@ remidpoint <- function(x, widths = FALSE){
     }
     return(node)
   }
-  settreeattr <- function(tree, widths = FALSE){
-    tree <- setnodeattr(tree, widths = widths)
-    if(is.list(tree)) tree[] <- lapply(tree, settreeattr, widths = widths)
+  settreeattr <- function(tree){
+    tree <- setnodeattr(tree)
+    if(is.list(tree)) tree[] <- lapply(tree, settreeattr)
     return(tree)
   }
-  if(widths) attr(x, "width") <- 1
-  x <- settreeattr(x, widths = widths)
+  x <- settreeattr(x)
   #x <- setnodeattr(x)
   if(isdendro) class(x) <- "dendrogram"
   return(x)

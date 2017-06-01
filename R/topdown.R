@@ -82,6 +82,8 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
   hashes <- attr(M, "hashes")
   kcounts <- attr(M, "kcounts") # NULL if not weighted
   seqlengths <- attr(M, "seqlengths")
+  if(is.null(rownames(M))) rownames(M) <- paste0("S", 1:nrow(M))
+  labs <- rownames(M)
   nuseq <- sum(!duplicates)
   M <- M[!duplicates, ] # removes attrs
   #seqlengths <- sapply(x[!duplicates], length)
@@ -167,16 +169,37 @@ topdown <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
     tree <- reposition(tree)
     tree <- ultrametricize(tree)
   }
-  reduplicate <- function(node, pointers){
-    attr(node, "sequences") <- which(pointers %in% attr(node, "sequences"))
-    return(node)
+  if(any(duplicates)){
+    reduplicate <- function(node, pointers){
+      attr(node, "sequences") <- which(pointers %in% attr(node, "sequences"))
+      if(is.leaf(node)){
+        lams <- length(attr(node, "sequences"))
+        if(lams > 1){
+          labs <- attr(node, "label")
+          hght <- attr(node, "height")
+          seqs <- attr(node, "sequences")
+          node <- vector(mode = "list", length = lams)
+          attr(node, "height") <- hght
+          attr(node, "sequences") <- seqs
+          for(i in 1:lams){
+            node[[i]] <- seqs[i]
+            attr(node[[i]], "height") <- hght
+            attr(node[[i]], "label") <- labs[i]
+            attr(node[[i]], "sequences") <- seqs[i]
+            attr(node[[i]], "leaf") <- TRUE
+          }
+        }
+      }
+      return(node)
+    }
+    tree <- dendrapply(tree, reduplicate, pointers)
+    tree <- remidpoint(tree)
   }
-  if(any(duplicates)) tree <- dendrapply(tree, reduplicate, pointers)
   label <- function(node, labs){
     if(is.leaf(node)) attr(node, "label") <- labs[attr(node, "sequences")]
     return(node)
   }
-  tree <- dendrapply(tree, label, labs = rownames(M))
+  tree <- dendrapply(tree, label, labs = labs)
   return(tree)
 }
 ################################################################################
