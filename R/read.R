@@ -181,12 +181,6 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   # now convert to dendrogram
   attr(res, "class") <- "dendrogram"
   res <- reposition(res)
-  # min.height <- min(unlist(dendrapply(res, attr, "height")))
-  # reposition <- function(y, min.height){ # y is a dendrogram
-  #   attr(y, "height") <- attr(y, "height") - min.height
-  #   y
-  # }
-  # res <- dendrapply(res, reposition, min.height = min.height)
   fixnames <- function(y){
     if(!(is.list(y))){
       attr(y, "label") <- gsub("unnamedleaf", "", attr(y, "label"))

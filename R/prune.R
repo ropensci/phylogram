@@ -51,11 +51,13 @@ prune <- function(tree, pattern, invert = FALSE, untag = FALSE){
     }
     return(node)
   }
-  prune1 <- function(tree, pattern, invert = FALSE){
-    if(is.list(tree)){
-      tree[] <- lapply(tree, collapse, pattern = pattern, invert = invert)
-      tree[] <- lapply(tree, prune1, pattern = pattern, invert = invert)
-    }
+  collapser <- function(tree, pattern, invert = FALSE){
+    tree <- collapse(tree, pattern = pattern, invert = invert)
+    if(is.list(tree)) tree[] <- lapply(tree, collapser, pattern = pattern, invert = invert)
+    # if(is.list(tree)){
+    #   tree[] <- lapply(tree, collapse, pattern = pattern, invert = invert)
+    #   tree[] <- lapply(tree, collapser, pattern = pattern, invert = invert)
+    # }
     return(tree)
   }
   fixmembers <- function(tree){
@@ -80,12 +82,6 @@ prune <- function(tree, pattern, invert = FALSE, untag = FALSE){
   }
   repeat{
     condemnedleaves <- grepd(pattern, tree, invert = invert)
-    # condemnedleaves <- grepl(pattern, unlist(dendrapply(tree, function(e) attr(e, "label"))))
-    # if(invert) condemnedleaves <- !condemnedleaves
-    # if(all(condemnedleaves)) {
-    #   return(structure(list(), class = "dendrogram", members = 0, height = 0))
-    # }
-    # if(!any(condemnedleaves)) break
     if(!condemnedleaves) break
     if(length(tree) == 1){
       if(!is.null(attr(tree, "label"))){
@@ -94,14 +90,21 @@ prune <- function(tree, pattern, invert = FALSE, untag = FALSE){
         if(hit) return(structure(list(), class = "dendrogram", members = 0, height = 0))
       }
     }
-    tree <- prune1(tree, pattern = pattern, invert = invert)
+    tree <- collapser(tree, pattern = pattern, invert = invert)
     tree <- dendrapply(tree, fixmembers)
-    tree <- collapse(tree, pattern = pattern, invert = invert)
   }
   if(length(tree) == 0) return(NULL)
-  newick <- write.dendrogram(tree)
-  if(invert & untag) newick <- gsub(pattern, "", newick)
-  tree <- read.dendrogram(text = newick)
+  if(length(tree) == 1 & is.list(tree)) tree <- tree[[1]]
+  if(invert & untag){
+    untagnode <- function(node, tag){
+      if(!is.null(attr(node, "label"))){
+        attr(node, "label") <- gsub(tag, "", attr(node, "label"))
+      }
+      return(node)
+    }
+    tree <- dendrapply(tree, untagnode, tag = pattern)
+  }
+  tree <- remidpoint(tree)
   return(tree)
 }
 

@@ -176,7 +176,8 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
               max(seeds) <= nseq,
               min(seeds) > 0)
   }
-  hashes <- sapply(x, function(s) paste(openssl::md5(as.vector(s))))
+  hashes <- .digest(x, simplify = TRUE)
+  # hashes <- sapply(x, function(s) paste(openssl::md5(as.vector(s))))
   duplicates <- duplicated(hashes)
   nuseq <- sum(!duplicates)
   if(any(duplicates)){
