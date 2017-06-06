@@ -240,7 +240,8 @@
       }else if(mode(s) == "integer"){
         s <- sapply(s, as.raw)
       }else if(mode(s) == "numeric"){
-        stop("Can't digest numeric vectors")
+        s <- unlist(sapply(s, function(a) charToRaw(paste(round(a, 4)))), use.names = FALSE)
+        #stop("Can't digest numeric vectors")
       }
     }
     return(paste(openssl::md5(as.vector(s))))

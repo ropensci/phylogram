@@ -4,17 +4,12 @@
 \alias{topdown}
 \title{Top down phylogenetic trees.}
 \usage{
-topdown(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
-  weighted = TRUE)
+topdown(x, k = 5, residues = NULL, gap = "-", ...)
 }
 \arguments{
 \item{x}{a list or matrix of sequences, possibly an object of class
 \code{"DNAbin"} or \code{"AAbin"}. Alternatively can be an object of class
-\code{mbed}.}
-
-\item{seeds}{an integer vector indicating which sequences should be used as
-seeds for the clustering procedure (see details section).
-If NULL the seeds are randomly selected from the input sequence list.}
+\code{kcounts}.}
 
 \item{k}{integer representing the the k-mer size to be used for calculating
 the distance matrix.}
@@ -30,9 +25,8 @@ recommended unless the sequence list is a "DNAbin" or "AAbin" object.}
 (if applicable). Ignored for \code{"DNAbin"} or \code{"AAbin"} objects.
 Defaults to "-" otherwise.}
 
-\item{weighted}{logical indicating whether the edge lengths in the
-tree should correspond to the degree of relatedness
-between the sequences. Defaults to TRUE (slower).}
+\item{...}{further arguments to be passed to \code{kmeans} (not including
+\code{centers}).}
 }
 \value{
 an object of class \code{"dendrogram"}.
@@ -63,14 +57,15 @@ This function creates phylogenetic trees by successively splitting
 ## Cluster the woodmouse dataset from the ape package
 library(ape)
 data(woodmouse)
-woodmouse <- woodmouse[, 47:962] ## trim gappy ends
-ambigs <- apply(woodmouse, 2, function(v) as.raw(240) \%in\% v)
-woodmouse <- woodmouse[, !ambigs] ## trim gappy ends
+## trim gappy ends for global alignment
+woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
+## build tree divisively
 set.seed(999)
 woodmouse.tree <- topdown(woodmouse)
+## plot tree
 op <- par(no.readonly = TRUE)
 par(mar = c(5, 2, 4, 8) + 0.1)
-plot(woodmouse.tree, main = "Woodmouse tree", horiz = TRUE)
+plot(woodmouse.tree, main = "Woodmouse phylogeny", horiz = TRUE)
 par(op)
 }
 }

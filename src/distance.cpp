@@ -36,7 +36,7 @@ NumericMatrix kcountDNA(List x, int k = 5){
   for(int i = 0; i < nseq; i++){
     RawVector seqi = VECTOR_ELT(x, i);
     seqlens[i] = seqi.size();
-    for(int j = 0; j < seqlens[i] - k; j++){
+    for(int j = 0; j < seqlens[i] - k + 1; j++){
       for(int l = 0; l < k; l++){
         kmer[l] = seqi[j + l];
         knownbase[l] = (seqi[j + l] & tmp[13]) == tmp[13];

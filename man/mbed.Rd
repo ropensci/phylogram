@@ -9,7 +9,8 @@ mbed(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
 }
 \arguments{
 \item{x}{a matrix of aligned sequences or a list of unaligned sequences.
-Accepted modes are "character" and "raw" (for "DNAbin" and "AAbin" objects).}
+Accepted modes are "character" and "raw" (the latter is for "DNAbin"
+and "AAbin" objects).}
 
 \item{seeds}{optional integer vector indicating which sequences should
 be used as the seed sequences. If \code{seeds = NULL} a set of
@@ -59,11 +60,15 @@ This function deals with ambiguities by assigning counts proportionally.
   used is that of Edgar (2004).
 }
 \examples{
-  ## embed the woodmouse dataset from the ape package
   library(ape)
   data(woodmouse)
-  woodmouse.mbed <- mbed(woodmouse)
-  woodmouse.mbed
+  ## randomly select three sequences as seeds
+  set.seed(999)
+  seeds <- sample(1:15, size = 3)
+  ## embed the woodmouse dataset in three dimensions
+  woodmouse.mbed <- mbed(woodmouse, seeds = seeds, k = 5)
+  ## print the distance matrix without attributes
+  print(woodmouse.mbed[,], digits = 2)
 }
 \references{
 Blackshields G, Sievers F, Shi W, Wilm A, Higgins DG (2010) Sequence embedding

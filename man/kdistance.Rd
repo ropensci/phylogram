@@ -4,12 +4,12 @@
 \alias{kdistance}
 \title{K-mer distance matrix computation.}
 \usage{
-kdistance(x, k = 5, measure = "EDGAR04", residues = NULL, gap = "-",
-  ...)
+kdistance(x, k = 5, method = "edgar", residues = NULL, gap = "-", ...)
 }
 \arguments{
 \item{x}{a matrix of aligned sequences or a list of unaligned sequences.
-Accepted modes are "character" and "raw" (for "DNAbin" and "AAbin" objects).}
+Accepted modes are "character" and "raw" (the latter is
+for "DNAbin" and "AAbin" objects).}
 
 \item{k}{integer representing the k-mer size to be used for calculating
 the distance matrix. Defaults to 5. Note that high values of k
@@ -17,12 +17,13 @@ may be slow to compute and use a lot of memory due to the large numbers
 of calculations required, particularly when the residue alphabet is
 also large.}
 
-\item{measure}{a character string giving the k-mer distance measure
-to be used. Currently the available options are \code{"EDGAR04"} (default;
-see Edgar (2004) for details) and \code{"YANG08"} (the euclidean
-distance measure described in Yang and Zhang (2008)).}
+\item{method}{a character string giving the k-mer distance measure
+to be used. Currently the available options are \code{"edgar"} (default;
+see Edgar (2004) for details) and the standard methods avaialable for
+the base function "dist" ("euclidean", "maximum", "manhattan", "canberra",
+"binary" and "minkowski").}
 
-\item{residues}{either NULL (default; emitted residues are automatically
+\item{residues}{either NULL (default; the residue alphabet is automatically
 detected from the sequences), a case sensitive character vector
 specifying the residue alphabet, or one of the character strings
 "RNA", "DNA", "AA", "AMINO". Note that the default option can be slow for
@@ -48,12 +49,13 @@ this function computes the N x N k-mer distance matrix,
 }
 \examples{
   ## compute the k-mer distance for the woodmouse dataset in the ape package
-  ## with a k-mer size of 4
+  ## with a k-mer size of 5
   library(ape)
   data(woodmouse)
-  woodmouse <- woodmouse[, 47:962] ## trim gappy ends for true global alignment
-  woodmouse.dist <- kdistance(woodmouse, k = 4)
-  ## compute and plot the UPGMA tree
+  ## trim gappy ends for global alignment
+  woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
+  woodmouse.dist <- kdistance(woodmouse, k = 5)
+  ## cluster and plot UPGMA tree
   woodmouse.tree <- as.dendrogram(hclust(woodmouse.dist, "average"))
   plot(woodmouse.tree)
 }
@@ -61,10 +63,6 @@ this function computes the N x N k-mer distance matrix,
 Edgar RC (2004) Local homology recognition and distance measures in
   linear time using compressed amino acid alphabets.
   \emph{Nucleic Acids Research}, \strong{32}, 380-385.
-
-  Yang K, Zhang L (2008) Performance comparison between k-tuple distance
-  and four model-based distances in phylogenetic tree reconstruction.
-  \emph{Nucleic Acids Research}, \strong{36}, e33.
 }
 \seealso{
 \code{\link{mbed}} for leaner distance matrices
