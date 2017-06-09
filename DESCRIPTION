@@ -1,15 +1,16 @@
 Package: phylogram
 Type: Package
-Title: View, edit and publish phylogenetic trees in R
+Title: Dendrograms for evolutionary analysis
 Version: 0.0.0.9000
 Authors@R: person("Shaun", "Wilkinson", role = c("aut", "cre"),
                      email = "shaunpwilkinson@gmail.com")
-Description: Contains functions for reading, viewing and editing phylogenetic
-    trees as deeply nested lists using R's 'dendrogram' object type. This enables
-    users to perform both top-down and bottom-up recursive tree operations such
-    as splitting and neighbor joining. For compatibility with other programs and
-    packages, trees can be imported and exported in the 'Newick' 
-    (a.k.a. 'New Hampshire') text format.
+Description: Contains functions for importing and exporting dendrogram 
+    objects in the Newick parenthetic text format, as well as several 
+    functions for command-line tree manipulation. 
+    With an emphasis on speed and computational efficiency, 
+    the package also includes a suite of tools for rapidly computing 
+    distance matrices and building large trees using fast alignment-free 
+    k-mer counting and divisive clustering techniques.
 License: GPL-3
 LazyData: TRUE
 URL: http://github.com/shaunpwilkinson/phylogram

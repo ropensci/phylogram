@@ -142,9 +142,7 @@ topdown <- function(x, k = 5, residues = NULL, gap = "-", ...){
       node <- vector(mode = "list", length = 2)
       attributes(node) <- tmpattr
       attr(node, "leaf") <- NULL
-      # attr(node, "avdist") <- sqrt(sum(abs(km$centers[1,] - km$centers[2,])^2))/mean(apply(km$centers, 1, sum))
       attr(node, "avdist") <- sqrt(sum(abs(km$centers[1,] - km$centers[2,])^2))
-      #euclidian dist between the two centers , TODO denom could be calc'd more efficiently / passed
       for(i in 1:2){
         node[[i]] <- 1
         attr(node[[i]], "height") <- attr(node, "height") - 1

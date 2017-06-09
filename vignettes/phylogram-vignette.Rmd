@@ -1,5 +1,5 @@
 ---
-title: "The 'phylogram' package for evolutionary tree development in R"
+title: "The 'phylogram' package for developing evolutionary trees with R"
 author: "Shaun Wilkinson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -24,11 +24,11 @@ parenthetic text format, as well as several functions for command-line
 tree manipulation.
 With an emphasis on speed and computational efficiency, **phylogram** also 
 includes a suite of tools for rapidly computing distance matrices and 
-building very large trees using fast alignment-free k-mer counting and 
-sequence embedding techniques.
-We hope that this will make R's powerful nested-list architecture more 
-accessible to evolutionary biologists, and facilitate the analysis 
-of large sequence datasets.
+building large trees using fast alignment-free k-mer counting and 
+divisive clustering techniques.
+This package makes R's powerful nested-list architecture more 
+accessible to evolutionary biologists, and facilitates the analysis 
+of very large sequence datasets.
 
 
 ## Introduction
@@ -42,13 +42,10 @@ These packages typically employ a tree structure known as the
 "phylo" object, whose primary element is an integer matrix 
 with one row for each edge in the graph, 
 and two columns giving the indices of the connecting nodes. 
-Other list elements may include edge lengths (weights), labels, and 
-the identity of the root node if applicable. 
 
-An alternative tree structure is the "dendrogram" object, produced using the 
-`as.dendrogram` function in the **stats** package [@R2017].
+An alternative tree structure is the "dendrogram" object, generated 
+using the `as.dendrogram` function in the **stats** package [@R2017].
 Rather than a matrix of edges, a dendrogram is a heirarchical list 
-(or a simple length-1 vector if the object is a single terminal leaf node). 
 These 'lists of lists' can be deeply nested, with the limit depending on 
 the C stack size (settable with `options("expressions")`).
 A useful feature of this representation is its modularity, whereby the 
@@ -58,7 +55,7 @@ way that standard lists are, which in addition to the inbuilt
 editing functions such as `cut` and `merge`, 
 facilitates intuitive command-line tree manipulation. 
 An especially powerful feature of this object type is that tree 
-manipulation operations can be carried out recursively 
+editing operations can be carried out recursively 
 using fast inbuilt functions in the "apply" family such as `dendrapply` 
 and `lapply`. 
 
@@ -129,8 +126,8 @@ plot(x, yaxt = "n")
 
 As demonstrated in this example, manually setting attributes on dendrogram
 objects can be rather tedious, motivating the development of functions 
-automating the generation and manipulation of tree 
-structures of this type.
+automating the generation and manipulation of these tree 
+structures.
 
 
 ## The 'phylogram' package
@@ -152,15 +149,15 @@ The Newick (a.k.a. New Hampshire) parenthetic text
 format [@felsensteinnewick] is a universal phylogenetic tree 
 representation that is compatible with most tree-editing software. 
 The **phylogram** package features the text parser `read.dendrogram`
-which reads a character string or text files in the Newick
-format and generates a "dendrogram" object.
+that reads a character string or text files in the Newick
+format and generates a dendrogram object.
 This function supports weighted edges, labels with special metacharacters 
 (provided they are enclosed in single quotation marks), comments 
 (enclosed in square brackets; ignored by the parser), 
 multifuricating nodes, and both rooted and unrooted trees.
-The current version of this package ignores inner-node labels; however, 
+This package currently ignores inner-node labels; however, 
 the addition of "label" attributes for non-leaf 
-dendrogram nodes will be available in a future release.
+dendrogram nodes will be available in a future version
 Objects of class "dendrogram" can be exported as 
 Newick-style parenthetic text using the function 
 `write.dendrogram`.
@@ -190,14 +187,14 @@ and a valid file path is passed to the function.
 
 
 ### Distance matrix computation
-The `kdistance` function computes a fast, alignment-free distance matrix 
-using k-mer counting, and returns an object of class "dist". 
+The **phylogram** package features the function `kdistance` that computes a fast, 
+alignment-free distance matrix by counting k-mers, returning an object of class "dist". 
 Breifly, all *k*-letter words are enumerated by sliding 
 a window of length *k* along the sequences, and the abundance of each k-mer (e.g. 
 the $4^3$ possible DNA 3-mers AAA, AAC, AAG, ..., TTT) in each sequence is 
-used to calculate the pairwise distances.
+used to calculate the pairwise distances. 
 The default distance metric used by `kdistance` is the 
-k-mer (k-tuple) distance measure outlined by Edgar [-@edgar2004local].
+k-mer (k-tuple) distance measure outlined in Edgar [-@edgar2004local].
 For two DNA sequences $a$ and $b$ the fractional common k-mer count over the 
 $4^k$ possible words of length $k$ is calculated as:
 
@@ -220,14 +217,13 @@ d = \frac{log(0.1 + F) - log(1.1)}{log(0.1)} \tag{2}
 \end{equation}
 $$
 
-### Sequence embedding
-The `kdistance` operation has time and memory complexity $O(n^2)$ 
-(where $n$ is the number of sequences), and thus can 
-quickly become computationally infeasible for more than ~ 10,000 sequences.
+For *n* sequences, the `kdistance` operation has time and memory 
+complexity $O(n^2)$ and thus can become computationally infeasible 
+when the sequence set is large (i.e. more than ~ 10,000 sequences).
 As such, the **phylogram** package also offers the function `mbed`, that 
 only computes the distances from each sequence to a smaller (or equal) 
-sized subset of 'seed' sequences (the default number of seeds is 
-$log_2(n)^2$ as suggested by Blackshields et al. [-@blackshields2010sequence]).
+sized subset of 'seed' sequences [@blackshields2010sequence]. 
+As suggested by the authors the default number of seeds is $log_2(n)^2$.
  
 DNA and amino acid sequences can be passed to `kdistance` and `mbed` 
 either as unaligned lists or aligned matrices, preferably in either 
@@ -254,22 +250,22 @@ Michaux et al. [-@michaux2003mitochondrial].
 While the **phylogram** distance functions do not require sequences to 
 be aligned, this example will enable us to compare our k-mer distances
 with the traditional alignment-reliant distances produced by 
-`ape::dist.dna`. First, load the woodmouse dataset and view the first few 
-rows and columns as follows:
+`ape::dist.dna`. First, load the woodmouse dataset as follows:
 
 ```{r}
 library(ape)
 data(woodmouse)
+## view the first few rows and columns 
 ape::as.character.DNAbin(woodmouse[1:5, 1:5])
 ```
 
 
 This is a semi-global ('glocal') alignment featuring some 
 incomplete sequences, with unknown characters represented by 
-the ambiguity code "n" (e.g. No305). To 
-avoid artificially inflating the distances between these partial sequences
-and the others, we first trim the gappy ends by subsetting 
-the 'true' global alignment (the **ape** function `dist.dna` 
+the ambiguity code "n" (e.g. No305). 
+To avoid artificially inflating the distances between these partial 
+sequences and the others, we first trim the gappy ends by subsetting 
+the 'true' global alignment (note that the **ape** function `dist.dna` 
 also removes columns with ambiguity codes prior to distance computation 
 by default ).
 
@@ -277,16 +273,16 @@ by default ).
 woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
 ```
 
-The following code computes the full $n \times n$ distance matrix and the 
-embedded distance matrix with three randomly selected seed sequences, 
-both using a k-mer size of 5.
+The following code computes the full $n \times n$ distance matrix, and the 
+embedded distances of each sequence to three randomly selected seed sequences. 
+In both cases the k-mer size is set to 5.
 
 ```{r}
 ### Compute the full distance matrix and print the first few rows and columns
 woodmouse.kdist <- phylogram::kdistance(woodmouse, k = 5)
 print(as.matrix(woodmouse.kdist)[1:7, 1:7], digits = 2)
 
-### Compute the embedded distance matrix and print
+### Output the embedded distance matrix
 set.seed(999)
 seeds <- sample(1:15, size = 3)
 woodmouse.mbed <- phylogram::mbed(woodmouse, seeds = seeds, k = 5)
@@ -313,11 +309,11 @@ et al. 2011), and other recursive operations such as
 classification tree learning.
 
 #### Example 4: Reconstruct a phylogenetic tree for the woodmouse data 
-In this example we will compare the fast and efficient top-down 
+In this example we will compare the fast top-down 
 method with standard neighbor-joining 
 trees constructed from full distance matrices computed using both the 
 alignment-free k-mer distance and the Kimura [-@kimura1980simple] 
-distance measure as featured in the examples in the **ape** package.
+distance as featured in the **ape** package examples.
 
 ```{r, out.width='700px', out.height='550px', dpi=500}
 ### set out plotting panes
@@ -343,10 +339,11 @@ tree2 <- ape::ladderize(tree2)
 plot(tree2, font = 1, cex = 1, 
      main = "Neighbor-joining tree with\nk-mer distance matrix (k=5)")
 
-### (3) topdown tree with no distance matrix computation
+### (3) topdown tree without distance matrix
 set.seed(999)
-# tree3 <- phylogram::topdown(woodmouse, seeds = seeds, weighted = TRUE)
-tree3 <- phylogram::topdown(woodmouse, k = 5)
+# higher values of nstart (number of random starts; passed to kmeans) 
+# tend to give better accuracy but at a computational cost
+tree3 <- phylogram::topdown(woodmouse, k = 5, nstart = 20)
 ### sort nodes by size
 tree3 <- phylogram::ladder(tree3)
 tree3 <- phylogram::reposition(tree3, shift = 0.005)
@@ -363,7 +360,7 @@ par(op)
 The neighbor-joining and the top-down trees are relatively 
 congruent regardless of the distance measure used, suggesting comparable 
 accuracy in this example. When the sequence set is large 
-the divisive (topdown) method builds trees orders of magnitude faster than 
+the divisive (top-down) method builds trees orders of magnitude faster than 
 traditional alignment and distance matrix-based methods, since computation 
 time and memory use increasing linearly rather than quadratically with *n*.
 
@@ -401,7 +398,7 @@ the **ggplot2** [@Wickam2009] and **ggdendro** [@deVries2016] packages.
 Moreover, there are several advanced plotting options for "phylo" objects in 
 the **ape** package [@paradis2004ape], made accessible for dendrogram objects 
 here *via* the Newick import/export functions `read.dendrogram` and `write.dendrogram`. 
-With the extensive tree visualization options already available, 
+Given the extensive tree visualization options already available, 
 we elected not to include any additional plotting functions in the **phylogram** package. 
 
 
