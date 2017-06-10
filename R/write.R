@@ -1,16 +1,15 @@
-#' Write a dendrogram object to parenthetic text.
+#' Export a dendrogram object to text.
 #'
-#' \code{write.dendrogram} writes a dendrogram object to a text file
-#'   in Newick (New Hampshire) format.
+#' This function writes a dendrogram object to Newick-style parenthetic text.
 #'
 #' @param x an object of class \code{"dendrogram"}.
 #' @param file a character string naming a file or connection to write the
 #'   output to. If no file path is specified or \code{file = ""} the result
-#'   will be printed to the console.
-#' @param append a logical value indicating whether the output should be
+#'   is printed to the console.
+#' @param append logical indicating whether the output should be
 #'   appended to the file. If \code{append = FALSE} the contents of the
 #'   file will be overwritten (the default setting).
-#' @param edges a logical value indicating whether edge weights should be
+#' @param edges logical indicating whether edge weights should be
 #'   included in the output string.
 #' @param ... further arguments to be passed to \code{format}. Used to
 #'   specify the numbering style of the edge weights (if edges = TRUE).
@@ -20,9 +19,15 @@
 #'   package performs a similar operation for \code{"phylo"}
 #'   and \code{"multiPhylo"} objects.
 #' @examples
-#'   arrests.hclust <- hclust(dist(USArrests[1:6,]), "average")
-#'   arrests.dendro <- as.dendrogram(arrests.hclust)
-#'   write.dendrogram(arrests.dendro, digits = 3)
+#'   ## build and export tree for the woodmouse data (ape package)
+#'   library(ape)
+#'   data(woodmouse)
+#'   ## trim gappy ends for global alignment
+#'   woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
+#'   ## build topdown tree
+#'   set.seed(999)
+#'   x <- topdown(woodmouse, nstart = 20)
+#'   write.dendrogram(x, edges = TRUE)
 #'
 ################################################################################
 write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){
@@ -89,6 +94,4 @@ write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){
     cat(res, file = file, append = append, sep = "\n")
   }
 }
-
-
-
+################################################################################

@@ -10,18 +10,17 @@ ultrametricize(x)
 \item{x}{an object of class \code{"dendrogram"}.}
 }
 \value{
-returns an object of class \code{"dendrogram"}.
+Returns an object of class \code{"dendrogram"}.
 }
 \description{
 This is a simple function that sets the 'height' attributes of
-  all leaf nodes to  zero.
+  all leaf nodes to zero to aid vizualization.
 }
 \examples{
-  newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
-  dendro <- read.dendrogram(text = newick)
-  plot(dendro, horiz = TRUE)
-  dendro <- ultrametricize(dendro)
-  plot(dendro, horiz = TRUE)
+  x <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);")
+  plot(x, horiz = TRUE)
+  x <- ultrametricize(x)
+  plot(x, horiz = TRUE)
 }
 \author{
 Shaun Wilkinson

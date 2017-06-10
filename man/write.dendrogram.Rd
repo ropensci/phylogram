@@ -2,7 +2,7 @@
 % Please edit documentation in R/write.R
 \name{write.dendrogram}
 \alias{write.dendrogram}
-\title{Write a dendrogram object to parenthetic text.}
+\title{Export a dendrogram object to text.}
 \usage{
 write.dendrogram(x, file = "", append = FALSE, edges = TRUE, ...)
 }
@@ -11,26 +11,31 @@ write.dendrogram(x, file = "", append = FALSE, edges = TRUE, ...)
 
 \item{file}{a character string naming a file or connection to write the
 output to. If no file path is specified or \code{file = ""} the result
-will be printed to the console.}
+is printed to the console.}
 
-\item{append}{a logical value indicating whether the output should be
+\item{append}{logical indicating whether the output should be
 appended to the file. If \code{append = FALSE} the contents of the
 file will be overwritten (the default setting).}
 
-\item{edges}{a logical value indicating whether edge weights should be
+\item{edges}{logical indicating whether edge weights should be
 included in the output string.}
 
 \item{...}{further arguments to be passed to \code{format}. Used to
 specify the numbering style of the edge weights (if edges = TRUE).}
 }
 \description{
-\code{write.dendrogram} writes a dendrogram object to a text file
-  in Newick (New Hampshire) format.
+This function writes a dendrogram object to Newick-style parenthetic text.
 }
 \examples{
-  arrests.hclust <- hclust(dist(USArrests[1:6,]), "average")
-  arrests.dendro <- as.dendrogram(arrests.hclust)
-  write.dendrogram(arrests.dendro, digits = 3)
+  ## build and export tree for the woodmouse data (ape package)
+  library(ape)
+  data(woodmouse)
+  ## trim gappy ends for global alignment
+  woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
+  ## build topdown tree
+  set.seed(999)
+  x <- topdown(woodmouse, nstart = 20)
+  write.dendrogram(x, edges = TRUE)
 
 }
 \seealso{

@@ -94,17 +94,16 @@ reposition <- function(x, shift = "reset"){
 #' Make dendrogram ultrametric.
 #'
 #' This is a simple function that sets the 'height' attributes of
-#'   all leaf nodes to  zero.
+#'   all leaf nodes to zero to aid vizualization.
 #'
 #' @param x an object of class \code{"dendrogram"}.
-#' @return returns an object of class \code{"dendrogram"}.
+#' @return Returns an object of class \code{"dendrogram"}.
 #' @author Shaun Wilkinson
 #' @examples
-#'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
-#'   dendro <- read.dendrogram(text = newick)
-#'   plot(dendro, horiz = TRUE)
-#'   dendro <- ultrametricize(dendro)
-#'   plot(dendro, horiz = TRUE)
+#'   x <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);")
+#'   plot(x, horiz = TRUE)
+#'   x <- ultrametricize(x)
+#'   plot(x, horiz = TRUE)
 ################################################################################
 ultrametricize <- function(x){
   if(!(inherits(x, "dendrogram"))) stop("x must be a 'dendrogram' object")
