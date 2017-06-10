@@ -12,29 +12,40 @@
 #'   provided in the Newick string should be retained in the returned
 #'   object (defaults to TRUE).
 #' @param ... further arguments to be passed to \code{scan}.
-#' @details There are many varying interpretations of the Newick/
-#'   New Hampshire file format. This function attempts to adhere to
-#'   that outlined by Joe Felsenstein
+#' @details
+#'   There are varying interpretations of the Newick/New Hampshire text format.
+#'   This function tries to adhere to the Felsenstein standard outlined
 #'   \href{http://evolution.genetics.washington.edu/phylip/newicktree.html}{here}.
-#'   Newick strings with labeled inner nodes (for example
-#'   "(B:6.0,(A:5.0,C:3.0,E:4.0)Ancestor1:5.0,D:11.0);")
-#'   are accepted, however the current version removes the inner node
-#'   labels. Comments enclosed in square brackets are also discarded.
-#' @return an object of class \code{"dendrogram"}.
+#'   The function supports weighted edges, labels with special
+#'   metacharacters (enclosed in single quotation marks),
+#'   comments (enclosed in square brackets; ignored by the parser),
+#'   multifuricating nodes, and both rooted and unrooted trees.
+#'   Comments enclosed in square brackets are also discarded.
+#'   Inner-node labels (for example
+#'   "(B:6.0,(A:5.0,C:3.0,E:4.0)Ancestor1:5.0,D:11.0);");
+#'   are also currently ignored; however, the parsing
+#'   of “label” attributes for non-leaf dendrogram nodes will be
+#'   available in a future version.
+#'
+#' @return Returns an object of class \code{"dendrogram"}.
+#'
 #' @author Shaun Wilkinson
+#'
 #' @references
 #'   \url{http://evolution.genetics.washington.edu/phylip/newicktree.html}
 #'   \url{http://evolution.genetics.washington.edu/phylip/newick_doc.html}
+#'
 #' @seealso
 #'   \code{\link{write.dendrogram}} writes an object of
 #'   class \code{"dendrogram"} to a text string.
 #'   The \code{\link[ape]{read.tree}} function in the
 #'   \code{\link[ape]{ape}} package performs a similar operation for objects
 #'   of class \code{"phylo"} and \code{"multiPhylo"}.
+#'
 #' @examples
 #'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
-#'   dendro <- read.dendrogram(text = newick)
-#'   plot(dendro, horiz = TRUE)
+#'   x <- read.dendrogram(text = newick)
+#'   plot(x, horiz = TRUE)
 ################################################################################
 read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   if(!is.null(text)){

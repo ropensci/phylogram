@@ -1,23 +1,32 @@
-#' Reorder tree branches in ladderized format.
+#' Reorder tree branches in ladderized pattern.
 #'
-#' \code{ladder} takes an object of class \code{dendrogram} and ladderizes
-#'   the branches for easier visual interpretation.
+#' This function ladderizes the branches of a \code{dendrogram} object
+#'   to aid in visual interpretation.
 #'
 #' @param x an object of class \code{"dendrogram"}.
 #' @param decreasing logical indicating whether the tree should be
-#'   ladderized upwards (FALSE; default) or downwards (TRUE).
-#' @return an object of class \code{dendrogram}.
-#' @details TBA.
+#'   ladderized upwards or downwards. Defaults to FALSE (downwards).
+#' @return Returns an object of class \code{dendrogram}.
+#' @details This function is the \code{dendrogram} analogue of the
+#'   \code{\link[ape]{ladderize}} function in the \code{\link[ape]{ape}}
+#'   package (Paradis et al 2004, 2012).
 #' @author Shaun Wilkinson
+#' @references
+#'   Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
+#'   and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
+#'
+#'   Paradis E (2012) Analysis of Phylogenetics and Evolution with R
+#'   (Second Edition). Springer, New York.
+#'
 #' @seealso The \code{\link[ape]{ladderize}} function in the
 #'   \code{\link[ape]{ape}} package performs a similar operation for objects
 #'   of class \code{"phylo"}.
+#'
 #' @examples
-#'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
-#'   dendro <- read.dendrogram(text = newick)
-#'   plot(dendro, horiz = TRUE)
-#'   dendro <- ladder(dendro, decreasing = TRUE)
-#'   plot(dendro, horiz = TRUE)
+#'   x <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);")
+#'   plot(x, horiz = TRUE)
+#'   x <- ladder(x, decreasing = TRUE)
+#'   plot(x, horiz = TRUE)
 #'
 ################################################################################
 ladder <- function(x, decreasing = FALSE){
@@ -43,3 +52,4 @@ ladder <- function(x, decreasing = FALSE){
   x <- remidpoint(x)
   return(x)
 }
+################################################################################

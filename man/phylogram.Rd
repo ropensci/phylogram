@@ -61,3 +61,15 @@ A breif description of the primary \pkg{phylogram} functions are
 }
 }
 
+\references{
+Blackshields G, Sievers F, Shi W, Wilm A, Higgins DG (2010) Sequence embedding
+  for fast construction of guide trees for multiple sequence alignment.
+  \emph{Algorithms for Molecular Biology}, \strong{5}, 21.
+
+  Edgar RC (2004) Local homology recognition and distance measures in
+  linear time using compressed amino acid alphabets.
+  \emph{Nucleic Acids Research}, \strong{32}, 380-385.
+
+  Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
+  and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
+}

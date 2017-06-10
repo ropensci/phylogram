@@ -21,26 +21,31 @@ object (defaults to TRUE).}
 \item{...}{further arguments to be passed to \code{scan}.}
 }
 \value{
-an object of class \code{"dendrogram"}.
+Returns an object of class \code{"dendrogram"}.
 }
 \description{
 \code{read.dendrogram} parses a text file or character string in Newick
   (New Hampshire) format and creates an object of class \code{"dendrogram"}.
 }
 \details{
-There are many varying interpretations of the Newick/
-  New Hampshire file format. This function attempts to adhere to
-  that outlined by Joe Felsenstein
+There are varying interpretations of the Newick/New Hampshire text format.
+  This function tries to adhere to the Felsenstein standard outlined
   \href{http://evolution.genetics.washington.edu/phylip/newicktree.html}{here}.
-  Newick strings with labeled inner nodes (for example
-  "(B:6.0,(A:5.0,C:3.0,E:4.0)Ancestor1:5.0,D:11.0);")
-  are accepted, however the current version removes the inner node
-  labels. Comments enclosed in square brackets are also discarded.
+  The function supports weighted edges, labels with special
+  metacharacters (enclosed in single quotation marks),
+  comments (enclosed in square brackets; ignored by the parser),
+  multifuricating nodes, and both rooted and unrooted trees.
+  Comments enclosed in square brackets are also discarded.
+  Inner-node labels (for example
+  "(B:6.0,(A:5.0,C:3.0,E:4.0)Ancestor1:5.0,D:11.0);");
+  are also currently ignored; however, the parsing
+  of “label” attributes for non-leaf dendrogram nodes will be
+  available in a future version.
 }
 \examples{
   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
-  dendro <- read.dendrogram(text = newick)
-  plot(dendro, horiz = TRUE)
+  x <- read.dendrogram(text = newick)
+  plot(x, horiz = TRUE)
 }
 \references{
 \url{http://evolution.genetics.washington.edu/phylip/newicktree.html}

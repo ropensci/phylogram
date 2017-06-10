@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance.R
 \name{mbed}
 \alias{mbed}
-\title{Convert sequences to vectors of distances to \emph{n} seed sequences.}
+\title{Convert sequences to vectors of distances to a subset of seed sequences.}
 \usage{
 mbed(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
   counts = FALSE)
@@ -14,9 +14,9 @@ and "AAbin" objects).}
 
 \item{seeds}{optional integer vector indicating which sequences should
 be used as the seed sequences. If \code{seeds = NULL} a set of
-log(N, 2)^2 non-identical sequences is randomly selected from the
-sequence set (where N is the number of sequences; see Blacksheilds et al.
-2010). Alternatively, if \code{seeds = 'all'} a standard N x N
+log(\emph{n}, 2)^2 non-identical sequences is randomly selected from the
+sequence set (where \emph{n} is the number of sequences; see Blacksheilds et al.
+2010). Alternatively, if \code{seeds = 'all'} a standard \emph{n} * \emph{n}
 distance matrix is computed.}
 
 \item{k}{integer representing the k-mer size to be used for calculating
@@ -38,28 +38,68 @@ Defaults to "-" otherwise.}
 
 \item{counts}{logical indicating whether the (usually large) matrix of
 k-mer counts should be returned as an attribute of the returned
-object. Defaults to FALSE to avoid excessive memory usage.}
+object. Defaults to FALSE.}
 }
 \value{
-returns a N x log(N, 2)^2 matrix of class "mbed" (where N is the
-  number of sequences). The returned
-  object has additional attributes including a the 'seeds' vector and
-  a matrix of k-mer counts with one row for each sequence and 4^k columns.
+Returns a \emph{n} * log(\emph{n}, 2)^2 matrix of class "mbed"
+  (where \emph{n} is the number of sequences). The returned
+  object has class "mbed", and contains additional attributes including an
+  integer vector of 'seed' sequence indices and possibly a matrix of k-mer
+  counts (see\code{\link{kcount}}).
 }
 \description{
-The \code{mbed} function takes a list of sequences and returns a matrix of
-  distances to a subset of seed sequences using the method outlined
-  in Blacksheilds et al. (2010).
+This function computes a matrix of
+  distances from each sequence to a subset of 'seed' sequences using
+  the method outlined in Blacksheilds et al (2010).
 }
 \details{
-This function deals with ambiguities by assigning counts proportionally.
-  For example the motif ACRTG would assign the 5-mers ACATG and ACGTG counts of
-  0.5 each. This algorithm is O N * 4^k in memory and time complexity so can be very
-  slow and memory hungry for larger values of k. Further details of the embedding
-  process can be found in Blacksheilds et al. (2010). The k-mer distance measure
-  used is that of Edgar (2004).
+This function computes a \emph{n} * log(\emph{n}, 2)^2 k-mer distance matrix
+  (where \emph{n} is the number of sequences), returning an object of class
+  \code{"mbed"}. If the number of sequences is less than or equal to 19, the full
+  \emph{n} * \emph{n} distance matrix is produced (since the rounded up value of
+  log(\emph{19}, 2)^2 is 19). Currently the only distance measure supported is
+  that of Edgar (2004).
+
+  For maximum information retention following the embedding process
+  it is generally desirable to select the seed sequences based on their
+  uniqueness, rather than simply selecting a random subset
+  (Blackshields et al. 2010).
+  Hence if 'seeds' is set to NULL (the default setting) the the `mbed`
+  function selects the subset by clustering the sequence set into
+  \emph{t} groups using the k-means algorithm (\emph{k} = \emph{t}),
+  and choosing one representative from each group.
+  Users can alternatively pass an integer vector (as in the above example)
+  to specify the seeds manually. See Blackshields et al (2010) for other
+  seed selection options.
+
+  DNA and amino acid sequences can be passed to the function
+  either as a list of non-aligned sequences or as a matrix of aligned sequences,
+  preferably in the "DNAbin" or "AAbin" raw-byte format
+  (Paradis et al 2004, 2012; see the \code{\link[ape]{ape}} package
+  documentation for more information on these S3 classes).
+  Character sequences are supported; however ambiguity codes may
+  not be recognized or treated appropriately, since raw ambiguity
+  codes are counted according to their underlying residue frequencies
+  (e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT"
+  and 0.5 to that of "ACGGT").
+
+  To minimize computation time when counting longer k-mers (k > 3),
+  amino acid sequences in the raw "AAbin" format are automatically
+  compressed using the Dayhoff-6 alphabet as detailed in Edgar (2004).
+  Note that amino acid sequences will not be compressed if they
+  are supplied as a list of character vectors rather than an "AAbin"
+  object, in which case the k-mer length should be reduced
+  (k < 4) to avoid excessive memory use and computation time.
+
+  Note that agglomerative (bottom-up) tree-building methods
+  such as neighbor-joining and UPGMA depend on a full
+  \emph{n} * \emph{n} distance matrix.
+  See the \code{\link{kdistance}} function for details on computing
+  symmetrical distance matrices.
 }
 \examples{
+  ## compute an embedded k-mer distance matrix for the woodmouse
+  ## dataset (ape package) using a k-mer size of 5
   library(ape)
   data(woodmouse)
   ## randomly select three sequences as seeds
@@ -67,19 +107,27 @@ This function deals with ambiguities by assigning counts proportionally.
   seeds <- sample(1:15, size = 3)
   ## embed the woodmouse dataset in three dimensions
   woodmouse.mbed <- mbed(woodmouse, seeds = seeds, k = 5)
-  ## print the distance matrix without attributes
+  ## print the distance matrix (without attributes)
   print(woodmouse.mbed[,], digits = 2)
 }
 \references{
 Blackshields G, Sievers F, Shi W, Wilm A, Higgins DG (2010) Sequence embedding
   for fast construction of guide trees for multiple sequence alignment.
   \emph{Algorithms for Molecular Biology}, \strong{5}, 21.
+
   Edgar RC (2004) Local homology recognition and distance measures in
   linear time using compressed amino acid alphabets.
   \emph{Nucleic Acids Research}, \strong{32}, 380-385.
+
+  Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
+  and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
+
+  Paradis E (2012) Analysis of Phylogenetics and Evolution with R
+  (Second Edition). Springer, New York.
 }
 \seealso{
-\code{\link{kdistance}} for full N x N distance matrix computation
+\code{\link{kdistance}} for full \emph{n} * \emph{n} distance
+  matrix computation.
 }
 \author{
 Shaun Wilkinson

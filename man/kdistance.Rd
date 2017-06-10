@@ -8,7 +8,7 @@ kdistance(x, k = 5, method = "edgar", residues = NULL, gap = "-", ...)
 }
 \arguments{
 \item{x}{a matrix of aligned sequences or a list of unaligned sequences.
-Accepted modes are "character" and "raw" (the latter is
+Accepted modes are "character" and "raw" (the latter being applicable
 for "DNAbin" and "AAbin" objects).}
 
 \item{k}{integer representing the k-mer size to be used for calculating
@@ -19,7 +19,7 @@ also large.}
 
 \item{method}{a character string giving the k-mer distance measure
 to be used. Currently the available options are \code{"edgar"} (default;
-see Edgar (2004) for details) and the standard methods avaialable for
+see Edgar (2004) for details) and the standard methods available for
 the base function "dist" ("euclidean", "maximum", "manhattan", "canberra",
 "binary" and "minkowski").}
 
@@ -37,25 +37,44 @@ Defaults to "-" otherwise.}
 \item{...}{further arguments to be passed to \code{"as.dist"}.}
 }
 \value{
-a distance matrix of class \code{"dist"}
+an object of class \code{"dist"}.
 }
 \description{
 Computes the matrix of k-mer distances between all pairwise comparisons
   of a set of sequences.
 }
 \details{
-this function computes the N x N k-mer distance matrix,
-  where N is the number of sequences in the dataset.
+This function computes the \emph{n} * \emph{n} k-mer distance matrix
+  (where \emph{n} is the number of sequences), returning an object of class
+  \code{"dist"}. DNA and amino acid sequences can be passed to the function
+  either as a list of non-aligned sequences or as a matrix of aligned sequences,
+  preferably in the "DNAbin" or "AAbin" raw-byte format
+  (Paradis et al 2004, 2012; see the \code{\link[ape]{ape}} package
+  documentation for more information on these S3 classes).
+  Character sequences are supported; however ambiguity codes may
+  not be recognized or treated appropriately, since raw ambiguity
+  codes are counted according to their underlying residue frequencies
+  (e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT"
+  and 0.5 to that of "ACGGT").
+
+  To minimize computation time when counting longer k-mers (k > 3),
+  amino acid sequences in the raw "AAbin" format are automatically
+  compressed using the Dayhoff-6 alphabet as detailed in Edgar (2004).
+  Note that amino acid sequences will not be compressed if they
+  are supplied as a list of character vectors rather than an "AAbin"
+  object, in which case the k-mer length should be reduced
+  (k < 4) to avoid excessive memory use and computation time.
 }
 \examples{
-  ## compute the k-mer distance for the woodmouse dataset in the ape package
-  ## with a k-mer size of 5
+  ## compute a k-mer distance matrix for the woodmouse
+  ## dataset (ape package) using a k-mer size of 5
   library(ape)
   data(woodmouse)
-  ## trim gappy ends for global alignment
+  ### subset global alignment by removing gappy ends
   woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
+  ### compute the distance matrix
   woodmouse.dist <- kdistance(woodmouse, k = 5)
-  ## cluster and plot UPGMA tree
+  ### cluster and plot UPGMA tree
   woodmouse.tree <- as.dendrogram(hclust(woodmouse.dist, "average"))
   plot(woodmouse.tree)
 }
@@ -63,9 +82,16 @@ this function computes the N x N k-mer distance matrix,
 Edgar RC (2004) Local homology recognition and distance measures in
   linear time using compressed amino acid alphabets.
   \emph{Nucleic Acids Research}, \strong{32}, 380-385.
+
+  Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
+  and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
+
+  Paradis E (2012) Analysis of Phylogenetics and Evolution with R
+  (Second Edition). Springer, New York.
 }
 \seealso{
-\code{\link{mbed}} for leaner distance matrices
+\code{\link{kcount}} for k-mer counting, and
+  \code{\link{mbed}} for leaner distance matrices
 }
 \author{
 Shaun Wilkinson

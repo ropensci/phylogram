@@ -2,17 +2,15 @@
 % Please edit documentation in R/topdown.R
 \name{topdown}
 \alias{topdown}
-\title{Top down phylogenetic trees.}
+\title{Top down (divisive) tree-building.}
 \usage{
 topdown(x, k = 5, residues = NULL, gap = "-", ...)
 }
 \arguments{
 \item{x}{a list or matrix of sequences, possibly an object of class
-\code{"DNAbin"} or \code{"AAbin"}. Alternatively can be an object of class
-\code{kcounts}.}
+\code{"DNAbin"} or \code{"AAbin"}.}
 
-\item{k}{integer representing the the k-mer size to be used for calculating
-the distance matrix.}
+\item{k}{integer. The k-mer size required.}
 
 \item{residues}{either NULL (default; emitted residues are automatically
 detected from the sequences), a case sensitive character vector
@@ -29,39 +27,59 @@ Defaults to "-" otherwise.}
 \code{centers}).}
 }
 \value{
-an object of class \code{"dendrogram"}.
+Returns an object of class \code{"dendrogram"}.
 }
 \description{
 Create phylogenetic trees by successively splitting the sequence dataset
   into smaller and smaller subsets.
 }
 \details{
-This function creates phylogenetic trees by successively splitting
-  the sequence dataset into smaller and smaller subsets (a.k.a. recursive
-  partitioning). This is a "top down" approach to tree-building, as
-  opposed to agglomerative "bottom up" methods such as neighbour joining
-  and UPGMA. It is useful for large sequence sets (> 20, 000) since the
-  usual N x N distance matrix is not required (where N is the number of
-  sequences). Instead, an N x log(N, 2)^2
-  distance matrix is first derived from the input sequences using the
-  \code{\link{mbed}} function of Blacksheilds et al. 2010 and the k-mer
-  distance measure of (Edgar 2004). This is done by first selecting
-  log(N, 2)^2 'seed' sequences (selected randomly by default)
-  and calculating the distance of each sequence to each of the seeds.
-  This requires substantially less memory and time than N x N matrix
-  computation. The 'embedded' sequences
-  are then split recursively using the k-means (clusters = 2) technique.
+This function creates a tree by successively splitting
+  the dataset into smaller and smaller subsets (recursive
+  partitioning). This is a divisive, or "top-down" approach to tree-building,
+  as opposed to agglomerative "bottom-up" methods such as neighbour joining
+  and UPGMA. It is particularly useful for large large datasets with many sequences
+  (\emph{n} > 10, 000) since the need to compute a large \emph{n} * \emph{n}
+  distance matrix is circumvented.
+  Instead, a matrix of k-mer counts is computed, and split recursively row-wise
+  using a k-means clustering algorithm (\emph{k} = 2). This effectively reduces
+  the time and memory complexity from quadratic to linear, while generally
+  maintaining comparable accuracy.
+
+  If a more accurate tree is required, users can increase the value
+  of \code{nstart} passed to \code{kmeans} \emph{via} the \code{...} argument.
+  While this can increase computation time, it can improve tree accuracy
+  considerably.
+
+  DNA and amino acid sequences can be passed to the function either as
+  a list of non-aligned sequences or a matrix of aligned sequences,
+  preferably in the "DNAbin" or "AAbin" raw-byte format
+  (Paradis et al 2004, 2012; see the \code{\link[ape]{ape}} package
+  documentation for more information on these S3 classes).
+  Character sequences are supported; however ambiguity codes may
+  not be recognized or treated appropriately, since raw ambiguity
+  codes are counted according to their underlying residue frequencies
+  (e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT"
+  and 0.5 to that of "ACGGT").
+
+  To minimize computation time when counting longer k-mers (k > 3),
+  amino acid sequences in the raw "AAbin" format are automatically
+  compressed using the Dayhoff-6 alphabet as detailed in Edgar (2004).
+  Note that amino acid sequences will not be compressed if they
+  are supplied as a list of character vectors rather than an "AAbin"
+  object, in which case the k-mer length should be reduced
+  (k < 4) to avoid excessive memory use and computation time.
 }
 \examples{
 \dontrun{
-## Cluster the woodmouse dataset from the ape package
+## Cluster the woodmouse dataset (ape package)
 library(ape)
 data(woodmouse)
 ## trim gappy ends for global alignment
 woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
 ## build tree divisively
 set.seed(999)
-woodmouse.tree <- topdown(woodmouse)
+woodmouse.tree <- topdown(woodmouse, nstart = 20)
 ## plot tree
 op <- par(no.readonly = TRUE)
 par(mar = c(5, 2, 4, 8) + 0.1)
@@ -70,13 +88,18 @@ par(op)
 }
 }
 \references{
-Blackshields G, Sievers F, Shi W, Wilm A, Higgins DG (2010) Sequence embedding
-  for fast construction of guide trees for multiple sequence alignment.
-  \emph{Algorithms for Molecular Biology}, \strong{5}, 21.
-
-  Edgar RC (2004) Local homology recognition and distance measures in
+Edgar RC (2004) Local homology recognition and distance measures in
   linear time using compressed amino acid alphabets.
   \emph{Nucleic Acids Research}, \strong{32}, 380-385.
+
+  Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
+  and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
+
+  Paradis E (2012) Analysis of Phylogenetics and Evolution with R
+  (Second Edition). Springer, New York.
+}
+\seealso{
+\code{\link{kcount}}
 }
 \author{
 Shaun Wilkinson

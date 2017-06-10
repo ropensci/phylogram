@@ -24,7 +24,7 @@ parenthetic text format, as well as several functions for command-line
 tree manipulation.
 With an emphasis on speed and computational efficiency, **phylogram** also 
 includes a suite of tools for rapidly computing distance matrices and 
-building large trees using fast alignment-free k-mer counting and 
+building large trees using fast alignment-free *k*-mer counting and 
 divisive clustering techniques.
 This package makes R's powerful nested-list architecture more 
 accessible to evolutionary biologists, and facilitates the analysis 
@@ -152,12 +152,12 @@ The **phylogram** package features the text parser `read.dendrogram`
 that reads a character string or text files in the Newick
 format and generates a dendrogram object.
 This function supports weighted edges, labels with special metacharacters 
-(provided they are enclosed in single quotation marks), comments 
+(enclosed in single quotation marks), comments 
 (enclosed in square brackets; ignored by the parser), 
 multifuricating nodes, and both rooted and unrooted trees.
 This package currently ignores inner-node labels; however, 
 the addition of "label" attributes for non-leaf 
-dendrogram nodes will be available in a future version
+dendrogram nodes will be available in a future version.
 Objects of class "dendrogram" can be exported as 
 Newick-style parenthetic text using the function 
 `write.dendrogram`.
@@ -187,15 +187,16 @@ and a valid file path is passed to the function.
 
 
 ### Distance matrix computation
-The **phylogram** package features the function `kdistance` that computes a fast, 
-alignment-free distance matrix by counting k-mers, returning an object of class "dist". 
+The **phylogram** package features the function `kcount` for counting 
+*k*-mers within a sequence or set of sequences, and `kdistance` for computing 
+a fast, alignment-free *k*-mer distance matrix. 
 Breifly, all *k*-letter words are enumerated by sliding 
-a window of length *k* along the sequences, and the abundance of each k-mer (e.g. 
+a window of length *k* along the sequences, and the abundance of each *k*-mer (e.g. 
 the $4^3$ possible DNA 3-mers AAA, AAC, AAG, ..., TTT) in each sequence is 
 used to calculate the pairwise distances. 
 The default distance metric used by `kdistance` is the 
-k-mer (k-tuple) distance measure outlined in Edgar [-@edgar2004local].
-For two DNA sequences $a$ and $b$ the fractional common k-mer count over the 
+*k*-mer (*k*-tuple) distance measure outlined in Edgar [-@edgar2004local].
+For two DNA sequences $a$ and $b$ the fractional common *k*-mer count over the 
 $4^k$ possible words of length $k$ is calculated as:
 
 $$
@@ -204,7 +205,7 @@ F  = \sum\limits_{\tau}
 \frac{min (n_a(\tau), n_b (\tau))}{min (L_a , L_b ) - k + 1} \tag{1}
 \end{equation}
 $$
-where $\tau$ represents each possible k-mer, 
+where $\tau$ represents each possible *k*-mer, 
 $n_a(\tau)$ and $n_b(\tau)$ 
 are the number of times $\tau$ appears in each sequence, 
 $k$ is the tuple length and $L$ is the sequence length.
@@ -223,34 +224,27 @@ when the sequence set is large (i.e. more than ~ 10,000 sequences).
 As such, the **phylogram** package also offers the function `mbed`, that 
 only computes the distances from each sequence to a smaller (or equal) 
 sized subset of 'seed' sequences [@blackshields2010sequence]. 
-As suggested by the authors the default number of seeds is $log_2(n)^2$.
+As suggested by the authors, the default number of seeds is $log_2(n)^2$.
  
-DNA and amino acid sequences can be passed to `kdistance` and `mbed` 
-either as unaligned lists or aligned matrices, preferably in either 
-the "DNAbin" or "AAbin" raw-byte format (see the **ape** package 
-documentation for more information on these S3 classes). 
-Character vectors are supported; however ambiguity 
-codes may not be recognized or treated approprately, since raw ambiguity 
+DNA and amino acid sequences can be passed to `kcount`, `kdistance` and `mbed` 
+either as a list of non-aligned sequences or a matrix of aligned sequences, 
+preferably in either the "DNAbin" or "AAbin" raw-byte format (see the 
+**ape** package documentation for more information on these S3 classes). 
+Character sequences are supported; however ambiguity 
+codes may not be recognized or treated appropriately, since raw ambiguity 
 codes are counted according to their underlying residue frequencies
 (e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT" 
 and 0.5 to that of "ACGGT"). 
-To minimize computation time when counting longer k-mers (k > 3), 
-amino acid sequences in the raw "AAbin" format are automatically compressed using 
-the Dayhoff-6 alphabet as detailed in Edgar [-@edgar2004local]. 
-Note that amino acid sequences will not be compressed if 
-they are supplied as a list of character vectors rather than an "AAbin" object, 
-in which case the k-mer length should be reduced 
-(k < 4) to avoid excessive memory use and computation time. 
 
-#### Example 3: Compute k-mer distance matrices for the woodmouse dataset
+#### Example 3: Compute *k*-mer distance matrices for the woodmouse dataset
 The **ape** package contains a dataset of 15 aligned mitochondrial 
 cytochrome *b* gene DNA seqences from the woodmouse *Apodemus sylvaticus*. 
 This is a subset of those originally published in 
 Michaux et al. [-@michaux2003mitochondrial].
 While the **phylogram** distance functions do not require sequences to 
-be aligned, this example will enable us to compare our k-mer distances
+be aligned, this example will enable us to compare our *k*-mer distances
 with the traditional alignment-reliant distances produced by 
-`ape::dist.dna`. First, load the woodmouse dataset as follows:
+`ape::dist.dna`. First, load the dataset as follows:
 
 ```{r}
 library(ape)
@@ -275,7 +269,7 @@ woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
 
 The following code computes the full $n \times n$ distance matrix, and the 
 embedded distances of each sequence to three randomly selected seed sequences. 
-In both cases the k-mer size is set to 5.
+In both cases the *k*-mer size is set to 5.
 
 ```{r}
 ### Compute the full distance matrix and print the first few rows and columns
@@ -296,7 +290,7 @@ To avoid excessive time and memory use when building large trees
 (e.g. *n* > 10,000), the **phylogram** package features the 
 function `topdown` for divisive tree building free of both alignment 
 and distance matrix computation. 
-This function first generates a matrix of k-mer counts, 
+This function first generates a matrix of *k*-mer counts, 
 and then recursively partitions the sequences using successive 
 k-means clustering (*k* = 2). 
 While this method may not necessarily 
@@ -312,7 +306,7 @@ classification tree learning.
 In this example we will compare the fast top-down 
 method with standard neighbor-joining 
 trees constructed from full distance matrices computed using both the 
-alignment-free k-mer distance and the Kimura [-@kimura1980simple] 
+alignment-free *k*-mer distance and the Kimura [-@kimura1980simple] 
 distance as featured in the **ape** package examples.
 
 ```{r, out.width='700px', out.height='550px', dpi=500}

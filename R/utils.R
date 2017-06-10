@@ -10,21 +10,22 @@
 #'   depending on the class of the input object.
 #' @author Shaun Wilkinson
 #' @examples
-#'   futuredendro <- list("A", list("B", "C"))
-#'   attr(futuredendro[[1]], "leaf") <- TRUE
-#'   attr(futuredendro[[2]][[1]], "leaf") <- TRUE
-#'   attr(futuredendro[[2]][[2]], "leaf") <- TRUE
-#'   attr(futuredendro[[1]], "label") <- "A"
-#'   attr(futuredendro[[2]][[1]], "label") <- "B"
-#'   attr(futuredendro[[2]][[2]], "label") <- "C"
-#'   attr(futuredendro, "height") <- 1
-#'   attr(futuredendro[[1]], "height") <- 0
-#'   attr(futuredendro[[2]], "height") <- 0.5
-#'   attr(futuredendro[[2]][[1]], "height") <- 0
-#'   attr(futuredendro[[2]][[2]], "height") <- 0
-#'   dendro <- remidpoint(futuredendro)
-#'   class(dendro) <- "dendrogram"
-#'   plot(dendro, horiz = TRUE)
+#'   ## manually create a small dendrogram with three members, A, B and C
+#'   x <- list("A", list("B", "C"))
+#'   attr(x[[1]], "leaf") <- TRUE
+#'   attr(x[[2]][[1]], "leaf") <- TRUE
+#'   attr(x[[2]][[2]], "leaf") <- TRUE
+#'   attr(x[[1]], "label") <- "A"
+#'   attr(x[[2]][[1]], "label") <- "B"
+#'   attr(x[[2]][[2]], "label") <- "C"
+#'   attr(x, "height") <- 1
+#'   attr(x[[1]], "height") <- 0
+#'   attr(x[[2]], "height") <- 0.5
+#'   attr(x[[2]][[1]], "height") <- 0
+#'   attr(x[[2]][[2]], "height") <- 0
+#'   x <- remidpoint(x)
+#'   class(x) <- "dendrogram"
+#'   plot(x, horiz = TRUE)
 ################################################################################
 remidpoint <- function(x){
   isdendro <- inherits(x, "dendrogram")
@@ -57,24 +58,24 @@ remidpoint <- function(x){
   return(x)
 }
 ################################################################################
-#' Reset dendrogram height to zero.
+#' Reset dendrogram height attributes.
 #'
 #' \code{reposition} is a helper function used for manually creating
 #'   \code{"dendrogram"} objects from nested lists. The function
-#'   recursively assigns the necessary 'height' attributes at each node
-#'   so that the height of the furthest leaf from the root node is zero.
+#'   recursively reassigns the 'height' attributes at each node by
+#'   a given constant.
 #'
 #' @param x an object of class \code{"dendrogram"}.
 #' @param shift either the character string "reset" (shift the graph so that
 #'   the height of the farthest leaf from the root is zero), or a numeric value
 #'   giving the amount to shift the graph along the primary axis.
-#' @return returns an object of class \code{"dendrogram"}.
+#' @return Returns an object of class \code{"dendrogram"}.
 #' @author Shaun Wilkinson
 #' @examples
-#'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
-#'   dendro <- read.dendrogram(text = newick)
-#'   dendro <- reposition(dendro)
-#'   plot(dendro, horiz = TRUE)
+#'   x <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);")
+#'   plot(x, horiz = TRUE)
+#'   x <- reposition(x)
+#'   plot(x, horiz = TRUE)
 ################################################################################
 reposition <- function(x, shift = "reset"){
   if(!(inherits(x, "dendrogram"))) stop("Input object must be of class

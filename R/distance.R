@@ -1,17 +1,16 @@
-#' Count k-mers.
+#' K-mer counting.
 #'
-#' Count all k-letter words in a sequence or set of sequences by
-#'   sliding a window of length k over the sequence(s).
+#' Count all k-letter words in a sequence or set of sequences
+#'   with a sliding window of length k.
 #'
 #' @param x a matrix of aligned sequences, a list of unaligned sequences,
 #'   or a vector representing a single sequence.
-#'   Accepted modes are "character" and "raw" (the latter is
+#'   Accepted modes are "character" and "raw" (the latter being applicable
 #'   for "DNAbin" and "AAbin" objects).
 #' @param k integer representing the k-mer size. Defaults to 5.
-#'   Note that high values of k
-#'   may be slow to compute and use a lot of memory due to the large numbers
-#'   of calculations required, particularly when the residue alphabet is
-#'   also large.
+#'   Note that high values of k may be slow to compute and use a lot of
+#'   memory due to the large numbers of calculations required,
+#'   particularly when the residue alphabet is also large.
 #' @param residues either NULL (default; the residue alphabet is automatically
 #'   detected from the sequences), a case sensitive character vector
 #'   specifying the residue alphabet, or one of the character strings
@@ -19,26 +18,60 @@
 #'   large lists of character vectors. Specifying the residue alphabet is therefore
 #'   recommended unless x is a "DNAbin" or "AAbin" object.
 #' @param gap the character used to represent gaps in the alignment matrix
-#'   (if applicable). Ignored for \code{"DNAbin"} or \code{"AAbin"} objects.
+#'   (if applicable). Ignored for \code{"DNAbin"} and \code{"AAbin"} objects.
 #'   Defaults to "-" otherwise.
-#' @return a matrix of k-mer counts with one row for each sequence and n^k
-#'   columns (where n is the size of the residue alphabet and k is the
-#'   k-mer size)
-#' @details TBA
+#' @return Returns a matrix of k-mer counts with one row for each sequence
+#'   and \emph{n}^\emph{k} columns (where \emph{n} is the size of the
+#'   residue alphabet and \emph{k} is the k-mer size)
+#' @details
+#'   This function computes a vector or matrix of k-mer counts
+#'   from a sequence or set of sequences using a sliding a window of length k.
+#'   DNA and amino acid sequences can be passed to the function either as
+#'   a list of non-aligned sequences or a matrix of aligned sequences,
+#'   preferably in the "DNAbin" or "AAbin" raw-byte format
+#'   (Paradis et al 2004, 2012; see the \code{\link[ape]{ape}} package
+#'   documentation for more information on these S3 classes).
+#'   Character sequences are supported; however ambiguity codes may
+#'   not be recognized or treated appropriately, since raw ambiguity
+#'   codes are counted according to their underlying residue frequencies
+#'   (e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT"
+#'   and 0.5 to that of "ACGGT").
+#'
+#'   To minimize computation time when counting longer k-mers (k > 3),
+#'   amino acid sequences in the raw "AAbin" format are automatically
+#'   compressed using the Dayhoff-6 alphabet as detailed in Edgar (2004).
+#'   Note that amino acid sequences will not be compressed if they
+#'   are supplied as a list of character vectors rather than an "AAbin"
+#'   object, in which case the k-mer length should be reduced
+#'   (k < 4) to avoid excessive memory use and computation time.
+#'
 #' @author Shaun Wilkinson
-#' @references TBA
-#' @seealso \code{\link{kdistance}} for distance matrices based on k-mer counting
+#'
+#' @references
+#'   Edgar RC (2004) Local homology recognition and distance measures in
+#'   linear time using compressed amino acid alphabets.
+#'   \emph{Nucleic Acids Research}, \strong{32}, 380-385.
+#'
+#'   Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
+#'   and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
+#'
+#'   Paradis E (2012) Analysis of Phylogenetics and Evolution with R
+#'   (Second Edition). Springer, New York.
+#'
+#' @seealso \code{\link{kdistance}} for k-mer distance matrix computation.
+#'
 #' @examples
-#'   ## compute a matrix of k-mer counts for the woodmouse data (ape package)
-#'   ## with a k-mer size of 3
+#'   ## compute a matrix of k-mer counts for the woodmouse
+#'   ## data (ape package) using a k-mer size of 3
 #'   library(ape)
 #'   data(woodmouse)
 #'   x <- kcount(woodmouse, k = 3)
-#'   ## 15 row matrix with 64 columns for nucleotide 3-mers AAA, AAC, ... TTT
-#'   ##
+#'   x
+#'   ## 64 columns for nucleotide 3-mers AAA, AAC, ... TTT
 #'   ## convert to AAbin object and repeat the operation
 #'   y <- kcount(ape::trans(woodmouse, 2), k = 2)
-#'   ## 15 row matrix with 400 columns for amino acid 2-mers AA, AB, ... , YY
+#'   y
+#'   ## 400 columns for amino acid 2-mers AA, AB, ... , YY
 ################################################################################
 kcount <- function(x, k = 5, residues = NULL, gap = "-"){
   DNA <- .isDNA(x)
@@ -103,7 +136,7 @@ kcount <- function(x, k = 5, residues = NULL, gap = "-"){
 #'   of a set of sequences.
 #'
 #' @param x a matrix of aligned sequences or a list of unaligned sequences.
-#'   Accepted modes are "character" and "raw" (the latter is
+#'   Accepted modes are "character" and "raw" (the latter being applicable
 #'   for "DNAbin" and "AAbin" objects).
 #' @param k integer representing the k-mer size to be used for calculating
 #'   the distance matrix. Defaults to 5. Note that high values of k
@@ -112,7 +145,7 @@ kcount <- function(x, k = 5, residues = NULL, gap = "-"){
 #'   also large.
 #' @param method a character string giving the k-mer distance measure
 #'   to be used. Currently the available options are \code{"edgar"} (default;
-#'   see Edgar (2004) for details) and the standard methods avaialable for
+#'   see Edgar (2004) for details) and the standard methods available for
 #'   the base function "dist" ("euclidean", "maximum", "manhattan", "canberra",
 #'   "binary" and "minkowski").
 #' @param residues either NULL (default; the residue alphabet is automatically
@@ -125,25 +158,56 @@ kcount <- function(x, k = 5, residues = NULL, gap = "-"){
 #'   (if applicable). Ignored for \code{"DNAbin"} or \code{"AAbin"} objects.
 #'   Defaults to "-" otherwise.
 #' @param ... further arguments to be passed to \code{"as.dist"}.
-#' @return a distance matrix of class \code{"dist"}
-#' @details this function computes the N x N k-mer distance matrix,
-#'   where N is the number of sequences in the dataset.
+#' @return an object of class \code{"dist"}.
+#'
+#' @details
+#'   This function computes the \emph{n} * \emph{n} k-mer distance matrix
+#'   (where \emph{n} is the number of sequences), returning an object of class
+#'   \code{"dist"}. DNA and amino acid sequences can be passed to the function
+#'   either as a list of non-aligned sequences or as a matrix of aligned sequences,
+#'   preferably in the "DNAbin" or "AAbin" raw-byte format
+#'   (Paradis et al 2004, 2012; see the \code{\link[ape]{ape}} package
+#'   documentation for more information on these S3 classes).
+#'   Character sequences are supported; however ambiguity codes may
+#'   not be recognized or treated appropriately, since raw ambiguity
+#'   codes are counted according to their underlying residue frequencies
+#'   (e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT"
+#'   and 0.5 to that of "ACGGT").
+#'
+#'   To minimize computation time when counting longer k-mers (k > 3),
+#'   amino acid sequences in the raw "AAbin" format are automatically
+#'   compressed using the Dayhoff-6 alphabet as detailed in Edgar (2004).
+#'   Note that amino acid sequences will not be compressed if they
+#'   are supplied as a list of character vectors rather than an "AAbin"
+#'   object, in which case the k-mer length should be reduced
+#'   (k < 4) to avoid excessive memory use and computation time.
+#'
 #' @author Shaun Wilkinson
+#'
 #' @references
 #'   Edgar RC (2004) Local homology recognition and distance measures in
 #'   linear time using compressed amino acid alphabets.
 #'   \emph{Nucleic Acids Research}, \strong{32}, 380-385.
 #'
-#' @seealso \code{\link{mbed}} for leaner distance matrices
+#'   Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
+#'   and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
+#'
+#'   Paradis E (2012) Analysis of Phylogenetics and Evolution with R
+#'   (Second Edition). Springer, New York.
+#'
+#' @seealso \code{\link{kcount}} for k-mer counting, and
+#'   \code{\link{mbed}} for leaner distance matrices
+#'
 #' @examples
-#'   ## compute the k-mer distance for the woodmouse dataset in the ape package
-#'   ## with a k-mer size of 5
+#'   ## compute a k-mer distance matrix for the woodmouse
+#'   ## dataset (ape package) using a k-mer size of 5
 #'   library(ape)
 #'   data(woodmouse)
-#'   ## trim gappy ends for global alignment
+#'   ### subset global alignment by removing gappy ends
 #'   woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
+#'   ### compute the distance matrix
 #'   woodmouse.dist <- kdistance(woodmouse, k = 5)
-#'   ## cluster and plot UPGMA tree
+#'   ### cluster and plot UPGMA tree
 #'   woodmouse.tree <- as.dendrogram(hclust(woodmouse.dist, "average"))
 #'   plot(woodmouse.tree)
 ################################################################################
@@ -172,11 +236,11 @@ kdistance <- function(x, k = 5, method = "edgar", residues = NULL,
   return(as.dist(d, ... = ...))
 }
 ################################################################################
-#' Convert sequences to vectors of distances to \emph{n} seed sequences.
+#' Convert sequences to vectors of distances to a subset of seed sequences.
 #'
-#' The \code{mbed} function takes a list of sequences and returns a matrix of
-#'   distances to a subset of seed sequences using the method outlined
-#'   in Blacksheilds et al. (2010).
+#' This function computes a matrix of
+#'   distances from each sequence to a subset of 'seed' sequences using
+#'   the method outlined in Blacksheilds et al (2010).
 #'
 #' @param x a matrix of aligned sequences or a list of unaligned sequences.
 #'   Accepted modes are "character" and "raw" (the latter is for "DNAbin"
@@ -188,9 +252,9 @@ kdistance <- function(x, k = 5, method = "edgar", residues = NULL,
 #'   also large.
 #' @param seeds optional integer vector indicating which sequences should
 #'   be used as the seed sequences. If \code{seeds = NULL} a set of
-#'   log(N, 2)^2 non-identical sequences is randomly selected from the
-#'   sequence set (where N is the number of sequences; see Blacksheilds et al.
-#'   2010). Alternatively, if \code{seeds = 'all'} a standard N x N
+#'   log(\emph{n}, 2)^2 non-identical sequences is randomly selected from the
+#'   sequence set (where \emph{n} is the number of sequences; see Blacksheilds et al.
+#'   2010). Alternatively, if \code{seeds = 'all'} a standard \emph{n} * \emph{n}
 #'   distance matrix is computed.
 #' @param residues either NULL (default; emitted residues are automatically
 #'   detected from the sequences), a case sensitive character vector
@@ -203,27 +267,80 @@ kdistance <- function(x, k = 5, method = "edgar", residues = NULL,
 #'   Defaults to "-" otherwise.
 #' @param counts logical indicating whether the (usually large) matrix of
 #'   k-mer counts should be returned as an attribute of the returned
-#'   object. Defaults to FALSE to avoid excessive memory usage.
-#' @return returns a N x log(N, 2)^2 matrix of class "mbed" (where N is the
-#'   number of sequences). The returned
-#'   object has additional attributes including a the 'seeds' vector and
-#'   a matrix of k-mer counts with one row for each sequence and 4^k columns.
-#' @details This function deals with ambiguities by assigning counts proportionally.
-#'   For example the motif ACRTG would assign the 5-mers ACATG and ACGTG counts of
-#'   0.5 each. This algorithm is O N * 4^k in memory and time complexity so can be very
-#'   slow and memory hungry for larger values of k. Further details of the embedding
-#'   process can be found in Blacksheilds et al. (2010). The k-mer distance measure
-#'   used is that of Edgar (2004).
+#'   object. Defaults to FALSE.
+#' @return Returns a \emph{n} * log(\emph{n}, 2)^2 matrix of class "mbed"
+#'   (where \emph{n} is the number of sequences). The returned
+#'   object has class "mbed", and contains additional attributes including an
+#'   integer vector of 'seed' sequence indices and possibly a matrix of k-mer
+#'   counts (see\code{\link{kcount}}).
+#' @details
+#'   This function computes a \emph{n} * log(\emph{n}, 2)^2 k-mer distance matrix
+#'   (where \emph{n} is the number of sequences), returning an object of class
+#'   \code{"mbed"}. If the number of sequences is less than or equal to 19, the full
+#'   \emph{n} * \emph{n} distance matrix is produced (since the rounded up value of
+#'   log(\emph{19}, 2)^2 is 19). Currently the only distance measure supported is
+#'   that of Edgar (2004).
+#'
+#'   For maximum information retention following the embedding process
+#'   it is generally desirable to select the seed sequences based on their
+#'   uniqueness, rather than simply selecting a random subset
+#'   (Blackshields et al. 2010).
+#'   Hence if 'seeds' is set to NULL (the default setting) the the `mbed`
+#'   function selects the subset by clustering the sequence set into
+#'   \emph{t} groups using the k-means algorithm (\emph{k} = \emph{t}),
+#'   and choosing one representative from each group.
+#'   Users can alternatively pass an integer vector (as in the above example)
+#'   to specify the seeds manually. See Blackshields et al (2010) for other
+#'   seed selection options.
+#'
+#'   DNA and amino acid sequences can be passed to the function
+#'   either as a list of non-aligned sequences or as a matrix of aligned sequences,
+#'   preferably in the "DNAbin" or "AAbin" raw-byte format
+#'   (Paradis et al 2004, 2012; see the \code{\link[ape]{ape}} package
+#'   documentation for more information on these S3 classes).
+#'   Character sequences are supported; however ambiguity codes may
+#'   not be recognized or treated appropriately, since raw ambiguity
+#'   codes are counted according to their underlying residue frequencies
+#'   (e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT"
+#'   and 0.5 to that of "ACGGT").
+#'
+#'   To minimize computation time when counting longer k-mers (k > 3),
+#'   amino acid sequences in the raw "AAbin" format are automatically
+#'   compressed using the Dayhoff-6 alphabet as detailed in Edgar (2004).
+#'   Note that amino acid sequences will not be compressed if they
+#'   are supplied as a list of character vectors rather than an "AAbin"
+#'   object, in which case the k-mer length should be reduced
+#'   (k < 4) to avoid excessive memory use and computation time.
+#'
+#'   Note that agglomerative (bottom-up) tree-building methods
+#'   such as neighbor-joining and UPGMA depend on a full
+#'   \emph{n} * \emph{n} distance matrix.
+#'   See the \code{\link{kdistance}} function for details on computing
+#'   symmetrical distance matrices.
+#'
 #' @author Shaun Wilkinson
+#'
 #' @references
 #'   Blackshields G, Sievers F, Shi W, Wilm A, Higgins DG (2010) Sequence embedding
 #'   for fast construction of guide trees for multiple sequence alignment.
 #'   \emph{Algorithms for Molecular Biology}, \strong{5}, 21.
+#'
 #'   Edgar RC (2004) Local homology recognition and distance measures in
 #'   linear time using compressed amino acid alphabets.
 #'   \emph{Nucleic Acids Research}, \strong{32}, 380-385.
-#' @seealso \code{\link{kdistance}} for full N x N distance matrix computation
+#'
+#'   Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
+#'   and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
+#'
+#'   Paradis E (2012) Analysis of Phylogenetics and Evolution with R
+#'   (Second Edition). Springer, New York.
+#'
+#' @seealso \code{\link{kdistance}} for full \emph{n} * \emph{n} distance
+#'   matrix computation.
+#'
 #' @examples
+#'   ## compute an embedded k-mer distance matrix for the woodmouse
+#'   ## dataset (ape package) using a k-mer size of 5
 #'   library(ape)
 #'   data(woodmouse)
 #'   ## randomly select three sequences as seeds
@@ -231,7 +348,7 @@ kdistance <- function(x, k = 5, method = "edgar", residues = NULL,
 #'   seeds <- sample(1:15, size = 3)
 #'   ## embed the woodmouse dataset in three dimensions
 #'   woodmouse.mbed <- mbed(woodmouse, seeds = seeds, k = 5)
-#'   ## print the distance matrix without attributes
+#'   ## print the distance matrix (without attributes)
 #'   print(woodmouse.mbed[,], digits = 2)
 ################################################################################
 mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",

@@ -2,26 +2,28 @@
 % Please edit documentation in R/prune.R
 \name{prune}
 \alias{prune}
-\title{Remove tree nodes with regular expression pattern matching.}
+\title{Remove tree nodes by regular expression pattern matching.}
 \usage{
-prune(tree, pattern, invert = FALSE, untag = FALSE)
+prune(tree, pattern, invert = FALSE, untag = FALSE, ...)
 }
 \arguments{
 \item{tree}{an object of class \code{"dendrogram"}.}
 
-\item{pattern}{a regular expression provided as a single string variable.}
+\item{pattern}{a regular expression.}
 
 \item{invert}{logical indicating whether the branches whose labels match
 the regular expression provided in "pattern" should be
-discarded (FALSE; default) or kept.
-Nodes with no "label" attributes are ignored.}
+discarded and the others kept (FALSE; default) or vice versa.
+Nodes without "label" attributes are ignored.}
 
 \item{untag}{logical (used only when invert = TRUE). Indicates whether
 the specified pattern should be removed from the branch labels in
 the returned object.}
+
+\item{...}{further arguments to be passed to \code{grepl} and \code{gsub}.}
 }
 \value{
-an object of class \code{"dendrogram"}.
+Returns an object of class \code{"dendrogram"}.
 }
 \description{
 \code{"prune"} takes an object of class \code{"dendrogram"} and
@@ -29,20 +31,25 @@ an object of class \code{"dendrogram"}.
   expression.
 }
 \details{
-TBA.
+This function recursively tests the "label" attribute of each
+  dendrogram node (including non-leaf inner nodes if applicable) for
+  the specified pattern, removing those that register a positive hit.
+  Note that positive matching inner nodes are removed along with all of
+  their sub-nodes, regardless of whether the "label" attributes of the
+  sub-nodes match the pattern.
 }
 \examples{
-  newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
-  dendro <- read.dendrogram(text = newick)
-  plot(dendro, horiz = TRUE)
-  dendro <- prune(dendro, pattern = "^A$")
-  plot(dendro, horiz = TRUE)
+  x <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);")
+  plot(x, horiz = TRUE)
+  x <- prune(x, pattern = "^A$")
+  plot(x, horiz = TRUE)
 
 }
 \seealso{
 The \code{\link[ape]{drop.tip}} function in the
   \code{\link[ape]{ape}} package performs a similar operation for objects
-  of class \code{"phylo"}.
+  of class \code{"phylo"}. See \code{\link{regex}} for help with
+  compiling regular expressions.
 }
 \author{
 Shaun Wilkinson
