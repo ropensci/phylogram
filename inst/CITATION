@@ -1,0 +1,12 @@
+citHeader("To cite phylogram in publications use:")
+
+citEntry(entry = "Manual",
+   title = "The {phylogram} package for developing evolutionary trees with R",
+   author = personList(as.person("Shaun Wilkinson")),
+   url = "https://cran.r-project.org/package=phylogram",
+   year   = "2017",
+   textVersion =
+   paste("Shaun Wilkinson (2017) The 'phylogram' package for developing",
+         "evolutionary trees with R. R package version 0.1.0.",
+         "https://cran.r-project.org/package=phylogram")
+)
