@@ -102,7 +102,6 @@ kcount <- function(x, k = 5, residues = NULL, gap = "-"){
       arity <- if(k > 3) 6 else 20 # compress AA alphabet for high k values
       x <- .encodeAA(x, arity = arity, na.rm = TRUE)
     }else{
-      #residues <- .alphadetect(x, residues = residues, gap = gap)
       arity <- length(residues)
       if(k > 2 & arity >= 20) stop("Unable to calculate distance matrix for
                                large k and large alphabet size. If residues
@@ -368,7 +367,6 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
               min(seeds) > 0)
   }
   hashes <- .digest(x, simplify = TRUE)
-  # hashes <- sapply(x, function(s) paste(openssl::md5(as.vector(s))))
   duplicates <- duplicated(hashes)
   nuseq <- sum(!duplicates)
   if(any(duplicates)){
@@ -427,7 +425,6 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
       seeds <- match(1:nseeds, groups)
     }
     ## LLR algorithm see Blacksheilds et al. 2010
-    # seeds <- sort(sample(seqalongx, size = nseeds))
   }else{
     seeds <- unique(pointers[seeds])
     nseeds <- length(seeds)
@@ -439,10 +436,8 @@ mbed <- function(x, seeds = NULL, k = 5, residues = NULL, gap = "-",
     rownames(tmp) <- catchnames
     colnames(tmp) <- names(x)[seeds]
     tmp[!duplicates, ] <- res
-    #for(i in which(duplicates)) tmp[i, ] <- res[pointers[i], ]
     tmp[duplicates, ] <- res[pointers[duplicates], ]
     res <- tmp
-    # also refll kcounts
     if(counts){
       tmpkc <- matrix(nrow = nseq, ncol = ncol(kcounts))
       rownames(tmpkc) <- catchnames

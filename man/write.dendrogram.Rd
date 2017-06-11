@@ -36,7 +36,6 @@ This function writes a dendrogram object to Newick-style parenthetic text.
   set.seed(999)
   x <- topdown(woodmouse, nstart = 20)
   write.dendrogram(x, edges = TRUE)
-
 }
 \seealso{
 \code{\link{read.dendrogram}} to create a \code{"dendrogram"}

@@ -75,7 +75,7 @@ This function creates a tree by successively splitting
 ## Cluster the woodmouse dataset (ape package)
 library(ape)
 data(woodmouse)
-## trim gappy ends for global alignment
+## trim gappy ends to subset global alignment
 woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
 ## build tree divisively
 set.seed(999)

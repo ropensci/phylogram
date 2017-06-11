@@ -50,11 +50,11 @@ prune <- function(tree, pattern, invert = FALSE, untag = FALSE, ...){
         condemnedleaves[is.na(childnames)] <- FALSE
       }
       condemnedleaf <- match(TRUE, condemnedleaves)
-      # just do one at a time so not to get singleton nodes
+      # just do one at a time to prevent singleton nodes
       if(!is.na(condemnedleaf)){
         tmpattr <- attributes(node) # cache internal node attributes
         node <- node[-condemnedleaf]
-        tmpattr$members <- tmpattr$members - 1 # necessary?
+        tmpattr$members <- tmpattr$members - 1
         attributes(node) <- tmpattr
         if(length(node) == 1) node <- node[[1]] # deletes inner node
       }
@@ -64,10 +64,6 @@ prune <- function(tree, pattern, invert = FALSE, untag = FALSE, ...){
   collapser <- function(tree, pattern, invert = FALSE){
     tree <- collapse(tree, pattern = pattern, invert = invert)
     if(is.list(tree)) tree[] <- lapply(tree, collapser, pattern = pattern, invert = invert)
-    # if(is.list(tree)){
-    #   tree[] <- lapply(tree, collapse, pattern = pattern, invert = invert)
-    #   tree[] <- lapply(tree, collapser, pattern = pattern, invert = invert)
-    # }
     return(tree)
   }
   fixmembers <- function(tree){
@@ -117,6 +113,4 @@ prune <- function(tree, pattern, invert = FALSE, untag = FALSE, ...){
   tree <- remidpoint(tree)
   return(tree)
 }
-
-
-
+################################################################################

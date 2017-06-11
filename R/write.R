@@ -28,7 +28,6 @@
 #'   set.seed(999)
 #'   x <- topdown(woodmouse, nstart = 20)
 #'   write.dendrogram(x, edges = TRUE)
-#'
 ################################################################################
 write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){
   if(!(inherits(x, "dendrogram"))) stop("Input object must be of class
@@ -75,8 +74,7 @@ write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){
   tmp <- paste0(tmp, collapse = "")
   tmp <- gsub(" ", "", tmp)
   tmp <- gsub("edge=\"([-0-9Ee.]+)\"", "edge=\\1", tmp)
-  #for(i in seq_along(xnames)) tmp <- gsub(xnames[i], ynames[i], tmp)
-  tmp2 <- gsub("list", ";", tmp) # needs to be a special single char - alternative?
+  tmp2 <- gsub("list", ";", tmp) # needs to be a special single char
   while(grepl("structure", tmp2)){
     tmp2 <- gsub("structure\\(\"([^\"]*)\",edge=([-0-9Ee.]+)\\)", "\\1:\\2", tmp2)
     tmp2 <- gsub(";\\(([^;\\)]*)\\)", "\"openbracket\\1closebracket\"", tmp2)

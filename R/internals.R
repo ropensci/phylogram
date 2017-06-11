@@ -1,5 +1,6 @@
 # Internal functions.
-# detect residue alphabet
+
+# Detect residue alphabet
 .alphadetect <- function(sequences, residues = NULL, gap = "-",
                          endchar = "?"){
   if(identical(toupper(residues), "RNA")){
@@ -27,6 +28,7 @@
 # Convert a vector in any arity to a decimal integer
 .decimal <- function(x, from) sum(x * from^rev(seq_along(x) - 1))
 
+# Check if object is DNA
 .isDNA <- function(x){
   if(inherits(x, "DNAbin")){
     return(TRUE)
@@ -50,6 +52,7 @@
   }
 }
 
+# Check if object is amino acid sequence
 .isAA <- function(x){
   if(inherits(x, "AAbin")){
     return(TRUE)
@@ -70,6 +73,7 @@
   }
 }
 
+# Remove ambiguous residues from amino acid sequence
 .disambiguateAA <- function(a, probs = rep(0.05, 20), random = TRUE){
   # a is a raw byte in AAbin format
   guide <- as.raw(c(65:90, 42, 45)) #length = 28
@@ -108,7 +112,7 @@
   }else stop("invalid byte for class 'AAbin'")
 }
 
-
+# Convert amino acid sequence to integers
 .encodeAA <- function(x, arity = 20, probs = NULL, random = TRUE, na.rm = FALSE){
   # x is a vector in AAbin format, possibly containing ambiguties
   # arity is an integer, either 20, 22, 24, 26, 27, or 6 (Dayhoff6 compression)
@@ -192,6 +196,7 @@
   if(is.list(x)) lapply(x, fun) else fun(x)
 }
 
+# Convert character sequence to integers
 .encodeCH <- function(x, residues, na.rm = FALSE){
   fun <- function(v, residues, na.rm = FALSE){
     ints <- seq(0, length(residues) - 1)
@@ -203,9 +208,8 @@
   if(is.list(x)) lapply(x, fun, residues, na.rm) else fun(x, residues, na.rm)
 }
 
-
+# Decompose an alignment matrix to a list of non-aligned sequences
 .unalign <- function(x, gap = "-"){
-  #x is a matrix representing an alignment
   DNA <- .isDNA(x)
   AA <- .isAA(x)
   gap <- if(AA) as.raw(45) else if(DNA) as.raw(4) else gap
@@ -232,6 +236,7 @@
   return(res)
 }
 
+# Return MD5 hash
 .digest <- function(x, simplify = TRUE){
   digest1 <- function(s){
     if(mode(s) != "raw"){

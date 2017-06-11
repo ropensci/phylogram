@@ -53,7 +53,6 @@ remidpoint <- function(x){
     return(tree)
   }
   x <- settreeattr(x)
-  #x <- setnodeattr(x)
   if(isdendro) class(x) <- "dendrogram"
   return(x)
 }

@@ -1,13 +1,12 @@
-#' A package for building, editing and publishing phylogenetic trees in R.
+#' Dendrograms for evolutionary analysis.
 #'
-#' The phylogram package contains functions for working with phylogenetic
-#'   trees as deeply nested lists using the \code{\link[stats]{dendrogram}}
-#'   object type.
-#'   This gives users fine-scale control to edit trees recursively
-#'   from the command line.
-#'   For compatibility with other programs and
-#'   packages, trees can be imported and exported
-#'   in the 'Newick' (a.k.a. 'New Hampshire') text format.
+#' The phylogram package contains functions for importing and exporting
+#' dendrogram objects in the Newick parenthetic text format, as well as
+#' several functions for command-line tree manipulation.
+#' With an emphasis on speed and computational efficiency, the package
+#' also includes a suite of tools for rapidly computing distance matrices
+#' and building large trees using fast alignment-free k-mer counting
+#' and divisive clustering techniques.
 #'
 #' @section Functions:
 #' A breif description of the primary \pkg{phylogram} functions are
@@ -23,41 +22,31 @@
 #'   format
 #' }
 #'
-#' @section Tree creation:
+#' @section Tree building:
 #' \itemize{
+#' \item \code{\link{kcount}} tabulates all of the
+#'   k-letter words in a sequence or set of sequence
 #' \item \code{\link{kdistance}} calculates pairwise
 #'   distances between sequences by k-mer counting
 #' \item \code{\link{mbed}} embeds sequences as vectors of distances to a set of
-#'   'seed' sequences (see Blackshields et al. (2010))
+#'   'seed' sequences
 #' \item \code{\link{topdown}} builds a phylogenetic tree by successively
 #'   splitting a set of sequences (recursive partitioning)
 #' }
 #'
 #' @section Tree editing and manipulation:
 #' \itemize{
-#' \item \code{\link{prune}} remove branches from a "dendrogram" object
+#' \item \code{\link{prune}} remove branches from a \code{dendrogram} object
 #'   based on regular expression pattern matching
-#' \item \code{\link{ladder}} reorders the branches of a \code{"dendrogram"}
+#' \item \code{\link{ladder}} reorders the branches of a \code{dendrogram}
 #'   object to aid visualization
 #' \item \code{\link{remidpoint}} recursively sets "midpoint" and "members"
-#'   attributes for a nested list
-#' \item \code{\link{reposition}} shifts a \code{"dendrogram"} object up or
+#'   attributes for a nested list/\code{dendrogram} object
+#' \item \code{\link{reposition}} shifts a \code{dendrogram} object up or
 #'   down (or sideways if plotted horizontally)
 #' \item \code{\link{ultrametricize}} modifies the "height" attributes of the
 #'   nodes such that all leaves terminate at zero
 #' }
-#'
-#' @references
-#'   Blackshields G, Sievers F, Shi W, Wilm A, Higgins DG (2010) Sequence embedding
-#'   for fast construction of guide trees for multiple sequence alignment.
-#'   \emph{Algorithms for Molecular Biology}, \strong{5}, 21.
-#'
-#'   Edgar RC (2004) Local homology recognition and distance measures in
-#'   linear time using compressed amino acid alphabets.
-#'   \emph{Nucleic Acids Research}, \strong{32}, 380-385.
-#'
-#'   Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
-#'   and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
 #'
 #' @docType package
 #' @name phylogram

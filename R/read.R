@@ -88,7 +88,6 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   fun1 <- function(s, has.edges){ # a string, applied to odds
     # (not enclosed in single quotes)
     # Underscore characters outside unquoted labels are converted to blanks.
-    #s <- gsub("_", "", s)
     s <- gsub(" ", "", s)
     # blank leaves are renamed, rectified later with fixnames function
     s <- gsub("\\( *,", "\\(unnamedleaf,", s)
@@ -112,7 +111,9 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
     evens <- seq(from = 2, to = length(tmp), by = 2)
     odds <- seq(from = 1, to = length(tmp), by = 2) # not names in single quotes
     tmp[odds] <- unname(sapply(tmp[odds], fun1, has.edges = has.edges))
-    tmp[evens] <- unname(sapply(tmp[evens], function(s) paste0("'", s, "'", if(has.edges) "" else ":1")))
+    tmp[evens] <- unname(sapply(tmp[evens], function(s){
+      paste0("'", s, "'", if(has.edges) "" else ":1")
+    }))
     tmp <- paste0(tmp, collapse = "")
   }else{
     tmp <- fun1(x, has.edges = has.edges)
@@ -147,12 +148,12 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
     tmp3 <- gsub(paste0("\\(", tojoin, "\\)"), newnodename, tmp3)
     innernodecount <- innernodecount + 1
   }
-  if(!grepl("^[LI][0-9]{6}:([-0-9Ee.]+)$", tmp3)) warning("Incomplete tree parse")
-  #if(length(tree) == 1 & is.list(tree[[1]])) tree <- tree[[1]]
+  if(!grepl("^[LI][0-9]{6}:([-0-9Ee.]+)$", tmp3)) warning("Possibly incomplete tree parse")
   tree <- tree[[1]]
   attr(tree, "edge") <- 0
   # convert nested list to dendrogram object by setting attributes recursvely
-  setnodeattr <- function(x, leafnames){ # x is a nested list with 'edge' attributes, leafnmes is a character vector
+  setnodeattr <- function(x, leafnames){
+    # x is a nested list with 'edge' attributes, leafnames is a character vector
     if(is.list(x)){
       cladesizes <- sapply(x, function(y) length(unlist(y, use.names = FALSE)))
       nclades <- length(cladesizes)

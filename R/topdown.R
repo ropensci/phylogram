@@ -75,7 +75,7 @@
 #' ## Cluster the woodmouse dataset (ape package)
 #' library(ape)
 #' data(woodmouse)
-#' ## trim gappy ends for global alignment
+#' ## trim gappy ends to subset global alignment
 #' woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
 #' ## build tree divisively
 #' set.seed(999)
@@ -88,8 +88,6 @@
 #' }
 ################################################################################
 topdown <- function(x, k = 5, residues = NULL, gap = "-", ...){
-  # seeds = NULL, weighted = TRUE,
-  # first embed the seqs in a N x log(N, 2)^2 distmat as in Blackshields 2010
   DNA <- .isDNA(x)
   AA <- .isAA(x)
   if(DNA) class(x) <- "DNAbin" else if(AA) class(x) <- "AAbin"
@@ -122,7 +120,7 @@ topdown <- function(x, k = 5, residues = NULL, gap = "-", ...){
   attr(tree, "sequences") <- 1:nuseq
   attr(tree, "height") <- 0
   # define recursive splitting functions
-  topdown1 <- function(tree, d){ # d is the mbed matrix
+  topdown1 <- function(tree, d){ # d is the kcount matrix
     tree <- topdown2(tree, d = d)
     if(is.list(tree)) tree[] <- lapply(tree, topdown1, d = d)
     return(tree)
