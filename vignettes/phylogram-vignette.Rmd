@@ -1,11 +1,11 @@
 ---
 title: "The 'phylogram' package for developing evolutionary trees with R"
 author: "Shaun Wilkinson"
-date: "`r Sys.Date()`"
+date: "2017-06-12"
 output: rmarkdown::html_vignette
 bibliography: phylogram.bib
 vignette: >
-  %\VignetteIndexEntry{phylogram introduction}
+  %\VignetteIndexEntry{Introduction to the phylogram package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -45,11 +45,11 @@ and two columns giving the indices of the connecting nodes.
 
 An alternative tree structure is the "dendrogram" object, generated 
 using the `as.dendrogram` function in the **stats** package [@RCoreTeam2015].
-Rather than a matrix of edges, a dendrogram is a heirarchical list 
+Rather than a matrix of edges, a dendrogram is a hierarchical list. 
 These 'lists of lists' can be deeply nested, with the limit depending on 
 the C stack size (settable with `options("expressions")`).
 A useful feature of this representation is its modularity, whereby the 
-subtree of a tree is itself a tree - a dendrogram within a dendrogram. 
+sub tree of a tree is itself a tree - a dendrogram within a dendrogram. 
 This means that dendrogram objects are subsettable in the same 
 way that standard lists are, which in addition to the inbuilt
 editing functions such as `cut` and `merge`, 
@@ -64,7 +64,7 @@ Each node of a dendrogram object has the following mandatory attributes:
 * "height" the position of the node along the vertical axis 
    (assuming the graph is orientated vertically)
 * "midpoint" the horizontal distance of the node from the left-most member 
-   of the subtree (where the horizontal distance between adjacent leaves is 1 unit)
+   of the sub tree (where the horizontal distance between adjacent leaves is 1 unit)
 * "members" the number of terminal leaf nodes belonging to the node 
 * "class" all nodes have the class attribute "dendrogram" 
 
@@ -84,7 +84,7 @@ for each node by setting the attributes "nodePar" and "edgePar".
 #### Example 1: Build a dendrogram object manually
 Consider the simple example of a tree with three members named 
 "A", "B" and "C", where "B" and "C" are more closely related
-to eachother than they are to "A". 
+to each other than they are to "A". 
 An unweighted Newick string for this tree would be *(A,(B,C));*
 We can manually create a dendrogram object for this basic phylogeny
 and plot the tree as follows:
@@ -139,7 +139,7 @@ manipulating and rendering trees for publication.
 A primary focus of the **phylogram** package is to facilitate the assembly 
 of very large trees as quickly and efficiently as possible. This can be 
 achieved with or without a multiple sequence alignment, and with or without
-a matrix of pariwise distances.
+a matrix of pairwise distances.
 These functions are detailed below with examples of their utility.
 
 
@@ -150,7 +150,7 @@ representation that is compatible with most tree-editing software.
 The **phylogram** package features the text parser `read.dendrogram`
 that reads a character string or text files in the Newick
 format and generates a dendrogram object.
-This function supports weighted edges, labels with special metacharacters 
+This function supports weighted edges, labels with special meta-characters 
 (enclosed in single quotation marks), comments 
 (enclosed in square brackets; ignored by the parser), 
 multifuricating nodes, and both rooted and unrooted trees.
@@ -190,7 +190,7 @@ and a valid file path is passed to the function.
 The **phylogram** package features the function `kcount` for counting 
 *k*-mers within a sequence or set of sequences, and `kdistance` for computing 
 a fast, alignment-free *k*-mer distance matrix. 
-Breifly, all *k*-letter words are enumerated by sliding 
+Briefly, all *k*-letter words are enumerated by sliding 
 a window of length *k* along the sequences, and the abundance of each *k*-mer (e.g. 
 the $4^3$ possible DNA 3-mers AAA, AAC, AAG, ..., TTT) in each sequence is 
 used to calculate the pairwise distances. 
@@ -239,7 +239,7 @@ is ignored.
 
 #### Example 3: Compute *k*-mer distance matrices for the woodmouse dataset
 The **ape** package contains a dataset of 15 aligned mitochondrial 
-cytochrome *b* gene DNA seqences from the woodmouse *Apodemus sylvaticus*. 
+cytochrome *b* gene DNA sequences from the woodmouse *Apodemus sylvaticus*. 
 This is a subset of those originally published in 
 Michaux et al. [-@Michaux2003].
 While the **phylogram** distance functions do not require sequences to 
@@ -370,13 +370,13 @@ time and memory use increasing linearly rather than quadratically with *n*.
 
 ### Tree editing/manipulation
 The **phylogram** package features 
-several additional functions to facilite some of the more common 
+several additional functions to facilitate some of the more common 
 manipulation operations.
 Leaf nodes and internal branching nodes can be removed 
 using the function `prune`, which identifies and 
 recursively deletes nodes based on regular expression pattern 
 matching of node "label" attributes.
-To aid vizualization, the function `ladder` rearranges
+To aid visualization, the function `ladder` rearranges
 the tree, sorting nodes by the number of members (analogous to the
 `ladderize ` function in the **ape** package). Another function 
 aiding in tree visualization is `ultrametricize `, which
