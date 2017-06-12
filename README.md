@@ -1,10 +1,5 @@
 # phylogram
 
-[![Build Status](https://travis-ci.org/shaunpwilkinson/phylogram.svg?branch=master)](https://travis-ci.org/shaunpwilkinson/phylogram)
-[![codecov](https://codecov.io/github/shaunpwilkinson/phylogram/branch/master/graphs/badge.svg)](https://codecov.io/github/shaunpwilkinson/phylogram)
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
-
 --------------------------------------------------------------------------------
 
 `phylogram` is an R package for developing evolutionary trees 
