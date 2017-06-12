@@ -57,6 +57,7 @@ dendrogram object using the `read.dendrogram` function
 as follows:
 
 ```R
+library("phylogram")
 newick <- "(A,(B,C));"
 x <- read.dendrogram(text = newick)
 plot(x)
@@ -83,6 +84,7 @@ This following code demonstrates how to build and plot a divisive
 tree using the `woodmouse` data from the ape package:
 
 ```R
+library("phylogram")
 library("ape")
 data(woodmouse)
 x <- topdown(woodmouse, k = 5, nstart = 20)

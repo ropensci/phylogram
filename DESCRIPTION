@@ -26,7 +26,7 @@ Imports:
     stats,
     utils
 Suggests:
-    ape (>= 4.0),
+    ape (>= 3.0),
     knitr,
     rmarkdown,
     testthat
