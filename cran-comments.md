@@ -1,2 +1,1 @@
-
-Submitted to CRAN 2017-06-11.
+Submitted to CRAN 2017-06-12.

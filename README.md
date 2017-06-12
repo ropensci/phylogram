@@ -42,7 +42,7 @@ install.packages("devtools")
 ``` 
 Then install and load the `phylogram` package by running 
 ```R
-devtools::install_github("shaunpwilkinson/phylogram") 
+devtools::install_github("shaunpwilkinson/phylogram", build_vignettes = TRUE) 
 library("phylogram")
 ```
 
@@ -92,19 +92,18 @@ plot(x, horiz = TRUE)
 par(op)
 ```
 These and more examples are available in the package vignette.
+If downloading the package from github, users will need to have 
+LaTeX installed to build the vignette. RStudio recommends 
+[MiKTeX Complete](http://miktex.org/2.9/setup) for Windows and
+[TexLive 2013 Full](http://tug.org/) for Mac OS X and Linux. 
+To view the vignette, run `vignette(package = "phylogram")`
+
 
 ### Help
-An overview of the package with links to the functions can be found by running
+An overview of the package with links to the function documentation can be found by running
 ```R
 ?phylogram
 ```
-
-To build the vignette users will need to have LaTeX installed. RStudio recommends 
-[MiKTeX Complete](http://miktex.org/2.9/setup) for Windows and
-[TexLive 2013 Full](http://tug.org/) for Mac OS X and Linux. To view the vignette,
-run `vignette(package = "phylogram")`
-
-
 If you experience a problem using this package please
 either raise it as an issue on [GitHub](http://github.com/shaunpwilkinson/phylogram/issues) 
 or post it on the [phylogram google group](http://groups.google.com/group/phylogram).

@@ -267,11 +267,17 @@ kdistance <- function(x, k = 5, method = "edgar", residues = NULL,
 #' @param counts logical indicating whether the (usually large) matrix of
 #'   k-mer counts should be returned as an attribute of the returned
 #'   object. Defaults to FALSE.
-#' @return Returns a \emph{n} * log(\emph{n}, 2)^2 matrix of class "mbed"
+#' @return Returns an object of class \code{"mbed"}, whose primary object is
+#'   an \emph{n} * log(\emph{n}, 2)^2 matrix
 #'   (where \emph{n} is the number of sequences). The returned
-#'   object has class "mbed", and contains additional attributes including an
-#'   integer vector of 'seed' sequence indices and possibly a matrix of k-mer
-#'   counts (see\code{\link{kcount}}).
+#'   object contains additional attributes including an
+#'   integer vector of seed sequence indices ("seeds"), a logical vector
+#'   identifying the duplicated sequences ("duplicates"), an integer vector
+#'   giving the matching indices of the non-duplicated sequences ("pointers"),
+#'   a character vector of MD5 digests of the sequences ("hashes"),
+#'   an integer vector of sequence lengths ("seqlengths"), and if
+#'   \code{counts = TRUE}, the matrix of k-mer counts ("kcounts";
+#'   see \code{\link{kcount}} for details).
 #' @details
 #'   This function computes a \emph{n} * log(\emph{n}, 2)^2 k-mer distance matrix
 #'   (where \emph{n} is the number of sequences), returning an object of class

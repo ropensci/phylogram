@@ -28,7 +28,7 @@ building large trees using fast alignment-free *k*-mer counting and
 divisive clustering techniques.
 This package makes R's powerful nested-list architecture more 
 accessible to evolutionary biologists, and facilitates the analysis 
-of very large sequence datasets.
+of very large biological sequence datasets.
 
 
 ## Introduction
@@ -70,7 +70,7 @@ Each node of a dendrogram object has the following mandatory attributes:
 
 Rather than lists, terminal leaf nodes are length-1 integer vectors whose
 values correspond to the indices of the members in the set. 
-The "members" attributes of leaf nodes is always set to 1, 
+The "members" attributes of leaf nodes is always 1, 
 the "midpoint" attribute is 0, and they have two additional attributes:    
 
 * "leaf" TRUE for terminal nodes (NULL otherwise)
@@ -85,9 +85,8 @@ for each node by setting the attributes "nodePar" and "edgePar".
 Consider the simple example of a tree with three members named 
 "A", "B" and "C", where "B" and "C" are more closely related
 to eachother than they are to "A". 
-An unweighted Newick string for this tree would be  
-$(A,(B,C));$  
-We could manually create a dendrogram object for this basic phylogeny
+An unweighted Newick string for this tree would be *(A,(B,C));*
+We can manually create a dendrogram object for this basic phylogeny
 and plot the tree as follows:
 
 ```{r}
@@ -155,7 +154,7 @@ This function supports weighted edges, labels with special metacharacters
 (enclosed in single quotation marks), comments 
 (enclosed in square brackets; ignored by the parser), 
 multifuricating nodes, and both rooted and unrooted trees.
-This package currently ignores inner-node labels; however, 
+Inner-node labels are ignored; however, 
 the addition of "label" attributes for non-leaf 
 dendrogram nodes will be available in a future version.
 Objects of class "dendrogram" can be exported as 
@@ -169,8 +168,9 @@ dendrogram object using the `read.dendrogram` function
 as follows:
 
 ```{r}
+library(phylogram)
 newick <- "(A,(B,C));"
-x <- phylogram::read.dendrogram(text = newick)
+x <- read.dendrogram(text = newick)
 x
 ```
 
@@ -178,7 +178,7 @@ The following command writes the object back to the console in
 Newick format without edge weights:
 
 ```{r}
-phylogram::write.dendrogram(x, edges = FALSE)
+write.dendrogram(x, edges = FALSE)
 ```
 
 The syntax is similar when reading and writing text files, 
@@ -208,7 +208,7 @@ $$
 where $\tau$ represents each possible *k*-mer, 
 $n_a(\tau)$ and $n_b(\tau)$ 
 are the number of times $\tau$ appears in each sequence, 
-$k$ is the tuple length and $L$ is the sequence length.
+$k$ is the *k*-mer length and $L$ is the sequence length.
 
 We then calculate the pairwise distance between $a$ and $b$ as: 
 
@@ -234,7 +234,8 @@ Character sequences are supported; however ambiguity
 codes may not be recognized or treated appropriately, since raw ambiguity 
 codes are counted according to their underlying residue frequencies
 (e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT" 
-and 0.5 to that of "ACGGT"). 
+and 0.5 to that of "ACGGT"). This excludes the ambiguity code "N", which 
+is ignored.
 
 #### Example 3: Compute *k*-mer distance matrices for the woodmouse dataset
 The **ape** package contains a dataset of 15 aligned mitochondrial 
@@ -250,7 +251,7 @@ with the traditional alignment-reliant distances produced by
 library(ape)
 data(woodmouse)
 ## view the first few rows and columns 
-ape::as.character.DNAbin(woodmouse[1:5, 1:5])
+as.character.DNAbin(woodmouse[1:5, 1:5])
 ```
 
 
@@ -259,7 +260,7 @@ incomplete sequences, with unknown characters represented by
 the ambiguity code "n" (e.g. No305). 
 To avoid artificially inflating the distances between these partial 
 sequences and the others, we first trim the gappy ends by subsetting 
-the 'true' global alignment (note that the **ape** function `dist.dna` 
+the global alignment (note that the **ape** function `dist.dna` 
 also removes columns with ambiguity codes prior to distance computation 
 by default ).
 
@@ -267,20 +268,21 @@ by default ).
 woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
 ```
 
-The following code computes the full $n \times n$ distance matrix, and the 
-embedded distances of each sequence to three randomly selected seed sequences. 
+The following code first computes the full $n \times n$ distance matrix, 
+and then the embedded distances of each sequence to three randomly selected 
+seed sequences. 
 In both cases the *k*-mer size is set to 5.
 
 ```{r}
 ### Compute the full distance matrix and print the first few rows and columns
-woodmouse.kdist <- phylogram::kdistance(woodmouse, k = 5)
+woodmouse.kdist <- kdistance(woodmouse, k = 5)
 print(as.matrix(woodmouse.kdist)[1:7, 1:7], digits = 2)
 
-### Output the embedded distance matrix
+### Compute and print the embedded distance matrix
 set.seed(999)
 seeds <- sample(1:15, size = 3)
-woodmouse.mbed <- phylogram::mbed(woodmouse, seeds = seeds, k = 5)
-### remove the attributes by subsetting out the distance matrix
+woodmouse.mbed <- mbed(woodmouse, seeds = seeds, k = 5)
+### remove the attributes for printing by subsetting the distance matrix
 print(woodmouse.mbed[,], digits = 2)
 ```
 
@@ -288,7 +290,7 @@ print(woodmouse.mbed[,], digits = 2)
 ### Building trees
 To avoid excessive time and memory use when building large trees 
 (e.g. *n* > 10,000), the **phylogram** package features the 
-function `topdown` for divisive tree building free of both alignment 
+function `topdown` for divisive tree building, free of both alignment 
 and distance matrix computation. 
 This function first generates a matrix of *k*-mer counts, 
 and then recursively partitions the sequences using successive 
@@ -310,57 +312,64 @@ alignment-free *k*-mer distance and the Kimura [-@Kimura1980]
 distance as featured in the **ape** package examples.
 
 ```{r, out.width='700px', out.height='550px', dpi=500}
-### set out plotting panes
+## set out plotting panes
 op <- par(no.readonly = TRUE)
 par(mfrow = c(1, 3), mar = c(1, 2, 3, 3), cex = 0.3)
 
-### (1) Neighbor joining tree for Kimura 1980 distance matrix
+## (1) neighbor joining tree with Kimura 1980 distance
 ### compute the n x n K80 distance matrix 
 woodmouse.dist <- ape::dist.dna(woodmouse, model = "K80") 
 ### build the neighbor-joining tree
-tree1 <- ape::nj(woodmouse.dist)
+tree1.phylo <- ape::nj(woodmouse.dist)
+### export as Newick text
+tree1.newick <- ape::write.tree(tree1.phylo)
+### import as "dendrogram" object
+tree1.dendro <- read.dendrogram(text = tree1.newick)
 ### sort nodes by size
-tree1 <- ape::ladderize(tree1)
+tree1.dendro <- ladder(tree1.dendro)
 ### plot the nj tree
-plot(tree1, font = 1, cex = 1, 
+plot(tree1.dendro, horiz = TRUE, yaxt = "n", 
      main = "Neighbor-joining tree with\nK80 distance matrix")
 
-### (2) Neighbor joining tree for full k-mer distance matrix
-tree2 <- ape::nj(woodmouse.kdist)
+## (2) neighbor joining tree with k-mer distance
+### compute the n x n k-mer distance matrix 
+woodmouse.kdist <- kdistance(woodmouse, k = 5) 
+### build the neighbor-joining tree
+tree2.phylo <- ape::nj(woodmouse.kdist)
+### export as Newick text
+tree2.newick <- ape::write.tree(tree2.phylo)
+### import as "dendrogram" object
+tree2.dendro <- read.dendrogram(text = tree2.newick)
 ### sort nodes by size
-tree2 <- ape::ladderize(tree2)
+tree2.dendro <- ladder(tree2.dendro)
 ### plot the nj tree
-plot(tree2, font = 1, cex = 1, 
+plot(tree2.dendro, horiz = TRUE, yaxt = "n", 
      main = "Neighbor-joining tree with\nk-mer distance matrix (k=5)")
 
-### (3) topdown tree without distance matrix
+## (3) topdown tree without distance matrix
 set.seed(999)
-# higher values of nstart (number of random starts; passed to kmeans) 
-# tend to give better accuracy but at a computational cost
 tree3 <- phylogram::topdown(woodmouse, k = 5, nstart = 20)
 ### sort nodes by size
 tree3 <- phylogram::ladder(tree3)
-tree3 <- phylogram::reposition(tree3, shift = 0.005)
-np <- list(pch = c(NA, NA), lab.cex = 1)
-plot(tree3, horiz = TRUE, yaxt = "n", nodePar = np,
+### plot the topdown tree
+plot(tree3, horiz = TRUE, yaxt = "n", 
      main = "Top-down tree without\ndistance matrix (k=5)")
 
-### reset plotting parameters
+## reset plotting parameters
 par(op)
 ```
 
 **Figure 2:** Comparison of tree-building methods for woodmouse sequences 
 
-The neighbor-joining and the top-down trees are relatively 
-congruent regardless of the distance measure used, suggesting comparable 
-accuracy in this example. When the sequence set is large 
-the divisive (top-down) method builds trees orders of magnitude faster than 
+The top-down and neighbor-joining trees show relatively congruent fine-scale 
+topologies, regardless of the distance measure and method used.
+However, for large sequence sets, the top-down (divisive) method builds trees 
+orders of magnitude faster than 
 traditional alignment and distance matrix-based methods, since computation 
 time and memory use increasing linearly rather than quadratically with *n*.
 
 ### Tree editing/manipulation
-While dendrogram objects can be edited fairly easily using standard 
-list- and vector subsetting operators, the **phylogram** package features 
+The **phylogram** package features 
 several additional functions to facilite some of the more common 
 manipulation operations.
 Leaf nodes and internal branching nodes can be removed 
