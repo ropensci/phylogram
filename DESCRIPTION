@@ -4,7 +4,6 @@ Title: Dendrograms for evolutionary analysis
 Version: 1.0.0
 Authors@R: person("Shaun", "Wilkinson", role = c("aut", "cre"),
                      email = "shaunpwilkinson@gmail.com")
-Maintainer: Shaun Wilkinson <shaunpwilkinson@gmail.com>
 Description: Contains functions for importing and exporting dendrogram 
     objects in the Newick parenthetic text format, as well as several 
     functions for command-line tree manipulation. 
