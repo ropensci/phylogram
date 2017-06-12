@@ -1,7 +1,7 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Removed the Maintainer field from the DESCRIPTION file.
+* Added Author field to the DESCRIPTION file.
 
 
 ## Original Submission
