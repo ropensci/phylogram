@@ -25,16 +25,6 @@ rawaminos <- as.raw((65:89)[-c(2, 10, 15, 21, 24, 26)])
 yAA <- apply(y, c(1, 2), function(s) rawaminos[match(s, aminos)])
 class(yAA) <- "AAbin"
 
-# aminos <- LETTERS[-c(2, 10, 15, 21, 24, 26)]
-# y <- list(sample(aminos, replace = TRUE, size = 100))
-# evolve <- function(a) if(runif(1) > 0.95) sample(aminos, 1) else a
-# for(i in 2:10) y[[i]] <- unname(sapply(y[[i - 1]], evolve))
-# names(y) <- paste("Sequence", 1:10)
-# # convert to AAbin object
-# rawaminos <- as.raw((65:89)[-c(2, 10, 15, 21, 24, 26)])
-# yAA <- lapply(y, function(s) rawaminos[match(s, aminos)])
-# class(yAA) <- "AAbin"
-
 # count k-mers
 x.kcounts <- kcount(x)
 xDNA.kcounts <- kcount(xDNA)

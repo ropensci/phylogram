@@ -6,7 +6,7 @@ citEntry(entry = "Manual",
    url = "https://cran.r-project.org/package=phylogram",
    year   = "2017",
    textVersion =
-   paste("Shaun Wilkinson (2017) The 'phylogram' package for developing",
+   paste("Wilkinson SP (2017) The 'phylogram' package for developing",
          "evolutionary trees with R. R package version 1.0.0.",
          "https://cran.r-project.org/package=phylogram")
 )
