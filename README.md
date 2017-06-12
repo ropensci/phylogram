@@ -51,8 +51,8 @@ library("phylogram")
 Consider the simple example of a tree with three members named 
 "A", "B" and "C", where "B" and "C" are more closely related
 to eachother than they are to "A". 
-An unweighted Newick string for this tree would be (A,(B,C));
-This string can be imported as a 
+An unweighted Newick string for this tree would be "(A,(B,C));".
+This text can be imported as a 
 dendrogram object using the `read.dendrogram` function 
 as follows:
 
