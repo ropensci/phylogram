@@ -1,24 +1,13 @@
-## Resubmission
-Resubmitted to CRAN 2017-06-12 1600. Modifications made include:
+This is a patch release addressing a solaris build error discovered by Prof. Ripley:
+`error: call of overloaded ‘pow(int, int&)’ is ambiguous`
+The patch replaces C++ calls to 'pow' with recursive multiplication.
 
-* Removed non-standard hidden files.
+## Test environments
+ * local ubuntu 16.04 x86_64-pc-linux-gnu; R version 3.4.0 
+ * travis-ci ubuntu 12.04.5 x86_64-pc-linux-gnu; R 3.4.0
 
-* Rectified capital case in title.
+## R CMD check results
+There were no ERRORs, WARNINGs, or NOTEs
 
-* Fixed spelling in DESCRIPTION (apart from 'Dendrograms' which is necessary in title).
-
-* Removed namespace declarations for 'utils' and 'graphics'.
-
-* Changed R project URL to canonical form in vignette.
-
-* Fixed spelling errors in vignette.
-
-
-## Resubmission
-Resubmitted to CRAN 2017-06-12 1300. In this version I have:
-
-* Added Author field to the DESCRIPTION file.
-
-
-## Original Submission
-Submitted to CRAN 2017-06-12.
+## Downstream dependencies
+There were no problems

@@ -6,17 +6,23 @@ using namespace Rcpp;
 NumericMatrix kcountDNA(List x, int k = 5){
   CharacterVector nms = x.attr("names");
   int nseq = x.size();
-  double fourtopowerk = pow(4, k);
+  //double fourtopowerk = pow(4, k); // caused build error on solaris
+  int(fourtopowerk) = 1;
+  for(int i = 0; i < k; i++) fourtopowerk *= 4;
   NumericMatrix tuplemat(nseq, fourtopowerk);
   tuplemat.attr("dimnames") = List::create(nms, CharacterVector(fourtopowerk));
   RawVector tmp = RawVector::create(4, 55, 0, 136, 72, 199, 40, 24,
                                     224, 176, 208, 112, 240, 8, 160,
                                     144, 96, 80);
   IntegerVector rsak(k); //reversed seq along k
-  int counter = 0;
-  for(int l = k - 1; l >= 0; l--) {
-    rsak[l] = pow(4, counter);
-    counter++;
+  // following changes made in 1.0.1 to prevent build error on solaris
+  rsak[k - 1] = 1;
+  //int counter = 0;
+  //for(int l = k - 1; l >= 0; l--){
+  for(int l = k - 2; l >= 0; l--){
+    rsak[l] = rsak[l + 1] * 4;
+    //rsak[l] = pow(4, counter);
+    //counter++;
   }
   IntegerVector seqlens(nseq);
   RawVector kmer(k);
