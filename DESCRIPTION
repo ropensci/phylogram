@@ -1,7 +1,7 @@
 Package: phylogram
 Type: Package
 Title: Dendrograms for Evolutionary Analysis
-Version: 1.0.1
+Version: 1.0.1.9000
 Authors@R: person("Shaun", "Wilkinson", role = c("aut", "cre"),
                      email = "shaunpwilkinson@gmail.com")
 Author: Shaun Wilkinson [aut, cre]
