@@ -347,8 +347,8 @@ plot(tree2.dendro, horiz = TRUE, yaxt = "n",
 
 ## (3) topdown tree without distance matrix
 set.seed(999)
-tree3 <- phylogram::topdown(woodmouse, k = 5, nstart = 20)
-### sort nodes by size
+tree3 <- phylogram::topdown(woodmouse, k = 5, nstart = 5)
+## sort nodes by size
 tree3 <- phylogram::ladder(tree3)
 ### plot the topdown tree
 plot(tree3, horiz = TRUE, yaxt = "n", 

@@ -79,7 +79,7 @@
 #' woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
 #' ## build tree divisively
 #' set.seed(999)
-#' woodmouse.tree <- topdown(woodmouse, nstart = 20)
+#' woodmouse.tree <- topdown(woodmouse, nstart = 5)
 #' ## plot tree
 #' op <- par(no.readonly = TRUE)
 #' par(mar = c(5, 2, 4, 8) + 0.1)

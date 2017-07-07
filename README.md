@@ -89,17 +89,13 @@ tree using the `woodmouse` data from the ape package:
 library("phylogram")
 library("ape")
 data(woodmouse)
-x <- topdown(woodmouse, k = 5, nstart = 20)
+x <- topdown(woodmouse, k = 5, nstart = 5)
 op <- par(no.readonly = TRUE)
 par(mar = c(4, 4, 4, 5))
 plot(x, horiz = TRUE)
 par(op)
 ```
 These and more examples are available in the package vignette.
-If downloading the package from github, users will need to have 
-LaTeX installed to build the vignette. RStudio recommends 
-[MiKTeX Complete](http://miktex.org/2.9/setup) for Windows and
-[TexLive 2013 Full](http://tug.org/) for Mac OS X and Linux. 
 To view the vignette, run `vignette("phylogram-vignette")`
 
 
