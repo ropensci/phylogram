@@ -113,33 +113,37 @@ topdown <- function(x, k = 5, residues = NULL, gap = "-", ...){
   }else{
     pointers <- seq_along(x)
   }
-  kcounts <- kcount(x, k = k, residues = residues, gap = gap)
+  kcounts <- kcount(x, k = k, residues = residues, gap = gap, named = FALSE)
   kfreqs <- kcounts/apply(kcounts, 1, sum)
   tree <- 1
   attr(tree, "leaf") <- TRUE
   attr(tree, "sequences") <- 1:nuseq
   attr(tree, "height") <- 0
-  # define recursive splitting functions
-  topdown1 <- function(tree, d){ # d is the kcount matrix
+  ## define recursive splitting functions
+  topdown1 <- function(tree, d){ # d is the kfreq matrix
     tree <- topdown2(tree, d = d)
     if(is.list(tree)) tree[] <- lapply(tree, topdown1, d = d)
     return(tree)
   }
   topdown2 <- function(node, d){
     if(!is.list(node) & length(attr(node, "sequences")) > 1){
-      # fork leaves only
+      ## fork leaves only
       seqs <- d[attr(node, "sequences"), , drop = FALSE]
-      errfun <- function(er){# use when > 3 uniq hashes but kmeans throws error
+      errfun <- function(er){## used when >3 uniq hashes but kmeans throws error
         out <- list()
         nrs <- nrow(seqs)
         cls <- rep(1, nrs)
-        cls[sample(1:nrs, 1)] <- 2 # peel one off
+        cls[sample(1:nrs, 1)] <- 2 ## peel randomly selected one off
         out$cluster <- cls
         out$centers <- rbind(apply(seqs[cls == 1, , drop = FALSE], 2, mean),
                              apply(seqs[cls == 2, , drop = FALSE], 2, mean))
         return(out)
       }
-      km <- tryCatch(kmeans(seqs, centers = 2, ... = ...), error = errfun, warning = errfun)
+      km <- if(nrow(seqs) > 2) {
+        tryCatch(kmeans(seqs, centers = 2, ... = ...), error = errfun, warning = errfun)
+      }else{
+        list(cluster = 1:2, centers = seqs)
+      }
       membership <- km$cluster
       centers <- km$centers
       tmpattr <- attributes(node)
@@ -149,26 +153,27 @@ topdown <- function(x, k = 5, residues = NULL, gap = "-", ...){
       attr(node, "avdist") <- sqrt(sum(abs(km$centers[1,] - km$centers[2,])^2))
       for(i in 1:2){
         node[[i]] <- 1
-        attr(node[[i]], "height") <- attr(node, "height") - 1
+        attr(node[[i]], "height") <- attr(node, "height") - 0.0001 ## cleaned up later
         attr(node[[i]], "leaf") <- TRUE
         attr(node[[i]], "sequences") <- attr(node, "sequences")[membership == i]
-        attr(node[[i]], "avdist") <- 0 # recalculated later
+        attr(node[[i]], "avdist") <- 0 ## recalculated later if subnode is list
       }
     }
     return(node)
   }
-  #  build tree recursively
-  tree <- topdown1(tree, d = kfreqs) # was M
+  ##  build tree recursively
+  tree <- topdown1(tree, d = kfreqs)
   tree <- remidpoint(tree)
   class(tree) <- "dendrogram"
   reheight <- function(node){
     if(is.list(node)){
+      ## arbitrary minimum branch length of 0.0001
       node1edge <- max(0.0001, (attr(node, "avdist") - attr(node[[1]], "avdist"))/2)
       node2edge <- max(0.0001, (attr(node, "avdist") - attr(node[[2]], "avdist"))/2)
       attr(node[[1]], "height") <- attr(node, "height") - node1edge
       attr(node[[2]], "height") <- attr(node, "height") - node2edge
     }
-    attr(node, "avdist") <- NULL # tidys up by removing attrs
+    attr(node, "avdist") <- NULL ## tidy up by removing attrs
     return(node)
   }
   reheight1 <- function(node){

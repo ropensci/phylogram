@@ -31,14 +31,14 @@ install.packages("phylogram")
 library("phylogram")
 ```
 To download the development version from 
-GitHub you will first need to ensure you have a C/C++ compliler and the 
-[devtools](https://github.com/hadley/devtools) R package installed. 
-Linux users will generally have a compiler such as `gcc` installed by default; 
-however Windows users will need to download 
+GitHub, first ensure a C/C++ compliler is available and the 
+[devtools](https://github.com/hadley/devtools) R package is installed. 
+Linux users will generally have a compiler installed by default; 
+however Windows users may need to download 
 [Rtools](https://cran.r-project.org/bin/windows/Rtools/) and Mac 
 OSX users will need [Xcode](https://developer.apple.com/xcode) 
-(note that Rtools and Xcode are not R packages). To download and install 
-devtools, run 
+(note that these are not R packages). 
+To download and install devtools, run 
 ```R
 install.packages("devtools")
 ``` 
@@ -100,7 +100,7 @@ If downloading the package from github, users will need to have
 LaTeX installed to build the vignette. RStudio recommends 
 [MiKTeX Complete](http://miktex.org/2.9/setup) for Windows and
 [TexLive 2013 Full](http://tug.org/) for Mac OS X and Linux. 
-To view the vignette, run `vignette(package = "phylogram")`
+To view the vignette, run `vignette("phylogram-vignette")`
 
 
 ### Help
@@ -110,7 +110,7 @@ An overview of the package with links to the function documentation can be found
 ```
 If you experience a problem using this package please
 either raise it as an issue on [GitHub](http://github.com/shaunpwilkinson/phylogram/issues) 
-or post it on the [phylogram google group](http://groups.google.com/group/phylogram).
+or post it on the [phylogram google group](https://groups.google.com/group/phylogram).
 
 
 ### Acknowledgements

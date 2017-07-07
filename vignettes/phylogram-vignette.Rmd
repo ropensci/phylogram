@@ -1,9 +1,10 @@
 ---
-title: "The 'phylogram' package for developing evolutionary trees with R"
+title: "phylogram: an R package for phylogenetic analysis with dendrograms"
 author: "Shaun Wilkinson"
-date: "2017-06-12"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: phylogram.bib
+csl: bioinformatics.csl
 vignette: >
   %\VignetteIndexEntry{Introduction to the phylogram package}
   %\VignetteEngine{knitr::rmarkdown}
@@ -17,18 +18,24 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 
 --------------------------------------------------------------------------------
 ## Abstract
-**phylogram** is an R package for developing evolutionary trees 
+**Summary:** `phylogram` is an R package for developing evolutionary trees 
 as deeply-nested lists known as "dendrogram" objects. 
 It provides functions for importing and exporting trees in the Newick 
-parenthetic text format, as well as several functions for command-line 
+parenthetic text format, as well as several tools for command-line 
 tree manipulation.
-With an emphasis on speed and computational efficiency, **phylogram** also 
-includes a suite of tools for rapidly computing distance matrices and 
+With an emphasis on speed and computational efficiency, `phylogram` also 
+includes a suite of functions for rapidly computing distance matrices and 
 building large trees using fast alignment-free *k*-mer counting and 
 divisive clustering techniques.
-This package makes R's powerful nested-list architecture more 
-accessible to evolutionary biologists, and facilitates the analysis 
-of very large biological sequence datasets.
+This package has a range of potential applications including 
+sequence weighting, alignment guide trees, 
+classification & regression trees, and phylogenetic 
+analysis of very large biological sequence datasets.  
+**Availability and Implementation:** The `phylogram` package is 
+released underthe GPL-3 license, and is available for download from 
+CRAN <https://CRAN.R-project.org/package=phylogram> and github 
+<https://github.com/shaunpwilkinson/phylogram>.  
+**Contact:** shaunpwilkinson\@gmail.com
 
 
 ## Introduction
@@ -36,8 +43,7 @@ The R environment continues to gain popularity as a platform for
 working with evolutionary trees, due to the reproducible 
 code-based workflow and the many powerful analytical tools 
 available in a suite of open-source packages such as **ape** 
-[@Paradis2004], **phangorn** [@Schliep2011]
-and **Phytools** [@Revell2012]. 
+[@Paradis2004], **phangorn** [@Schliep2011] and **Phytools** [@Revell2012]. 
 These packages typically employ a tree structure known as the 
 "phylo" object, whose primary element is an integer matrix 
 with one row for each edge in the graph, 
@@ -47,7 +53,7 @@ An alternative tree structure is the "dendrogram" object, generated
 using the `as.dendrogram` function in the **stats** package [@RCoreTeam2015].
 Rather than a matrix of edges, a dendrogram is a hierarchical list. 
 These 'lists of lists' can be deeply nested, with the limit depending on 
-the C stack size (settable with `options("expressions")`).
+the C stack size (settable *via* `options("expressions")`).
 A useful feature of this representation is its modularity, whereby the 
 sub tree of a tree is itself a tree - a dendrogram within a dendrogram. 
 This means that dendrogram objects are subsettable in the same 
@@ -130,13 +136,13 @@ structures.
 
 
 ## The 'phylogram' package
-Here, we introduce **phylogram**, an R package for working with 
+Here, we introduce `phylogram`, an R package for working with 
 evolutionary trees as deeply-nested lists. 
 The package contains functions for importing and exporting dendrogram 
-objects to and from Newick-style parenthetic text, 
+objects to and from parenthetic text, 
 computing distance matrices, and assembling, visualizing, 
 manipulating and rendering trees for publication.
-A primary focus of the **phylogram** package is to facilitate the assembly 
+A primary focus of the `phylogram` package is to facilitate the assembly 
 of very large trees as quickly and efficiently as possible. This can be 
 achieved with or without a multiple sequence alignment, and with or without
 a matrix of pairwise distances.
@@ -147,16 +153,16 @@ These functions are detailed below with examples of their utility.
 The Newick (a.k.a. New Hampshire) parenthetic text 
 format [@Felsenstein1986] is a universal phylogenetic tree 
 representation that is compatible with most tree-editing software. 
-The **phylogram** package features the text parser `read.dendrogram`
-that reads a character string or text files in the Newick
-format and generates a dendrogram object.
+The `phylogram` package features the text parser `read.dendrogram`
+that reads a character string or text file in the Newick
+format and creates a dendrogram object.
 This function supports weighted edges, labels with special meta-characters 
 (enclosed in single quotation marks), comments 
 (enclosed in square brackets; ignored by the parser), 
 multifuricating nodes, and both rooted and unrooted trees.
-Inner-node labels are ignored; however, 
-the addition of "label" attributes for non-leaf 
-dendrogram nodes will be available in a future version.
+Inner-node labels are currently ignored; however, 
+the inclusion of "label" attributes for non-leaf 
+nodes will be available in a future version.
 Objects of class "dendrogram" can be exported as 
 Newick-style parenthetic text using the function 
 `write.dendrogram`.
@@ -187,52 +193,45 @@ and a valid file path is passed to the function.
 
 
 ### Distance matrix computation
-The **phylogram** package features the function `kcount` for counting 
+The `phylogram` package features the function `kcount` for counting 
 *k*-mers within a sequence or set of sequences, and `kdistance` for computing 
 a fast, alignment-free *k*-mer distance matrix. 
-Briefly, all *k*-letter words are enumerated by sliding 
-a window of length *k* along the sequences, and the abundance of each *k*-mer (e.g. 
-the $4^3$ possible DNA 3-mers AAA, AAC, AAG, ..., TTT) in each sequence is 
-used to calculate the pairwise distances. 
+This is achieved by sliding a window of length *k* along each sequence, 
+counting the number of times each *k*-mer appears 
+(for example, the $4^3$ possible DNA 3-mers: AAA, AAC, AAG, ..., TTT),
+and using these counts to derive the pairwise distances. 
 The default distance metric used by `kdistance` is the 
 *k*-mer (*k*-tuple) distance measure outlined in Edgar [-@Edgar2004c].
-For two DNA sequences $a$ and $b$ the fractional common *k*-mer count over the 
+For two DNA sequences $a$ and $b$, the fractional common *k*-mer count over the 
 $4^k$ possible words of length $k$ is calculated as:
+$$F  = \sum\limits_{\tau}\frac{min (n_a(\tau), n_b (\tau))}{min (L_a , L_b ) - k + 1} \tag{1}$$
 
-$$
-\begin{equation}
-F  = \sum\limits_{\tau}
-\frac{min (n_a(\tau), n_b (\tau))}{min (L_a , L_b ) - k + 1} \tag{1}
-\end{equation}
-$$
 where $\tau$ represents each possible *k*-mer, 
 $n_a(\tau)$ and $n_b(\tau)$ 
 are the number of times $\tau$ appears in each sequence, 
-$k$ is the *k*-mer length and $L$ is the sequence length.
+$k$ is the *k*-mer length and $L$ is the sequence length. 
+The pairwise distance between $a$ and $b$ is then calculated as: 
 
-We then calculate the pairwise distance between $a$ and $b$ as: 
+$$d = \frac{log(0.1 + F) - log(1.1)}{log(0.1)} \tag{2}$$
 
-$$
-\begin{equation}
-d = \frac{log(0.1 + F) - log(1.1)}{log(0.1)} \tag{2}
-\end{equation}
-$$
-
-For *n* sequences, the `kdistance` operation has time and memory 
+For $n$ sequences, the `kdistance` operation has time and memory 
 complexity $O(n^2)$ and thus can become computationally infeasible 
 when the sequence set is large (i.e. more than ~ 10,000 sequences).
-As such, the **phylogram** package also offers the function `mbed`, that 
+As such, the `phylogram` package also offers the function `mbed`, that 
 only computes the distances from each sequence to a smaller (or equal) 
 sized subset of 'seed' sequences [@Blackshields2010]. 
-As suggested by the authors, the default number of seeds is $log_2(n)^2$.
+The default behavior of the `kdistance` function is to select 
+$t = (log_2n)^2$ seeds by clustering the sequences 
+(*k*-means algorithm with $k = t$), and selecting one
+representative sequence from each cluster. 
  
 DNA and amino acid sequences can be passed to `kcount`, `kdistance` and `mbed` 
 either as a list of non-aligned sequences or a matrix of aligned sequences, 
 preferably in either the "DNAbin" or "AAbin" raw-byte format (see the 
 **ape** package documentation for more information on these S3 classes). 
 Character sequences are supported; however ambiguity 
-codes may not be recognized or treated appropriately, since raw ambiguity 
-codes are counted according to their underlying residue frequencies
+codes may not be recognized or treated appropriately, since raw ambiguities 
+are counted according to their underlying residue frequencies
 (e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT" 
 and 0.5 to that of "ACGGT"). This excludes the ambiguity code "N", which 
 is ignored.
@@ -242,7 +241,7 @@ The **ape** package contains a dataset of 15 aligned mitochondrial
 cytochrome *b* gene DNA sequences from the woodmouse *Apodemus sylvaticus*. 
 This is a subset of those originally published in 
 Michaux et al. [-@Michaux2003].
-While the **phylogram** distance functions do not require sequences to 
+While the `phylogram` distance functions do not require sequences to 
 be aligned, this example will enable us to compare our *k*-mer distances
 with the traditional alignment-reliant distances produced by 
 `ape::dist.dna`. First, load the dataset as follows:
@@ -289,7 +288,7 @@ print(woodmouse.mbed[,], digits = 2)
 
 ### Building trees
 To avoid excessive time and memory use when building large trees 
-(e.g. *n* > 10,000), the **phylogram** package features the 
+(e.g. *n* > 10,000), the `phylogram` package features the 
 function `topdown` for divisive tree building, free of both alignment 
 and distance matrix computation. 
 This function first generates a matrix of *k*-mer counts, 
@@ -299,10 +298,10 @@ While this method may not necessarily
 reconstruct sufficiently accurate phylogenetic trees for taxonomic 
 purposes, it offers a fast and efficient means of producing large trees 
 for a variety of other applications. 
-These include tree-based sequence weighting (e.g. Gerstein et al. 1994), 
+These include tree-based sequence weighting (e.g. Gerstein et al. [-@Gerstein1994]), 
 guide trees for progressive multiple sequence alignment (e.g. Sievers 
-et al. 2011), and other recursive operations such as
-classification tree learning.
+et al. [-@Sievers2011]), and other recursive operations such as
+classification and regression tree learning.
 
 #### Example 4: Reconstruct a phylogenetic tree for the woodmouse data 
 In this example we will compare the fast top-down 
@@ -369,7 +368,7 @@ traditional alignment and distance matrix-based methods, since computation
 time and memory use increasing linearly rather than quadratically with *n*.
 
 ### Tree editing/manipulation
-The **phylogram** package features 
+The `phylogram` package features 
 several additional functions to facilitate some of the more common 
 manipulation operations.
 Leaf nodes and internal branching nodes can be removed 
@@ -402,7 +401,7 @@ Moreover, there are several advanced plotting options for "phylo" objects in
 the **ape** package [@Paradis2004], made accessible for dendrogram objects 
 here *via* the Newick import/export functions `read.dendrogram` and `write.dendrogram`. 
 Given the extensive tree visualization options already available, 
-we elected not to include any additional plotting functions in the **phylogram** package. 
+we elected not to include any additional plotting functions in the `phylogram` package. 
 
 
 ## Future direction
@@ -412,9 +411,11 @@ Machine learning and data mining techniques such as classification and
 regression trees (CART) offer many potential benefits for the field 
 of bioinformatics, particularly in the exploratory 
 analysis of large datasets generated by high-throughput sequencing. 
-This tool makes the nested-list architecture, which is ideally suited to such 
-tasks, more accessible. We hope that it will help evolutionary biologists to 
-further explore this appealing opportunity.  
+We hope that this package will help biologists to 
+further explore these exciting opportunities.  
 
+## Acknowledgements 
+This software was developed with funding from a Rutherford Foundation Postdoctoral 
+Research Fellowship from the Royal Society of New Zealand.
 
 ## References 

@@ -20,6 +20,8 @@
 #' @param gap the character used to represent gaps in the alignment matrix
 #'   (if applicable). Ignored for \code{"DNAbin"} and \code{"AAbin"} objects.
 #'   Defaults to "-" otherwise.
+#' @param named logical. Should the k-mers be returned as column names in
+#'   the returned matrix? Defaults to TRUE.
 #' @return Returns a matrix of k-mer counts with one row for each sequence
 #'   and \emph{n}^\emph{k} columns (where \emph{n} is the size of the
 #'   residue alphabet and \emph{k} is the k-mer size)
@@ -73,7 +75,7 @@
 #'   y
 #'   ## 400 columns for amino acid 2-mers AA, AB, ... , YY
 ################################################################################
-kcount <- function(x, k = 5, residues = NULL, gap = "-"){
+kcount <- function(x, k = 5, residues = NULL, gap = "-", named = TRUE){
   DNA <- .isDNA(x)
   AA <- .isAA(x)
   if(DNA) class(x) <- "DNAbin" else if(AA) class(x) <- "AAbin"
@@ -125,7 +127,9 @@ kcount <- function(x, k = 5, residues = NULL, gap = "-"){
     ntimes <- ntimes * arity
     counter <- counter - 1
   }
-  colnames(kcounts) <- apply(indices, 2, function(i) paste0(residues[i], collapse = ""))
+  colnames(kcounts) <- if(named){
+    apply(indices, 2, function(i) paste0(residues[i], collapse = ""))
+  }else NULL
   return(kcounts)
 }
 ################################################################################

@@ -8,7 +8,7 @@ The patch replaces C++ calls to 'pow' with recursive multiplication.
  * winbuilder devel (2017-06-12 r72786)
 
 ## R CMD check results
-There were no ERROR sor WARNINGs.
+There were no ERRORs or WARNINGs.
 The winbuilder check returned one NOTE 
 "Possibly mis-spelled words in DESCRIPTION:
   Dendrograms (3:8)"

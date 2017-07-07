@@ -4,7 +4,7 @@
 \alias{kcount}
 \title{K-mer counting.}
 \usage{
-kcount(x, k = 5, residues = NULL, gap = "-")
+kcount(x, k = 5, residues = NULL, gap = "-", named = TRUE)
 }
 \arguments{
 \item{x}{a matrix of aligned sequences, a list of unaligned sequences,
@@ -27,6 +27,9 @@ recommended unless x is a "DNAbin" or "AAbin" object.}
 \item{gap}{the character used to represent gaps in the alignment matrix
 (if applicable). Ignored for \code{"DNAbin"} and \code{"AAbin"} objects.
 Defaults to "-" otherwise.}
+
+\item{named}{logical. Should the k-mers be returned as column names in
+the returned matrix? Defaults to TRUE.}
 }
 \value{
 Returns a matrix of k-mer counts with one row for each sequence
