@@ -89,7 +89,7 @@ tree using the `woodmouse` data from the ape package:
 library("phylogram")
 library("ape")
 data(woodmouse)
-x <- topdown(woodmouse, k = 5, nstart = 5)
+x <- topdown(woodmouse, k = 5, nstart = 10)
 op <- par(no.readonly = TRUE)
 par(mar = c(4, 4, 4, 5))
 plot(x, horiz = TRUE)
