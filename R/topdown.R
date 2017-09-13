@@ -95,11 +95,37 @@ topdown <- function(x, k = 5, residues = NULL, gap = "-", ...){
   gap <- if(AA) as.raw(45) else if(DNA) as.raw(4) else gap
   if(is.matrix(x)) x <- .unalign(x, gap = gap)
   nseq <- length(x)
-  if(nseq == 1) stop("Only a single sequence provided")
+  if(nseq == 1){# singleton tree (leaf)
+    tree <- 1
+    attr(tree, "leaf") <- TRUE
+    attr(tree, "height") <- 0
+    attr(tree, "midpoint") <- 0
+    attr(tree, "label") <- names(x)[1]
+    attr(tree, "members") <- 1
+    class(tree) <- "dendrogram"
+    return(tree)
+  }
+  # stop("Only a single sequence provided")
   if(is.null(names(x))) names(x) <- paste0("S", 1:nseq)
   catchnames <- names(x)
   hashes <- .digest(x, simplify = TRUE)
   duplicates <- duplicated(hashes)
+  if(sum(!duplicates) == 1){
+    tree <- vector(mode = "list", length = length(x))
+    attr(tree, "height") <- 0
+    attr(tree, "midpoint") <- 0.5
+    attr(tree, "members") <- length(x)
+    for(i in seq_along(x)){
+      tree[[i]] <- i
+      attr(tree[[i]], "height") <- 0
+      attr(tree[[i]], "midpoint") <- 0
+      attr(tree[[i]], "members") <- 1
+      attr(tree[[i]], "leaf") <- TRUE
+      attr(tree[[i]], "label") <- catchnames[i]
+    }
+    class(tree) <- "dendrogram"
+    return(tree)
+  }
   nuseq <- sum(!duplicates)
   if(any(duplicates)){
     pointers <- integer(length(x))

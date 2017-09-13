@@ -392,7 +392,7 @@ The function `remidpoint` recursively corrects all "midpoint",
 ### Tree vizualization 
 Publication-quality trees can be generated from dendrogram objects 
 using the **stats** plotting function `plot.dendrogram`, and the extensive
-plotting functions available in a dendrogram-enhancing packages such as 
+plotting functions available in dendrogram-enhancing packages such as 
 **circlize** [@Gu2014] and **dendextend** [@Galili2015].
 The latter also offers the facility to convert dendrograms to "ggdend" objects, 
 for which many powerful 'grammar of graphics' plotting functions are available in 

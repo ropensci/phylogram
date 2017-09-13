@@ -34,7 +34,7 @@ This function writes a dendrogram object to Newick-style parenthetic text.
   woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
   ## build topdown tree
   set.seed(999)
-  x <- topdown(woodmouse, nstart = 20)
+  x <- topdown(woodmouse, nstart = 5)
   write.dendrogram(x, edges = TRUE)
 }
 \seealso{
