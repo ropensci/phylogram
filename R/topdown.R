@@ -146,12 +146,12 @@ topdown <- function(x, k = 5, residues = NULL, gap = "-", ...){
   attr(tree, "sequences") <- 1:nuseq
   attr(tree, "height") <- 0
   ## define recursive splitting functions
-  topdown1 <- function(tree, d){ # d is the kfreq matrix
-    tree <- topdown2(tree, d = d)
-    if(is.list(tree)) tree[] <- lapply(tree, topdown1, d = d)
+  topdown1 <- function(tree, d, ...){ # d is the kfreq matrix
+    tree <- topdown2(tree, d = d, ... = ...)
+    if(is.list(tree)) tree[] <- lapply(tree, topdown1, d = d, ... = ...)
     return(tree)
   }
-  topdown2 <- function(node, d){
+  topdown2 <- function(node, d, ...){
     if(!is.list(node) & length(attr(node, "sequences")) > 1){
       ## fork leaves only
       seqs <- d[attr(node, "sequences"), , drop = FALSE]
