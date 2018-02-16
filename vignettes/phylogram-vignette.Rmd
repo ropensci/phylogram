@@ -1,5 +1,5 @@
 ---
-title: "phylogram: an R package for phylogenetic analysis with dendrograms"
+title: "phylogram: dendrograms for evolutionary analysis"
 author: "Shaun Wilkinson"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -23,10 +23,7 @@ as deeply-nested lists known as "dendrogram" objects.
 It provides functions for importing and exporting trees in the Newick 
 parenthetic text format, as well as several tools for command-line 
 tree manipulation.
-With an emphasis on speed and computational efficiency, `phylogram` also 
-includes a suite of functions for rapidly computing distance matrices and 
-building large trees using fast alignment-free *k*-mer counting and 
-divisive clustering techniques.
+
 This package has a range of potential applications including 
 sequence weighting, alignment guide trees, 
 classification & regression trees, and phylogenetic 
@@ -140,12 +137,7 @@ Here, we introduce `phylogram`, an R package for working with
 evolutionary trees as deeply-nested lists. 
 The package contains functions for importing and exporting dendrogram 
 objects to and from parenthetic text, 
-computing distance matrices, and assembling, visualizing, 
-manipulating and rendering trees for publication.
-A primary focus of the `phylogram` package is to facilitate the assembly 
-of very large trees as quickly and efficiently as possible. This can be 
-achieved with or without a multiple sequence alignment, and with or without
-a matrix of pairwise distances.
+and assembling, visualizing, manipulating and rendering trees for publication.
 These functions are detailed below with examples of their utility.
 
 
@@ -192,181 +184,6 @@ except that the `text` argument is replaced by `file`,
 and a valid file path is passed to the function. 
 
 
-### Distance matrix computation
-The `phylogram` package features the function `kcount` for counting 
-*k*-mers within a sequence or set of sequences, and `kdistance` for computing 
-a fast, alignment-free *k*-mer distance matrix. 
-This is achieved by sliding a window of length *k* along each sequence, 
-counting the number of times each *k*-mer appears 
-(for example, the $4^3$ possible DNA 3-mers: AAA, AAC, AAG, ..., TTT),
-and using these counts to derive the pairwise distances. 
-The default distance metric used by `kdistance` is the 
-*k*-mer (*k*-tuple) distance measure outlined in Edgar [-@Edgar2004c].
-For two DNA sequences $a$ and $b$, the fractional common *k*-mer count over the 
-$4^k$ possible words of length $k$ is calculated as:
-$$F  = \sum\limits_{\tau}\frac{min (n_a(\tau), n_b (\tau))}{min (L_a , L_b ) - k + 1} \tag{1}$$
-
-where $\tau$ represents each possible *k*-mer, 
-$n_a(\tau)$ and $n_b(\tau)$ 
-are the number of times $\tau$ appears in each sequence, 
-$k$ is the *k*-mer length and $L$ is the sequence length. 
-The pairwise distance between $a$ and $b$ is then calculated as: 
-
-$$d = \frac{log(0.1 + F) - log(1.1)}{log(0.1)} \tag{2}$$
-
-For $n$ sequences, the `kdistance` operation has time and memory 
-complexity $O(n^2)$ and thus can become computationally infeasible 
-when the sequence set is large (i.e. more than ~ 10,000 sequences).
-As such, the `phylogram` package also offers the function `mbed`, that 
-only computes the distances from each sequence to a smaller (or equal) 
-sized subset of 'seed' sequences [@Blackshields2010]. 
-The default behavior of the `kdistance` function is to select 
-$t = (log_2n)^2$ seeds by clustering the sequences 
-(*k*-means algorithm with $k = t$), and selecting one
-representative sequence from each cluster. 
- 
-DNA and amino acid sequences can be passed to `kcount`, `kdistance` and `mbed` 
-either as a list of non-aligned sequences or a matrix of aligned sequences, 
-preferably in either the "DNAbin" or "AAbin" raw-byte format (see the 
-**ape** package documentation for more information on these S3 classes). 
-Character sequences are supported; however ambiguity 
-codes may not be recognized or treated appropriately, since raw ambiguities 
-are counted according to their underlying residue frequencies
-(e.g. the 5-mer "ACRGT" would contribute 0.5 to the tally for "ACAGT" 
-and 0.5 to that of "ACGGT"). This excludes the ambiguity code "N", which 
-is ignored.
-
-#### Example 3: Compute *k*-mer distance matrices for the woodmouse dataset
-The **ape** package contains a dataset of 15 aligned mitochondrial 
-cytochrome *b* gene DNA sequences from the woodmouse *Apodemus sylvaticus*. 
-This is a subset of those originally published in 
-Michaux et al. [-@Michaux2003].
-While the `phylogram` distance functions do not require sequences to 
-be aligned, this example will enable us to compare our *k*-mer distances
-with the traditional alignment-reliant distances produced by 
-`ape::dist.dna`. First, load the dataset as follows:
-
-```{r}
-library(ape)
-data(woodmouse)
-## view the first few rows and columns 
-as.character.DNAbin(woodmouse[1:5, 1:5])
-```
-
-
-This is a semi-global ('glocal') alignment featuring some 
-incomplete sequences, with unknown characters represented by 
-the ambiguity code "n" (e.g. No305). 
-To avoid artificially inflating the distances between these partial 
-sequences and the others, we first trim the gappy ends by subsetting 
-the global alignment (note that the **ape** function `dist.dna` 
-also removes columns with ambiguity codes prior to distance computation 
-by default ).
-
-```{r}
-woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
-```
-
-The following code first computes the full $n \times n$ distance matrix, 
-and then the embedded distances of each sequence to three randomly selected 
-seed sequences. 
-In both cases the *k*-mer size is set to 5.
-
-```{r}
-### Compute the full distance matrix and print the first few rows and columns
-woodmouse.kdist <- kdistance(woodmouse, k = 5)
-print(as.matrix(woodmouse.kdist)[1:7, 1:7], digits = 2)
-
-### Compute and print the embedded distance matrix
-set.seed(999)
-seeds <- sample(1:15, size = 3)
-woodmouse.mbed <- mbed(woodmouse, seeds = seeds, k = 5)
-### remove the attributes for printing by subsetting the distance matrix
-print(woodmouse.mbed[,], digits = 2)
-```
-
-
-### Building trees
-To avoid excessive time and memory use when building large trees 
-(e.g. *n* > 10,000), the `phylogram` package features the 
-function `topdown` for divisive tree building, free of both alignment 
-and distance matrix computation. 
-This function first generates a matrix of *k*-mer counts, 
-and then recursively partitions the sequences using successive 
-k-means clustering (*k* = 2). 
-While this method may not necessarily 
-reconstruct sufficiently accurate phylogenetic trees for taxonomic 
-purposes, it offers a fast and efficient means of producing large trees 
-for a variety of other applications. 
-These include tree-based sequence weighting (e.g. Gerstein et al. [-@Gerstein1994]), 
-guide trees for progressive multiple sequence alignment (e.g. Sievers 
-et al. [-@Sievers2011]), and other recursive operations such as
-classification and regression tree learning.
-
-#### Example 4: Reconstruct a phylogenetic tree for the woodmouse data 
-In this example we will compare the fast top-down 
-method with standard neighbor-joining 
-trees constructed from full distance matrices computed using both the 
-alignment-free *k*-mer distance and the Kimura [-@Kimura1980] 
-distance as featured in the **ape** package examples.
-
-```{r, out.width='700px', out.height='550px', dpi=500}
-## set out plotting panes
-op <- par(no.readonly = TRUE)
-par(mfrow = c(1, 3), mar = c(1, 2, 3, 3), cex = 0.3)
-
-## (1) neighbor joining tree with Kimura 1980 distance
-### compute the n x n K80 distance matrix 
-woodmouse.dist <- ape::dist.dna(woodmouse, model = "K80") 
-### build the neighbor-joining tree
-tree1.phylo <- ape::nj(woodmouse.dist)
-### export as Newick text
-tree1.newick <- ape::write.tree(tree1.phylo)
-### import as "dendrogram" object
-tree1.dendro <- read.dendrogram(text = tree1.newick)
-### sort nodes by size
-tree1.dendro <- ladder(tree1.dendro)
-### plot the nj tree
-plot(tree1.dendro, horiz = TRUE, yaxt = "n", 
-     main = "Neighbor-joining tree with\nK80 distance matrix")
-
-## (2) neighbor joining tree with k-mer distance
-### compute the n x n k-mer distance matrix 
-woodmouse.kdist <- kdistance(woodmouse, k = 5) 
-### build the neighbor-joining tree
-tree2.phylo <- ape::nj(woodmouse.kdist)
-### export as Newick text
-tree2.newick <- ape::write.tree(tree2.phylo)
-### import as "dendrogram" object
-tree2.dendro <- read.dendrogram(text = tree2.newick)
-### sort nodes by size
-tree2.dendro <- ladder(tree2.dendro)
-### plot the nj tree
-plot(tree2.dendro, horiz = TRUE, yaxt = "n", 
-     main = "Neighbor-joining tree with\nk-mer distance matrix (k=5)")
-
-## (3) topdown tree without distance matrix
-set.seed(999)
-tree3 <- phylogram::topdown(woodmouse, k = 5, nstart = 5)
-## sort nodes by size
-tree3 <- phylogram::ladder(tree3)
-### plot the topdown tree
-plot(tree3, horiz = TRUE, yaxt = "n", 
-     main = "Top-down tree without\ndistance matrix (k=5)")
-
-## reset plotting parameters
-par(op)
-```
-
-**Figure 2:** Comparison of tree-building methods for woodmouse sequences 
-
-The top-down and neighbor-joining trees show relatively congruent fine-scale 
-topologies, regardless of the distance measure and method used.
-However, for large sequence sets, the top-down (divisive) method builds trees 
-orders of magnitude faster than 
-traditional alignment and distance matrix-based methods, since computation 
-time and memory use increasing linearly rather than quadratically with *n*.
-
 ### Tree editing/manipulation
 The `phylogram` package features 
 several additional functions to facilitate some of the more common 
@@ -412,7 +229,7 @@ regression trees (CART) offer many potential benefits for the field
 of bioinformatics, particularly in the exploratory 
 analysis of large datasets generated by high-throughput sequencing. 
 We hope that this package will help biologists to 
-further explore these exciting opportunities.  
+further explore these opportunities.  
 
 ## Acknowledgements 
 This software was developed with funding from a Rutherford Foundation Postdoctoral 

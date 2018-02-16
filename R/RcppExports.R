@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 .kcountDNA <- function(x, k = 5L) {
-    .Call('phylogram_kcountDNA', PACKAGE = 'phylogram', x, k)
+    .Call('_phylogram_kcountDNA', PACKAGE = 'phylogram', x, k)
 }
 
 .kdist <- function(x, from, to, seqlengths, k) {
-    .Call('phylogram_kdist', PACKAGE = 'phylogram', x, from, to, seqlengths, k)
+    .Call('_phylogram_kdist', PACKAGE = 'phylogram', x, from, to, seqlengths, k)
 }
 

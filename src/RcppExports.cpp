@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // kcountDNA
 NumericMatrix kcountDNA(List x, int k);
-RcppExport SEXP phylogram_kcountDNA(SEXP xSEXP, SEXP kSEXP) {
+RcppExport SEXP _phylogram_kcountDNA(SEXP xSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,7 +19,7 @@ END_RCPP
 }
 // kdist
 NumericMatrix kdist(NumericMatrix x, IntegerVector from, IntegerVector to, IntegerVector seqlengths, int k);
-RcppExport SEXP phylogram_kdist(SEXP xSEXP, SEXP fromSEXP, SEXP toSEXP, SEXP seqlengthsSEXP, SEXP kSEXP) {
+RcppExport SEXP _phylogram_kdist(SEXP xSEXP, SEXP fromSEXP, SEXP toSEXP, SEXP seqlengthsSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;

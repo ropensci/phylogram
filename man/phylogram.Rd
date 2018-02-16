@@ -9,10 +9,6 @@
 The phylogram package contains functions for importing and exporting
 dendrogram objects in the Newick parenthetic text format, as well as
 several functions for command-line tree manipulation.
-With an emphasis on speed and computational efficiency, the package
-also includes a suite of tools for rapidly computing distance matrices
-and building large trees using fast alignment-free k-mer counting
-and divisive clustering techniques.
 }
 \section{Functions}{
 
@@ -29,20 +25,6 @@ A breif description of the primary \pkg{phylogram} functions are
 \item \code{\link{write.dendrogram}} outputs an object of class
   \code{"dendrogram"} to a text string or file in Newick/New Hampshire
   format
-}
-}
-
-\section{Tree building}{
-
-\itemize{
-\item \code{\link{kcount}} tabulates all of the
-  k-letter words in a sequence or set of sequence
-\item \code{\link{kdistance}} calculates pairwise
-  distances between sequences by k-mer counting
-\item \code{\link{mbed}} embeds sequences as vectors of distances to a set of
-  'seed' sequences
-\item \code{\link{topdown}} builds a phylogenetic tree by successively
-  splitting a set of sequences (recursive partitioning)
 }
 }
 

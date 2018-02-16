@@ -23,9 +23,9 @@ Depends:
 Imports:
     openssl,
     Rcpp (>= 0.12.8),
-    stats,
+    stats
 Suggests:
-    ape (>= 3.0),
+    ape (>= 4.0),
     knitr,
     rmarkdown,
     testthat
