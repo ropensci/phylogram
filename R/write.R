@@ -19,14 +19,8 @@
 #'   package performs a similar operation for \code{"phylo"}
 #'   and \code{"multiPhylo"} objects.
 #' @examples
-#'   ## build and export tree for the woodmouse data (ape package)
-#'   library(ape)
-#'   data(woodmouse)
-#'   ## trim gappy ends for global alignment
-#'   woodmouse <- woodmouse[, apply(woodmouse, 2, function(v) !any(v == 0xf0))]
-#'   ## build topdown tree
-#'   set.seed(999)
-#'   x <- topdown(woodmouse, nstart = 5)
+#'   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
+#'   x <- read.dendrogram(text = newick)
 #'   write.dendrogram(x, edges = TRUE)
 ################################################################################
 write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){

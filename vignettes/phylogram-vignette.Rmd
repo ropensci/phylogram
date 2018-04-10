@@ -17,19 +17,19 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
 --------------------------------------------------------------------------------
+
+**Important Note:** From version 2.0 all *k*-mer counting and clustering functions
+have been migrated to the **kmer** package. Apologies for any inconvenience.
+
+
 ## Abstract
-**Summary:** `phylogram` is an R package for developing evolutionary trees 
-as deeply-nested lists known as "dendrogram" objects. 
-It provides functions for importing and exporting trees in the Newick 
+The **phylogram** R package is a Newick parser and tool for developing 
+evolutionary trees as deeply-nested lists known as "dendrogram" objects. 
+It provides functions for importing and exporting trees in 
 parenthetic text format, as well as several tools for command-line 
 tree manipulation.
-
-This package has a range of potential applications including 
-sequence weighting, alignment guide trees, 
-classification & regression trees, and phylogenetic 
-analysis of very large biological sequence datasets.  
-**Availability and Implementation:** The `phylogram` package is 
-released underthe GPL-3 license, and is available for download from 
+The **phylogram** package is released underthe GPL-3 license, 
+and is available for download from 
 CRAN <https://CRAN.R-project.org/package=phylogram> and github 
 <https://github.com/shaunpwilkinson/phylogram>.  
 **Contact:** shaunpwilkinson\@gmail.com
@@ -128,12 +128,12 @@ plot(x, yaxt = "n")
 
 As demonstrated in this example, manually setting attributes on dendrogram
 objects can be rather tedious, motivating the development of functions 
-automating the generation and manipulation of these tree 
+to automate the generation and manipulation of these tree 
 structures.
 
 
 ## The 'phylogram' package
-Here, we introduce `phylogram`, an R package for working with 
+Here, we introduce **phylogram**, an R package for working with 
 evolutionary trees as deeply-nested lists. 
 The package contains functions for importing and exporting dendrogram 
 objects to and from parenthetic text, 
@@ -145,7 +145,7 @@ These functions are detailed below with examples of their utility.
 The Newick (a.k.a. New Hampshire) parenthetic text 
 format [@Felsenstein1986] is a universal phylogenetic tree 
 representation that is compatible with most tree-editing software. 
-The `phylogram` package features the text parser `read.dendrogram`
+The **phylogram** package features the text parser `read.dendrogram`
 that reads a character string or text file in the Newick
 format and creates a dendrogram object.
 This function supports weighted edges, labels with special meta-characters 
@@ -183,9 +183,19 @@ The syntax is similar when reading and writing text files,
 except that the `text` argument is replaced by `file`, 
 and a valid file path is passed to the function. 
 
+If required, the dendrogram can be converted to an object of class "phylo"
+using the `as.phylo.dendrogram` method, and converted back to a dendrogram
+with `as.dendrogram.phylo`.
+
+```{r}
+y <- as.phylo(x)
+z <- as.dendrogram(y)
+identical(x, z)
+```
+
 
 ### Tree editing/manipulation
-The `phylogram` package features 
+The **phylogram** package features 
 several additional functions to facilitate some of the more common 
 manipulation operations.
 Leaf nodes and internal branching nodes can be removed 
@@ -196,7 +206,9 @@ To aid visualization, the function `ladder` rearranges
 the tree, sorting nodes by the number of members (analogous to the
 `ladderize ` function in the **ape** package). Another function 
 aiding in tree visualization is `ultrametricize `, which
-resets the "height" attributes of all terminal leaf nodes to zero. 
+resets the "height" attributes of all terminal leaf nodes to zero 
+(note that unlike `ape::chronos()` there is no mathematical basis 
+for this operation; rather it is merely a visualization aid). 
 The function `reposition` scales the height of all nodes in
 a tree by a given constant (passed *via* the argument `shift`), 
 and features the option to reset all node heights so that height of 
@@ -213,23 +225,20 @@ plotting functions available in dendrogram-enhancing packages such as
 **circlize** [@Gu2014] and **dendextend** [@Galili2015].
 The latter also offers the facility to convert dendrograms to "ggdend" objects, 
 for which many powerful 'grammar of graphics' plotting functions are available in 
-the **ggplot2** [@Wickam2009] and **ggdendro** [@deVries2016] packages. 
+the **ggplot2** [@Wickam2009] and **ggdendro** [@deVries2016] packages, as well as the
+Bioconductor package **ggtree** [@Guangchuang2017]. 
 Moreover, there are several advanced plotting options for "phylo" objects in 
 the **ape** package [@Paradis2004], made accessible for dendrogram objects 
 here *via* the Newick import/export functions `read.dendrogram` and `write.dendrogram`. 
 Given the extensive tree visualization options already available, 
-we elected not to include any additional plotting functions in the `phylogram` package. 
+we elected not to include any additional plotting functions in the **phylogram** package. 
 
 
-## Future direction
-A primary motivation for the development of this package was the requirement
-to perform recursive tree operations in a straightforward and intuitive manner.
-Machine learning and data mining techniques such as classification and 
-regression trees (CART) offer many potential benefits for the field 
-of bioinformatics, particularly in the exploratory 
-analysis of large datasets generated by high-throughput sequencing. 
-We hope that this package will help biologists to 
-further explore these opportunities.  
+### Getting help
+If you experience a problem using this package please
+either raise it as an issue on [GitHub](http://github.com/shaunpwilkinson/phylogram/issues), 
+post it on the **phylogram** [google group](https://groups.google.com/group/phylogram) 
+or email the author directly.
 
 ## Acknowledgements 
 This software was developed with funding from a Rutherford Foundation Postdoctoral 
