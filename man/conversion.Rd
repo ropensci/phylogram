@@ -28,9 +28,9 @@ These functions are used for converting dendrograms to "phylo" objects
   and \emph{vice versa}.
 }
 \details{
-These functions currently work by temporarily writing a tree in Newick
-  text format and then parsing the text using either \code{\link{read.dendrogram}}
-  or \code{\link[ape]{read.tree}}. A faster implementation which avoids the
+These functions currently work by temporarily writing a tree to Newick
+  text and then parsing the string using either \code{\link{read.dendrogram}}
+  or \code{\link[ape]{read.tree}}. A faster implementation that avoids the
   transformation to text strings will be available in a future version.
 }
 \examples{
