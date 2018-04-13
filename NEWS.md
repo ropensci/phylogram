@@ -1,3 +1,7 @@
+#phylogram 2.0.1
+
+Patch release addressing issue where as.phylo was masked from ape.
+
 #phylogram 2.0.0
 
 Major release retaining the newick parsing and tree manipulation 

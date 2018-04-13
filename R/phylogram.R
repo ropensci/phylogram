@@ -18,6 +18,15 @@
 #'   format
 #' }
 #'
+#' @section Object conversion:
+#' \itemize{
+#' \item \code{\link{as.phylo.dendrogram}} converts a dendrogram to
+#'   an object of class "phylo"
+#'   \code{"dendrogram"}
+#' \item \code{\link{as.dendrogram.phylo}} converts a "phylo" object
+#'   to a dendrogram
+#' }
+#'
 #' @section Tree editing and manipulation:
 #' \itemize{
 #' \item \code{\link{prune}} remove branches from a \code{dendrogram} object

@@ -1,7 +1,7 @@
 Package: phylogram
 Type: Package
 Title: Dendrograms for Evolutionary Analysis
-Version: 2.0.0.9000
+Version: 2.0.1.9000
 Authors@R: person("Shaun", "Wilkinson", role = c("aut", "cre"),
                      email = "shaunpwilkinson@gmail.com")
 Author: Shaun Wilkinson [aut, cre]
@@ -15,10 +15,11 @@ URL: http://github.com/shaunpwilkinson/phylogram
 BugReports: http://github.com/shaunpwilkinson/phylogram/issues
 Encoding: UTF-8
 Depends:
-    R (>= 3.0.0)
+    R (>= 3.0.0),
+    methods,
+    stats
 Imports:
     ape (>= 4.0),
-    stats
 Suggests:
     knitr,
     rmarkdown,

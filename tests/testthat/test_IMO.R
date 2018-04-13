@@ -39,6 +39,14 @@ test_that("tree can be ultrametricized", {
   expect_equal(attr(ultrametricize(x2)[[2]], "height"), 0)
 })
 
+test_that("tree can be converted", {
+  expect_true(inherits(as.phylo(x1), "phylo"))
+  expect_true(inherits(as.phylo(x2), "phylo"))
+  expect_true(inherits(as.dendrogram(as.phylo(x1)), "dendrogram"))
+  expect_true(inherits(as.dendrogram(as.phylo(x2)), "dendrogram"))
+})
+
+
 test_that("write.dendrogram outputs Newick string", {
   expect_equal(write.dendrogram(x1, edges = FALSE), "(A,(B,C));")
   expect_equal(write.dendrogram(x2, edges = TRUE), "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);")

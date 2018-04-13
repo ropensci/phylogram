@@ -3,8 +3,12 @@ exportPattern("^[[:alpha:]]+")
 S3method(as.phylo, dendrogram)
 S3method(as.dendrogram, phylo)
 
+import(methods)
+
+importFrom(ape, as.phylo)
 importFrom(ape, read.tree)
 importFrom(ape, write.tree)
 importFrom(ape, print.phylo)
+importFrom(stats, as.dendrogram)
 importFrom(stats, dendrapply)
 importFrom(stats, is.leaf)
