@@ -1,6 +1,6 @@
 ---
 title: "phylogram: an R package for phylogenetic analysis with dendrograms"
-author: "Shaun P. Wilkinson *^1\\*^* and Simon K. Davy *^1^*"
+author: "Shaun P. Wilkinson *^1,2^* and Simon K. Davy *^1^*"
 output:
   html_document:
     keep_md: true
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", out.width='500px', dpi=50
 
 *^1^* School of Biological Sciences, Victoria University of Wellington, Kelburn Parade, Wellington 6012, New Zealand.
 
-^\*^ Correspondence author. E-mail: shaunpwilkinson\@gmail.com
+*^2^* Correspondence author. E-mail: shaunpwilkinson\@gmail.com
 
 ## Abstract
 The **phylogram** R package is a tool for for developing 
