@@ -4,18 +4,14 @@ author: "Shaun P. Wilkinson *^1\\*^* and Simon K. Davy *^1^*"
 output:
   html_document:
     keep_md: true
-bibliography: phylogram.bib
+bibliography: vignettes/phylogram.bib
 vignette: >
   %\VignetteIndexEntry{Introduction to the phylogram package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-#knitr::opts_chunk$set(out.width='750px', dpi=200)
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", out.width='500px', dpi=500,
-                      fig.path = 'figures/')
-```
+
 
 --------------------------------------------------------------------------------
 
@@ -112,7 +108,8 @@ An unweighted Newick string for this tree would be *(A,(B,C));*
 We can manually create a dendrogram object for this basic phylogeny
 and plot the tree as follows:
 
-```{r, fig.keep='none', fig.height=3, fig.width=4, fig.align='left', dpi=500}
+
+```r
 x <- list(1, list(2, 3))
 ## attach "leaf" and "label" attributes to leaf nodes
 attr(x[[1]], "leaf") <- TRUE
@@ -141,13 +138,9 @@ attr(x[[2]][[1]], "members") <- attr(x[[2]][[2]], "members") <- 1
 class(x) <- "dendrogram"
 
 plot(x, yaxt = "n")
-
 ```
 
-```{r, echo=FALSE, fig.height=2, fig.width=4, fig.align='left', dpi=500}
-par(mar = c(1, 1, 1, 1))
-plot(x, yaxt = "n")
-```
+<img src="vignettes/figures/unnamed-chunk-3-1.png" width="500px" style="display: block; margin: auto auto auto 0;" />
 
 \ \ \ \ **Figure 1:** A simple dendrogram with three terminal leaf nodes
 
@@ -181,18 +174,22 @@ The simple Newick string in Example 1 can be imported as a
 dendrogram object using the `read.dendrogram` function 
 as follows:
 
-```{r}
+
+```r
 library(phylogram)
 newick <- "(A,(B,C));"
 x <- read.dendrogram(text = newick)
 x
+#> 'dendrogram' with 2 branches and 3 members total, at height 2
 ```
 
 The following command writes the object back to the console in 
 Newick format without edge weights:
 
-```{r}
+
+```r
 write.dendrogram(x, edges = FALSE)
+#> [1] "(A,(B,C));"
 ```
 
 The syntax is similar when reading and writing text files, 
@@ -203,10 +200,12 @@ If required, the dendrogram can be converted to an object of class "phylo"
 using the `as.phylo.dendrogram` method, and converted back to a dendrogram
 with `as.dendrogram.phylo`.
 
-```{r}
+
+```r
 y <- as.phylo(x)
 z <- as.dendrogram(y)
 identical(x, z)
+#> [1] TRUE
 ```
 
 
