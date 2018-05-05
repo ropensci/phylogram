@@ -6,9 +6,10 @@
 #' @param x a dendrogram object.
 #' @param ... further arguments to be passed between methods.
 #' @return an object of class "phylo".
-#' @details These functions currently work by temporarily writing a tree to Newick
-#'   text and then parsing the string using either \code{\link{read.dendrogram}}
-#'   or \code{\link[ape]{read.tree}}. A faster implementation that avoids the
+#' @details These functions currently work by temporarily writing a tree
+#'   to Newick text and then parsing the string using either
+#'   \code{\link{read.dendrogram}} or \code{\link[ape]{read.tree}}.
+#'   A faster implementation that avoids the
 #'   transformation to text strings will be available in a future version.
 #' @author Shaun Wilkinson
 #' @examples

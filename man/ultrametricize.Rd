@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{ultrametricize}
 \alias{ultrametricize}
-\title{Make dendrogram ultrametric.}
+\title{Reset leaf node heights.}
 \usage{
 ultrametricize(x)
 }
@@ -14,7 +14,15 @@ Returns an object of class \code{"dendrogram"}.
 }
 \description{
 This is a simple function that sets the 'height' attributes of
-  all leaf nodes to zero to aid vizualization.
+  all leaf nodes to zero.
+}
+\details{
+This function simply resets the "height" attributes of all
+  terminal leaf nodes to zero.
+  Note that unlike the \code{\link[ape]{chronos}} function in the
+  \code{\link{ape}} package there is no mathematical basis for this
+  operation.
+  Rather, it is intended merely as a visualization aid.
 }
 \examples{
   x <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);")

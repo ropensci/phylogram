@@ -14,8 +14,8 @@
 #' @param ... further arguments to be passed to \code{scan}.
 #' @details
 #'   There are varying interpretations of the Newick/New Hampshire text format.
-#'   This function tries to adhere to the Felsenstein standard outlined
-#'   \href{http://evolution.genetics.washington.edu/phylip/newicktree.html}{here}.
+#'   This function tries to adhere to the Felsenstein standard outlined at
+#'   \url{http://evolution.genetics.washington.edu/phylip/newicktree.html}.
 #'   The function supports weighted edges, labels with special
 #'   metacharacters (enclosed in single quotation marks),
 #'   comments (enclosed in square brackets; ignored by the parser),
@@ -71,7 +71,9 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
   if(has.comments){
     opens <- which(xsplit == "[")
     closes <- which(xsplit == "]")
-    if(length(opens) != length(closes)) stop("Invalid metacharacters in Newick string")
+    if(length(opens) != length(closes)){
+      stop("Invalid metacharacters in Newick string")
+    }
     comments <- unlist(mapply(":", opens, closes), use.names = FALSE)
     xsplit <- xsplit[-comments]
     x <- paste0(xsplit, collapse = "")
@@ -105,15 +107,16 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
     }
     return(s)
   }
+  fun2 <- function(s, has.edges){
+    paste0("'", s, "'", if(has.edges) "" else ":1")
+  }
   has.singlequotes <- grepl("'", x)
   if(has.singlequotes){
     tmp <- strsplit(x, split = "'")[[1]]
     evens <- seq(from = 2, to = length(tmp), by = 2)
-    odds <- seq(from = 1, to = length(tmp), by = 2) # not names in single quotes
-    tmp[odds] <- unname(sapply(tmp[odds], fun1, has.edges = has.edges))
-    tmp[evens] <- unname(sapply(tmp[evens], function(s){
-      paste0("'", s, "'", if(has.edges) "" else ":1")
-    }))
+    odds <- seq(from = 1, to = length(tmp), by = 2) # not names in singl quotes
+    tmp[odds] <- vapply(tmp[odds], fun1, "", has.edges, USE.NAMES = FALSE)
+    tmp[evens] <- vapply(tmp[evens], fun2, "", has.edges, USE.NAMES = FALSE)
     tmp <- paste0(tmp, collapse = "")
   }else{
     tmp <- fun1(x, has.edges = has.edges)
@@ -148,14 +151,17 @@ read.dendrogram <- function(file = "", text = NULL, edges = TRUE, ...){
     tmp3 <- gsub(paste0("\\(", tojoin, "\\)"), newnodename, tmp3)
     innernodecount <- innernodecount + 1
   }
-  if(!grepl("^[LI][0-9]{6}:([-0-9Ee.]+)$", tmp3)) warning("Possibly incomplete tree parse")
+  if(!grepl("^[LI][0-9]{6}:([-0-9Ee.]+)$", tmp3)){
+    warning("Possibly incomplete tree parse")
+  }
   tree <- tree[[1]]
   attr(tree, "edge") <- 0
   # convert nested list to dendrogram object by setting attributes recursvely
   setnodeattr <- function(x, leafnames){
-    # x is a nested list with 'edge' attributes, leafnames is a character vector
+    # x is a nested list with 'edge' attributes, leafnames is a char vector
     if(is.list(x)){
-      cladesizes <- sapply(x, function(y) length(unlist(y, use.names = FALSE)))
+      get_cladesizes <- function(y) length(unlist(y, use.names = FALSE))
+      cladesizes <- vapply(x, get_cladesizes, 0)
       nclades <- length(cladesizes)
       attr(x, "members") <- sum(cladesizes)
       attr(x, "midpoint") <- if(nclades > 1){

@@ -32,7 +32,7 @@
 ladder <- function(x, decreasing = FALSE){
   ordernode <- function(tree, decreasing = FALSE){
     if(is.list(tree)){
-      cladesizes <- sapply(tree, function(e) attr(e, "members"))
+      cladesizes <- vapply(tree, function(e) attr(e, "members"), 0)
       if(any(cladesizes > 1)){
         cladeorder <- order(cladesizes, decreasing = decreasing)
         tree[] <- tree[cladeorder]

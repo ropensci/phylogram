@@ -40,14 +40,13 @@
 prune <- function(tree, pattern, invert = FALSE, untag = FALSE, ...){
   collapse <- function(node, pattern, invert = FALSE){
     if(is.list(node)){
-      childnames <- sapply(node, function(e){
-        if(is.null(attr(e, "label"))) NA else attr(e, "label")
-      })
-      if(all(is.na(childnames))) return(node)
+      lab <- function(e) if(is.null(attr(e, "label"))) "" else attr(e, "label")
+      childnames <- vapply(node, lab, "")
+      if(all(childnames == "")) return(node)
       condemnedleaves <- grepl(pattern, childnames, ... = ...)
       if(invert){
         condemnedleaves <- !condemnedleaves
-        condemnedleaves[is.na(childnames)] <- FALSE
+        condemnedleaves[childnames == ""] <- FALSE
       }
       condemnedleaf <- match(TRUE, condemnedleaves)
       # just do one at a time to prevent singleton nodes
@@ -63,7 +62,9 @@ prune <- function(tree, pattern, invert = FALSE, untag = FALSE, ...){
   }
   collapser <- function(tree, pattern, invert = FALSE){
     tree <- collapse(tree, pattern = pattern, invert = invert)
-    if(is.list(tree)) tree[] <- lapply(tree, collapser, pattern = pattern, invert = invert)
+    if(is.list(tree)){
+      tree[] <- lapply(tree, collapser, pattern = pattern, invert = invert)
+    }
     return(tree)
   }
   fixmembers <- function(tree){
@@ -93,7 +94,9 @@ prune <- function(tree, pattern, invert = FALSE, untag = FALSE, ...){
       if(!is.null(attr(tree, "label"))){
         hit <- grepl(pattern, attr(tree, "label"), ... = ...)
         if(invert) hit <- !hit
-        if(hit) return(structure(list(), class = "dendrogram", members = 0, height = 0))
+        if(hit){
+          structure(list(), class = "dendrogram", members = 0, height = 0)
+        }
       }
     }
     tree <- collapser(tree, pattern = pattern, invert = invert)

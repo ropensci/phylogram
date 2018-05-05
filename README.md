@@ -2,6 +2,7 @@
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/phylogram)](https://cran.r-project.org/package=phylogram)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/phylogram)](https://cran.r-project.org/package=phylogram)
+[![](https://badges.ropensci.org/212_status.svg)](https://github.com/ropensci/onboarding/issues/212)
 [![Build Status](https://travis-ci.org/shaunpwilkinson/phylogram.svg?branch=master)](https://travis-ci.org/shaunpwilkinson/phylogram)
 [![codecov](https://codecov.io/github/shaunpwilkinson/phylogram/branch/master/graphs/badge.svg)](https://codecov.io/github/shaunpwilkinson/phylogram)
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)

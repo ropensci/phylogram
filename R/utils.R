@@ -31,9 +31,8 @@ remidpoint <- function(x){
   isdendro <- inherits(x, "dendrogram")
   setnodeattr <- function(node){
     if(is.list(node)){
-      cladesizes <- sapply(node, function(subnode){
-        length(unlist(subnode, use.names = FALSE))
-      })
+      get_cladesizes <- function(z) length(unlist(z, use.names = FALSE))
+      cladesizes <- vapply(node, get_cladesizes, 0)
       nclades <- length(cladesizes)
       attr(node, "members") <- sum(cladesizes)
       attr(node, "midpoint") <- ((cladesizes[1] - 1)/2 +
@@ -90,14 +89,20 @@ reposition <- function(x, shift = "reset"){
   return(x)
 }
 ################################################################################
-#' Make dendrogram ultrametric.
+#' Reset leaf node heights.
 #'
 #' This is a simple function that sets the 'height' attributes of
-#'   all leaf nodes to zero to aid vizualization.
+#'   all leaf nodes to zero.
 #'
 #' @param x an object of class \code{"dendrogram"}.
 #' @return Returns an object of class \code{"dendrogram"}.
 #' @author Shaun Wilkinson
+#' @details This function simply resets the "height" attributes of all
+#'   terminal leaf nodes to zero.
+#'   Note that unlike the \code{\link[ape]{chronos}} function in the
+#'   \code{\link{ape}} package there is no mathematical basis for this
+#'   operation.
+#'   Rather, it is intended merely as a visualization aid.
 #' @examples
 #'   x <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);")
 #'   plot(x, horiz = TRUE)
@@ -116,10 +121,11 @@ ultrametricize <- function(x){
   x <- dendrapply(x, placeflags)
   checkflags <- function(node){
     if(is.list(node)){
-      if(all(sapply(node, function(e) !is.null(attr(e, "flag"))))){
-        return(TRUE)
-      }else return(FALSE)
-    }else return(FALSE)
+      has_flag <- function(e) !is.null(attr(e, "flag"))
+      return(all(vapply(node, has_flag, logical(1))))
+    }else{
+      return(FALSE)
+    }
   }
   removeflags <- function(node){
     if(is.list(node)){
@@ -132,7 +138,7 @@ ultrametricize <- function(x){
   ultrametricize1 <- function(node){
     if(is.list(node)){
       if(checkflags(node)){
-        childheights <- sapply(node, function(e) attr(e, "height"))
+        childheights <- vapply(node, attr, 0, "height")
         attr(node, "height") <- max(childheights) + 1
         node <- removeflags(node)
         attr(node, "flag") <- TRUE

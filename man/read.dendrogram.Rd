@@ -29,8 +29,8 @@ Returns an object of class \code{"dendrogram"}.
 }
 \details{
 There are varying interpretations of the Newick/New Hampshire text format.
-  This function tries to adhere to the Felsenstein standard outlined
-  \href{http://evolution.genetics.washington.edu/phylip/newicktree.html}{here}.
+  This function tries to adhere to the Felsenstein standard outlined at
+  \url{http://evolution.genetics.washington.edu/phylip/newicktree.html}.
   The function supports weighted edges, labels with special
   metacharacters (enclosed in single quotation marks),
   comments (enclosed in square brackets; ignored by the parser),

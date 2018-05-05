@@ -24,15 +24,12 @@
 #'   write.dendrogram(x, edges = TRUE)
 ################################################################################
 write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){
-  if(!(inherits(x, "dendrogram"))) stop("Input object must be of class
-                                        'dendrogram'")
+  if(!(inherits(x, "dendrogram"))) stop("Input object must be a dendrogram")
   renameLeaves <- function(y){
     if(is.leaf(y)){
       tmp <- attr(y, "label")
-      if(grepl("[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]",
-               tmp)){
-        tmp <- paste0(c("'", tmp, "'"), collapse = "")
-      }
+      pa <- "[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]"
+      if(grepl(pa, tmp)) tmp <- paste0(c("'", tmp, "'"), collapse = "")
       y[1] <- tmp
     }
     y
@@ -70,8 +67,10 @@ write.dendrogram <- function(x, file = "", append = FALSE, edges = TRUE, ...){
   tmp <- gsub("edge=\"([-0-9Ee.]+)\"", "edge=\\1", tmp)
   tmp2 <- gsub("list", ";", tmp) # needs to be a special single char
   while(grepl("structure", tmp2)){
-    tmp2 <- gsub("structure\\(\"([^\"]*)\",edge=([-0-9Ee.]+)\\)", "\\1:\\2", tmp2)
-    tmp2 <- gsub(";\\(([^;\\)]*)\\)", "\"openbracket\\1closebracket\"", tmp2)
+    tmp2 <- gsub(
+      "structure\\(\"([^\"]*)\",edge=([-0-9Ee.]+)\\)", "\\1:\\2", tmp2)
+    tmp2 <- gsub(
+      ";\\(([^;\\)]*)\\)", "\"openbracket\\1closebracket\"", tmp2)
   }
   tmp3 <- gsub("openbracket", "\\(", tmp2)
   tmp3 <- gsub("closebracket", "\\)", tmp3)
