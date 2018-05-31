@@ -3,6 +3,9 @@ context("tree input, manipulation and output")
 
 x1 <- read.dendrogram(text = "(A,(B,C));")
 x2 <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F;")
+tmp <- tempfile()
+write.dendrogram(x1, file = tmp)
+write.dendrogram(x2, file = tmp, append = TRUE)
 
 test_that("read.dendrogram parses Newick string", {
   expect_is(x1, "dendrogram")
@@ -13,6 +16,7 @@ test_that("read.dendrogram parses Newick string", {
   expect_equal(length(x2), 3)
   expect_equal(attr(x2[[1]], "label"), "A")
   expect_true(is.leaf(x2[[1]]))
+  expect_error(read.dendrogram(file = tmp))
 })
 
 test_that("prune removes/retains matching nodes", {
