@@ -2,7 +2,7 @@ library(phylogram)
 context("tree input, manipulation and output")
 
 x1 <- read.dendrogram(text = "(A,(B,C));")
-x2 <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);")
+x2 <- read.dendrogram(text = "(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F;")
 
 test_that("read.dendrogram parses Newick string", {
   expect_is(x1, "dendrogram")
@@ -20,7 +20,9 @@ test_that("prune removes/retains matching nodes", {
   expect_equal(length(prune(x2, "A")), 2)
   expect_equal(length(prune(x2, "C")), 3)
   expect_equal(attr(prune(x2, "C"), "members"), 3)
-  expect_true(is.leaf(prune(x2, "B", invert = TRUE)))
+  expect_true(is.leaf(prune(x2, "B", keep = TRUE)))
+  expect_equal(length(prune(x2, "F")), 0)
+  expect_equal(length(prune(x2, "A|B|C|D")), 0)
 })
 
 test_that("tree can be repositioned", {
@@ -34,9 +36,9 @@ test_that("tree can be remidpointed", {
   expect_equal(attr(prune(x2, "D"), "midpoint"), 1)
 })
 
-test_that("tree can be ultrametricized", {
+test_that("tree can be converted to cladogram", {
   expect_equal(attr(x2[[2]], "height"), 0.7)
-  expect_equal(attr(ultrametricize(x2)[[2]], "height"), 0)
+  expect_equal(attr(as.cladogram(x2)[[2]], "height"), 0)
 })
 
 test_that("tree can be ladderized", {

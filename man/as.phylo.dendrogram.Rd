@@ -2,12 +2,12 @@
 % Please edit documentation in R/asphylo.R
 \name{as.phylo.dendrogram}
 \alias{as.phylo.dendrogram}
-\title{Convert dendrogram to "phylo" object.}
+\title{Convert a dendrogram to a "phylo" object.}
 \usage{
 \method{as.phylo}{dendrogram}(x, ...)
 }
 \arguments{
-\item{x}{a dendrogram object.}
+\item{x}{a dendrogram.}
 
 \item{...}{further arguments to be passed between methods.}
 }
@@ -15,22 +15,24 @@
 an object of class "phylo".
 }
 \description{
-Functions for converting dendrograms to "phylo" objects
-  and \emph{vice versa}.
-}
-\details{
-These functions currently work by temporarily writing a tree
-  to Newick text and then parsing the string using either
-  \code{\link{read.dendrogram}} or \code{\link[ape]{read.tree}}.
-  A faster implementation that avoids the
-  transformation to text strings will be available in a future version.
+This function converts a dendrogram into an object of class "phylo"
+  (see Paradis et al 2004).
 }
 \examples{
   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
   x <- read.dendrogram(text = newick)
   y <- as.phylo(x)
   z <- as.dendrogram(y)
-  identical(x, z)
+}
+\references{
+Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics
+  and evolution in R language. \emph{Bioinformatics} \strong{20}, 289-290.
+
+  Paradis E (2008) Definition of Formats for Coding Phylogenetic Trees in R.
+  \url{http://ape-package.ird.fr/misc/FormatTreeR_24Oct2012.pdf}
+
+  Paradis E (2012) Analysis of Phylogenetics and Evolution with R
+  (Second Edition). Springer, New York.
 }
 \author{
 Shaun Wilkinson

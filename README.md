@@ -12,12 +12,14 @@
 
 --------------------------------------------------------------------------------
 
-**phylogram** is an R package for working with evolutionary trees 
-as deeply-nested lists known as "dendrogram" objects. 
-It provides functions for importing and exporting trees in the Newick 
-parenthetic text format, as well as several functions for command-line 
-tree manipulation, making R's versatile dendrogram objects more 
-accessible to evolutionary biologists.
+The **phylogram** R package is a tool for for developing 
+phylogenetic trees as deeply-nested lists known as "dendrogram" objects. 
+It provides functions for conversion between "dendrogram" and 
+"phylo" class objects, as well as several tools for command-line tree 
+manipulation and import/export via Newick parenthetic text.
+This improves accessibility to the comprehensive range of object-specific 
+analytical and tree-visualization functions found across a wide array of 
+bioinformatic R packages.
 
 
 ### Installation

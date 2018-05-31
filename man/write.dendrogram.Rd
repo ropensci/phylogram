@@ -2,7 +2,7 @@
 % Please edit documentation in R/write.R
 \name{write.dendrogram}
 \alias{write.dendrogram}
-\title{Export a dendrogram object to text.}
+\title{Write a dendrogram object to parenthetic text.}
 \usage{
 write.dendrogram(x, file = "", append = FALSE, edges = TRUE, ...)
 }
@@ -24,15 +24,23 @@ included in the output string.}
 specify the numbering style of the edge weights (if edges = TRUE).}
 }
 \description{
-This function writes a dendrogram object to Newick-style parenthetic text.
+This function exports a dendrogram object as a Newick/New Hampshire
+  text string.
 }
 \examples{
   newick <- "(A:0.1,B:0.2,(C:0.3,D:0.4):0.5);"
   x <- read.dendrogram(text = newick)
   write.dendrogram(x, edges = TRUE)
 }
+\references{
+Felsenstein J (1986) The Newick tree format.
+  \url{http://evolution.genetics.washington.edu/phylip/newicktree.html}
+
+  Olsen G (1990) Interpretation of the "Newick's 8:45" tree format standard.
+  \url{http://evolution.genetics.washington.edu/phylip/newick_doc.html}
+}
 \seealso{
-\code{\link{read.dendrogram}} to create a \code{"dendrogram"}
+\code{\link{read.dendrogram}} to parse a \code{"dendrogram"}
   object from a text file.
   The \code{\link[ape]{write.tree}} function in the \code{\link[ape]{ape}}
   package performs a similar operation for \code{"phylo"}

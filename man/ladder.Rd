@@ -29,7 +29,6 @@ This function is the \code{dendrogram} analogue of the
   plot(x, horiz = TRUE)
   x <- ladder(x, decreasing = TRUE)
   plot(x, horiz = TRUE)
-
 }
 \references{
 Paradis E, Claude J, Strimmer K, (2004) APE: analyses of phylogenetics

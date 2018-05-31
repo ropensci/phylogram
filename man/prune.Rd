@@ -4,21 +4,17 @@
 \alias{prune}
 \title{Remove tree nodes by regular expression pattern matching.}
 \usage{
-prune(tree, pattern, invert = FALSE, untag = FALSE, ...)
+prune(tree, pattern, keep = FALSE, ...)
 }
 \arguments{
 \item{tree}{an object of class \code{"dendrogram"}.}
 
 \item{pattern}{a regular expression.}
 
-\item{invert}{logical indicating whether the branches whose labels match
+\item{keep}{logical indicating whether the nodes whose labels match
 the regular expression provided in "pattern" should be
-discarded and the others kept (FALSE; default) or vice versa.
-Nodes without "label" attributes are ignored.}
-
-\item{untag}{logical (used only when invert = TRUE). Indicates whether
-the specified pattern should be removed from the branch labels in
-the returned object.}
+kept and the remainder discarded. Defaults to FALSE.
+Note that nodes without "label" attributes are ignored.}
 
 \item{...}{further arguments to be passed to \code{grepl} and \code{gsub}.}
 }
@@ -43,7 +39,6 @@ This function recursively tests the "label" attribute of each
   plot(x, horiz = TRUE)
   x <- prune(x, pattern = "^A$")
   plot(x, horiz = TRUE)
-
 }
 \seealso{
 The \code{\link[ape]{drop.tip}} function in the

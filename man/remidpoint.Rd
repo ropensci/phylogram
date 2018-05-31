@@ -16,8 +16,8 @@ returns a nested list, or an object of class \code{"dendrogram"}
 \description{
 \code{remidpoint} is a helper function used for manually creating
   \code{"dendrogram"} objects from nested lists. The function
-  recursively assigns the necessary 'midpoint' and 'members'
-  attributes at each node.
+  recursively assigns the necessary 'midpoint', 'members', and
+  'leaf' attributes at each node.
 }
 \examples{
   ## manually create a small dendrogram with three members, A, B and C
