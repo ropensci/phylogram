@@ -8,3 +8,5 @@
 ^\.gitignore$
 ^\.Rhistory$
 ^\.travis\.yml$
+^\.github$
+^codemeta\.json$

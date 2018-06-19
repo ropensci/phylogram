@@ -1,0 +1,139 @@
+{
+  "@context": ["https://doi.org/10.5063/schema/codemeta-2.0", "http://schema.org"],
+  "@type": "SoftwareSourceCode",
+  "identifier": "phylogram",
+  "description": "A package for developing phylogenetic trees as\n    deeply-nested lists known as \"dendrogram\" objects.\n    Contains functions for conversion between \"dendrogram\" and\n    \"phylo\" class objects\n    (see Paradis et al (2004) <doi:10.1093/bioinformatics/btg412>),\n    as well as several tools for command-line tree\n    manipulation and import/export via Newick parenthetic text.",
+  "name": "phylogram: Dendrograms for Evolutionary Analysis",
+  "codeRepository": "http://github.com/shaunpwilkinson/phylogram",
+  "issueTracker": "http://github.com/shaunpwilkinson/phylogram/issues",
+  "license": "https://spdx.org/licenses/GPL-3.0",
+  "version": "2.0.1.9000",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "version": "3.4.4",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 3.4.4 (2018-03-15)",
+  "provider": {
+    "@id": "https://cran.r-project.org",
+    "@type": "Organization",
+    "name": "Comprehensive R Archive Network (CRAN)",
+    "url": "https://cran.r-project.org"
+  },
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Shaun",
+      "familyName": "Wilkinson",
+      "email": "shaunpwilkinson@gmail.com"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Shaun",
+      "familyName": "Wilkinson",
+      "email": "shaunpwilkinson@gmail.com"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "dendextend",
+      "name": "dendextend",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=dendextend"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "knitr",
+      "name": "knitr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
+    }
+  ],
+  "softwareRequirements": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "ape",
+      "name": "ape",
+      "version": ">= 4.0",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=ape"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "methods",
+      "name": "methods"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "stats",
+      "name": "stats"
+    }
+  ],
+  "releaseNotes": "https://github.com/shaunpwilkinson/phylogram/blob/master/NEWS.md",
+  "readme": "https://github.com/shaunpwilkinson/phylogram/blob/master/README.md",
+  "fileSize": "264.311KB",
+  "contIntegration": ["https://travis-ci.org/shaunpwilkinson/phylogram", "https://codecov.io/github/shaunpwilkinson/phylogram"],
+  "developmentStatus": "http://www.repostatus.org/#active",
+  "citation": [
+    {
+      "@type": "SoftwareSourceCode",
+      "datePublished": "2017",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Shaun",
+          "familyName": "Wilkinson"
+        }
+      ],
+      "name": "The {phylogram} package for developing evolutionary trees with R",
+      "identifier": "10.5281/zenodo.1227670",
+      "url": "https://cran.r-project.org/package=phylogram",
+      "@id": "https://doi.org/10.5281/zenodo.1227670",
+      "sameAs": "https://doi.org/10.5281/zenodo.1227670"
+    }
+  ],
+  "relatedLink": "https://CRAN.R-project.org/package=phylogram"
+}

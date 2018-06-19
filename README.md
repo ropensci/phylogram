@@ -97,3 +97,6 @@ This software was developed at
 [Victoria University of Wellington](http://www.victoria.ac.nz/) 
 with funding from a Rutherford Foundation Postdoctoral Research Fellowship 
 award from the Royal Society of New Zealand.
+
+
+[![ropensci_footer](https://ropensci.org/public_images/ropensci_footer.png)](https://ropensci.org)
