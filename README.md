@@ -3,8 +3,8 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/phylogram)](https://cran.r-project.org/package=phylogram)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/phylogram)](https://cran.r-project.org/package=phylogram)
 [![](https://badges.ropensci.org/212_status.svg)](https://github.com/ropensci/onboarding/issues/212)
-[![Build Status](https://travis-ci.org/shaunpwilkinson/phylogram.svg?branch=master)](https://travis-ci.org/shaunpwilkinson/phylogram)
-[![codecov](https://codecov.io/github/shaunpwilkinson/phylogram/branch/master/graphs/badge.svg)](https://codecov.io/github/shaunpwilkinson/phylogram)
+[![Build Status](https://travis-ci.org/ropensci/phylogram.svg?branch=master)](https://travis-ci.org/ropensci/phylogram)
+[![codecov](https://codecov.io/github/ropensci/phylogram/branch/master/graphs/badge.svg)](https://codecov.io/github/ropensci/phylogram)
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/79178372.svg)](https://zenodo.org/badge/latestdoi/79178372)
@@ -34,7 +34,7 @@ library("phylogram")
 To download the latest development version from GitHub, run:
 
 ```R
-devtools::install_github("shaunpwilkinson/phylogram", build_vignettes = TRUE) 
+devtools::install_github("ropensci/phylogram", build_vignettes = TRUE) 
 library("phylogram")
 ```
 
@@ -87,7 +87,7 @@ An overview of the package with links to the function documentation can be found
 ```
 
 If you experience a problem using this package please
-either raise it as an issue on [GitHub](http://github.com/shaunpwilkinson/phylogram/issues) 
+either raise it as an issue on [GitHub](http://github.com/ropensci/phylogram/issues) 
 or post it on the **phylogram** [google group](https://groups.google.com/group/phylogram).
 
 

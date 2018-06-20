@@ -1,11 +1,14 @@
 {
-  "@context": ["https://doi.org/10.5063/schema/codemeta-2.0", "http://schema.org"],
+  "@context": [
+    "https://doi.org/10.5063/schema/codemeta-2.0",
+    "http://schema.org"
+  ],
   "@type": "SoftwareSourceCode",
   "identifier": "phylogram",
   "description": "A package for developing phylogenetic trees as\n    deeply-nested lists known as \"dendrogram\" objects.\n    Contains functions for conversion between \"dendrogram\" and\n    \"phylo\" class objects\n    (see Paradis et al (2004) <doi:10.1093/bioinformatics/btg412>),\n    as well as several tools for command-line tree\n    manipulation and import/export via Newick parenthetic text.",
   "name": "phylogram: Dendrograms for Evolutionary Analysis",
-  "codeRepository": "http://github.com/shaunpwilkinson/phylogram",
-  "issueTracker": "http://github.com/shaunpwilkinson/phylogram/issues",
+  "codeRepository": "http://github.com/ropensci/phylogram",
+  "issueTracker": "http://github.com/ropensci/phylogram/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
   "version": "2.0.1.9000",
   "programmingLanguage": {
@@ -113,9 +116,12 @@
     }
   ],
   "releaseNotes": "https://github.com/shaunpwilkinson/phylogram/blob/master/NEWS.md",
-  "readme": "https://github.com/shaunpwilkinson/phylogram/blob/master/README.md",
+  "readme": "https://github.com/ropensci/phylogram/blob/master/README.md",
   "fileSize": "264.311KB",
-  "contIntegration": ["https://travis-ci.org/shaunpwilkinson/phylogram", "https://codecov.io/github/shaunpwilkinson/phylogram"],
+  "contIntegration": [
+    "https://travis-ci.org/shaunpwilkinson/phylogram",
+    "https://codecov.io/github/shaunpwilkinson/phylogram"
+  ],
   "developmentStatus": "http://www.repostatus.org/#active",
   "citation": [
     {
