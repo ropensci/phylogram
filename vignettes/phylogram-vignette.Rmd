@@ -37,7 +37,7 @@ bioinformatic R packages.
 The **phylogram** package is released under the GPL-3 license, 
 and is available for download from 
 CRAN <https://CRAN.R-project.org/package=phylogram> and GitHub 
-<https://github.com/shaunpwilkinson/phylogram>.  
+<https://github.com/ropensci/phylogram>.  
 
 \  
 
@@ -391,7 +391,7 @@ phylogenetic applications implemented in the R programming language.
 This software is still under active development, and will
 continue to be upgraded and expanded as new applications arise.
 Bug reports and other feedback are welcomed and can be directed to the GitHub issues
-page at <http://github.com/shaunpwilkinson/phylogram/issues>, 
+page at <http://github.com/ropensci/phylogram/issues>, 
 or the **phylogram** google group at <https://groups.google.com/group/phylogram>.
 
 \  
