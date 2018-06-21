@@ -1,3 +1,10 @@
+#phylogram 2.1.0
+
+* Addresses performance issues when converting between "dendrogram" and "phylo" objects
+* More examples and detail added to vignette
+* `as.cladogram` replaces `ultrametricize`
+* `read.dendrogram` now wraps `ape::read.tree` and converts to dendrogram via `as.dendrogram.phylo`
+
 #phylogram 2.0.1
 
 Patch release addressing issue where as.phylo was masked from ape.

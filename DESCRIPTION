@@ -2,14 +2,19 @@ Package: phylogram
 Type: Package
 Title: Dendrograms for Evolutionary Analysis
 Version: 2.1.0
-Authors@R: person("Shaun", "Wilkinson", role = c("aut", "cre"),
-                     email = "shaunpwilkinson@gmail.com")
+Authors@R: c(person("Shaun", "Wilkinson", role = c("aut", "cre"),
+                     email = "shaunpwilkinson@gmail.com", 
+                     comment = c(ORCID = '0000-0002-7332-7931')),
+             person("Simon", "Davy", role = "aut",
+                     email = "simon.davy@vuw.ac.nz", 
+                     comment = c(ORCID = '0000-0003-3584-5356'))
+                     )
 Author: Shaun Wilkinson [aut, cre]
 Maintainer: Shaun Wilkinson <shaunpwilkinson@gmail.com>
 Description: A package for developing phylogenetic trees as
     deeply-nested lists ("dendrogram" objects).
-    Contains functions for conversion between "dendrogram" and
-    "phylo" class objects
+    Contains functions for bi-directional conversion between dendrogram and
+    "phylo" objects
     (see Paradis et al (2004) <doi:10.1093/bioinformatics/btg412>),
     as well as several tools for command-line tree
     manipulation and import/export via Newick parenthetic text.
