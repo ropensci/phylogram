@@ -1,11 +1,12 @@
 # phylogram
 
+[![DOI](http://joss.theoj.org/papers/10.21105/joss.00790/status.svg)](https://doi.org/10.21105/joss.00790)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/phylogram)](https://cran.r-project.org/package=phylogram)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/phylogram)](https://cran.r-project.org/package=phylogram)
 [![](https://badges.ropensci.org/212_status.svg)](https://github.com/ropensci/onboarding/issues/212)
 [![Build Status](https://travis-ci.org/ropensci/phylogram.svg?branch=master)](https://travis-ci.org/ropensci/phylogram)
 [![codecov](https://codecov.io/github/ropensci/phylogram/branch/master/graphs/badge.svg)](https://codecov.io/github/ropensci/phylogram)
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![Project Status](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1293634.svg)](https://doi.org/10.5281/zenodo.1293634)
 [![ORCiD](https://img.shields.io/badge/ORCiD-0000--0002--7332--7931-brightgreen.svg)](http://orcid.org/0000-0002-7332-7931)

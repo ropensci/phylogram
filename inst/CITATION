@@ -1,13 +1,16 @@
 citHeader("To cite phylogram in publications use:")
 
 citEntry(entry = "Manual",
-   title = "The {phylogram} package for developing evolutionary trees with R",
-   author = personList(as.person("Shaun Wilkinson")),
-   url = "https://cran.r-project.org/package=phylogram",
-   year   = "2017",
-   doi = "10.5281/zenodo.1227670",
+   title = "{phylogram}: an R package for phylogenetic analysis with nested lists",
+   author = personList(as.person("Shaun P. Wilkinson"), as.person("Simon K. Davy")),
+   url = "http://joss.theoj.org/papers/10.21105/joss.00790",
+   journal = "Journal of Open Source Software",
+   volume = "3",
+   pages = "790",
+   year   = "2018",
+   doi = "10.21105/joss.00790",
    textVersion =
-   paste("Wilkinson SP (2017) The 'phylogram' package for developing",
-         "evolutionary trees with R. R package version 2.0.0.",
-         "https://cran.r-project.org/package=phylogram")
+   paste0("Wilkinson SP, Davy SK (2018) phylogram: an R package for phylogenetic ",
+          "analysis with nested lists. Journal of Open Source Software 3:790. ",
+          "DOI: 10.21105/joss.00790")
 )

@@ -371,7 +371,7 @@ plotting functions available in dendrogram-enhancing packages such as
 **circlize** [@Gu2014] and **dendextend** [@Galili2015].
 The latter also offers the facility to convert dendrograms to "ggdend" objects, 
 for which many powerful 'grammar of graphics' plotting functions are available in 
-the **ggplot2** [@Wickam2009] and **ggdendro** [@deVries2016] packages. 
+the **ggplot2** [@Wickham2009] and **ggdendro** [@deVries2016] packages. 
 Moreover, there are several advanced plotting options for "phylo" objects in 
 the **ape** package [@Paradis2004], as well as the
 Bioconductor package **ggtree** [@Guangchuang2017].

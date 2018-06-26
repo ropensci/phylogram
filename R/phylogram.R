@@ -10,7 +10,7 @@
 #' bioinformatic R packages.
 #'
 #' @section Functions:
-#' A breif description of the primary \pkg{phylogram} functions are
+#' A brief description of the primary \pkg{phylogram} functions are
 #'   provided with links to their help pages below.
 #'
 #' @section File import/export:

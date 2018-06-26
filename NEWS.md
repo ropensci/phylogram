@@ -4,6 +4,7 @@
 * More examples and detail added to vignette
 * `as.cladogram` replaces `ultrametricize`
 * `read.dendrogram` now wraps `ape::read.tree` and converts to dendrogram via `as.dendrogram.phylo`
+* Thanks very much to the ROpenSci editors and reviewers for improvements and suggestions
 
 #phylogram 2.0.1
 

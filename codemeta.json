@@ -5,12 +5,12 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "phylogram",
-  "description": "A package for developing phylogenetic trees as\n    deeply-nested lists (\"dendrogram\" objects).\n    Contains functions for bi-directional conversion between dendrogram and\n    \"phylo\" objects\n    (see Paradis et al (2004) <doi:10.1093/bioinformatics/btg412>),\n    as well as several tools for command-line tree\n    manipulation and import/export via Newick parenthetic text.",
+  "description": "Contains functions for developing phylogenetic trees as\n    deeply-nested lists (\"dendrogram\" objects).\n    Enables bi-directional conversion between dendrogram and\n    \"phylo\" objects\n    (see Paradis et al (2004) <doi:10.1093/bioinformatics/btg412>),\n    and features several tools for command-line tree\n    manipulation and import/export via Newick parenthetic text.",
   "name": "phylogram: Dendrograms for Evolutionary Analysis",
   "codeRepository": "http://github.com/ropensci/phylogram",
   "issueTracker": "http://github.com/ropensci/phylogram/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "2.1.0",
+  "version": "2.1.0.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -124,9 +124,9 @@
       "name": "stats"
     }
   ],
-  "releaseNotes": "https://github.com/shaunpwilkinson/phylogram/blob/master/NEWS.md",
+  "releaseNotes": "https://github.com/ropensci/phylogram/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/phylogram/blob/master/README.md",
-  "fileSize": "264.432KB",
+  "fileSize": "264.537KB",
   "contIntegration": [
     "https://travis-ci.org/shaunpwilkinson/phylogram",
     "https://codecov.io/github/shaunpwilkinson/phylogram"
@@ -135,19 +135,34 @@
   "citation": [
     {
       "@type": "SoftwareSourceCode",
-      "datePublished": "2017",
+      "datePublished": "2018",
       "author": [
         {
           "@type": "Person",
-          "givenName": "Shaun",
+          "givenName": ["Shaun", "P."],
           "familyName": "Wilkinson"
+        },
+        {
+          "@type": "Person",
+          "givenName": ["Simon", "K."],
+          "familyName": "Davy"
         }
       ],
-      "name": "The {phylogram} package for developing evolutionary trees with R",
-      "identifier": "10.5281/zenodo.1227670",
-      "url": "https://cran.r-project.org/package=phylogram",
-      "@id": "https://doi.org/10.5281/zenodo.1227670",
-      "sameAs": "https://doi.org/10.5281/zenodo.1227670"
+      "name": "{phylogram}: an R package for phylogenetic analysis with nested lists",
+      "identifier": "10.21105/joss.00790",
+      "url": "http://joss.theoj.org/papers/10.21105/joss.00790",
+      "paginiation": "790",
+      "@id": "https://doi.org/10.21105/joss.00790",
+      "sameAs": "https://doi.org/10.21105/joss.00790",
+      "isPartOf": {
+        "@type": "PublicationIssue",
+        "datePublished": "2018",
+        "isPartOf": {
+          "@type": ["PublicationVolume", "Periodical"],
+          "volumeNumber": "3",
+          "name": "Journal of Open Source Software"
+        }
+      }
     }
   ],
   "relatedLink": "https://CRAN.R-project.org/package=phylogram"

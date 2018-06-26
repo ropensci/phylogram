@@ -57,7 +57,7 @@ both object types.
 Here, we introduce ``phylogram``, an R package for developing 
 phylogenies as deeply-nested lists, converting trees between 
 list- and matrix-type objects, importing and exporting trees 
-to and from parenthetic text, an editing/manipulating dendrogram objects.
+to and from parenthetic text, and editing/manipulating dendrogram objects.
 ``phylogram`` is available from GitHub (<https://github.com/ropensci/phylogram>)
 and CRAN (<https://CRAN.R-project.org/package=phylogram>), 
 and version 2.1 of the package is archived to Zenodo (<http://dx.doi.org/10.5281/zenodo.1293634>).
